@@ -1,0 +1,5760 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Donater",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/healthz": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Healthz",
+        "description": "Process is up. Deliberately checks no dependency.",
+        "operationId": "healthz_healthz_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string",
+                    "const": "ok"
+                  },
+                  "type": "object",
+                  "title": "Response Healthz Healthz Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/readyz": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Readyz",
+        "operationId": "readyz_readyz_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Readyz Readyz Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tg/webhook": {
+      "post": {
+        "tags": [
+          "hooks"
+        ],
+        "summary": "Telegram Webhook",
+        "operationId": "telegram_webhook_tg_webhook_post",
+        "parameters": [
+          {
+            "name": "X-Telegram-Bot-Api-Secret-Token",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Telegram-Bot-Api-Secret-Token"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hooks/fazercards": {
+      "post": {
+        "tags": [
+          "hooks"
+        ],
+        "summary": "Fazercards Webhook",
+        "operationId": "fazercards_webhook_hooks_fazercards_post",
+        "parameters": [
+          {
+            "name": "X-Webhook-Signature",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Webhook-Signature"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Fazercards Webhook Hooks Fazercards Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hooks/payme": {
+      "post": {
+        "tags": [
+          "hooks"
+        ],
+        "summary": "Payme Endpoint",
+        "operationId": "payme_endpoint_hooks_payme_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Payme Endpoint Hooks Payme Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hooks/click/prepare": {
+      "post": {
+        "tags": [
+          "hooks"
+        ],
+        "summary": "Click Prepare",
+        "operationId": "click_prepare_hooks_click_prepare_post",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_click_prepare_hooks_click_prepare_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Click Prepare Hooks Click Prepare Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/hooks/click/complete": {
+      "post": {
+        "tags": [
+          "hooks"
+        ],
+        "summary": "Click Complete",
+        "operationId": "click_complete_hooks_click_complete_post",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_click_complete_hooks_click_complete_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Click Complete Hooks Click Complete Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/auth/telegram": {
+      "post": {
+        "tags": [
+          "admin:auth"
+        ],
+        "summary": "Sign In",
+        "operationId": "sign_in_admin_api_v1_auth_telegram_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelegramLoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenPairOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/auth/refresh": {
+      "post": {
+        "tags": [
+          "admin:auth"
+        ],
+        "summary": "Refresh",
+        "operationId": "refresh_admin_api_v1_auth_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenPairOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/auth/logout": {
+      "post": {
+        "tags": [
+          "admin:auth"
+        ],
+        "summary": "Sign Out",
+        "operationId": "sign_out_admin_api_v1_auth_logout_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "admin:auth"
+        ],
+        "summary": "Me",
+        "operationId": "me_admin_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/users": {
+      "get": {
+        "tags": [
+          "admin:users"
+        ],
+        "summary": "List Users",
+        "operationId": "list_users_admin_api_v1_users_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "before_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Return rows with a smaller id",
+              "title": "Before Id"
+            },
+            "description": "Return rows with a smaller id"
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "tg id or username",
+              "title": "Q"
+            },
+            "description": "tg id or username"
+          },
+          {
+            "name": "is_blocked",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Is Blocked"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_UserOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/users/export": {
+      "get": {
+        "tags": [
+          "admin:users"
+        ],
+        "summary": "Export Users",
+        "description": "The same filter as the list, as a file.\n\nThe audit entry is written before a single byte goes out: once the response\nis streaming there is no way to refuse it.",
+        "operationId": "export_users_admin_api_v1_users_export_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "tg id or username",
+              "title": "Q"
+            },
+            "description": "tg id or username"
+          },
+          {
+            "name": "is_blocked",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Is Blocked"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/users/{user_id}": {
+      "get": {
+        "tags": [
+          "admin:users"
+        ],
+        "summary": "Get User",
+        "operationId": "get_user_admin_api_v1_users__user_id__get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDetailOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/users/{user_id}/ledger": {
+      "get": {
+        "tags": [
+          "admin:users"
+        ],
+        "summary": "User Ledger",
+        "operationId": "user_ledger_admin_api_v1_users__user_id__ledger_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "before_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Return rows with a smaller id",
+              "title": "Before Id"
+            },
+            "description": "Return rows with a smaller id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_LedgerEntryOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/users/{user_id}/balance-adjust": {
+      "post": {
+        "tags": [
+          "admin:users"
+        ],
+        "summary": "Adjust Balance",
+        "description": "Manual correction. The key makes a retried request a no-op, not a second one.",
+        "operationId": "adjust_balance_admin_api_v1_users__user_id__balance_adjust_post",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          },
+          {
+            "name": "idempotency_key",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Idempotency Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BalanceAdjustRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LedgerEntryOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/users/{user_id}/block": {
+      "post": {
+        "tags": [
+          "admin:users"
+        ],
+        "summary": "Block User",
+        "operationId": "block_user_admin_api_v1_users__user_id__block_post",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BlockRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/users/{user_id}/unblock": {
+      "post": {
+        "tags": [
+          "admin:users"
+        ],
+        "summary": "Unblock User",
+        "operationId": "unblock_user_admin_api_v1_users__user_id__unblock_post",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/orders": {
+      "get": {
+        "tags": [
+          "admin:orders"
+        ],
+        "summary": "List Orders",
+        "operationId": "list_orders_admin_api_v1_orders_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "before_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Return rows with a smaller id",
+              "title": "Before Id"
+            },
+            "description": "Return rows with a smaller id"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "User Id"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "public or provider order id",
+              "title": "Q"
+            },
+            "description": "public or provider order id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_OrderOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/orders/export": {
+      "get": {
+        "tags": [
+          "admin:orders"
+        ],
+        "summary": "Export Orders",
+        "description": "The list, as a file. Delivered keys are never included.",
+        "operationId": "export_orders_admin_api_v1_orders_export_get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "User Id"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "public or provider order id",
+              "title": "Q"
+            },
+            "description": "public or provider order id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/orders/{order_id}": {
+      "get": {
+        "tags": [
+          "admin:orders"
+        ],
+        "summary": "Get Order",
+        "operationId": "get_order_admin_api_v1_orders__order_id__get",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderDetailOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/orders/{order_id}/payload": {
+      "get": {
+        "tags": [
+          "admin:orders"
+        ],
+        "summary": "Reveal Payload",
+        "description": "Reveal the delivered code. Restricted, and always audited.",
+        "operationId": "reveal_payload_admin_api_v1_orders__order_id__payload_get",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Reveal Payload Admin Api V1 Orders  Order Id  Payload Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/orders/{order_id}/retry": {
+      "post": {
+        "tags": [
+          "admin:orders"
+        ],
+        "summary": "Retry Order",
+        "description": "Queue a held order again. The stored idempotency key prevents a second charge.",
+        "operationId": "retry_order_admin_api_v1_orders__order_id__retry_post",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/orders/{order_id}/refund": {
+      "post": {
+        "tags": [
+          "admin:orders"
+        ],
+        "summary": "Refund Order",
+        "operationId": "refund_order_admin_api_v1_orders__order_id__refund_post",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefundRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/orders/{order_id}/force-complete": {
+      "post": {
+        "tags": [
+          "admin:orders"
+        ],
+        "summary": "Force Complete",
+        "description": "Mark an order delivered by hand, for when it was fulfilled out of band.",
+        "operationId": "force_complete_admin_api_v1_orders__order_id__force_complete_post",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Order Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefundRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/payments": {
+      "get": {
+        "tags": [
+          "admin:payments"
+        ],
+        "summary": "List Payments",
+        "operationId": "list_payments_admin_api_v1_payments_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "before_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Return rows with a smaller id",
+              "title": "Before Id"
+            },
+            "description": "Return rows with a smaller id"
+          },
+          {
+            "name": "provider",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Provider"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_PaymentOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/payments/export": {
+      "get": {
+        "tags": [
+          "admin:payments"
+        ],
+        "summary": "Export Payments",
+        "description": "The list, as a file. Accounting asks for this one every month.",
+        "operationId": "export_payments_admin_api_v1_payments_export_get",
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Provider"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/payments/{payment_id}/proof-file": {
+      "get": {
+        "tags": [
+          "admin:payments"
+        ],
+        "summary": "Proof File",
+        "description": "The receipt photo, proxied from Telegram.\n\nProxied rather than linked because a Telegram file URL carries the bot\ntoken; handing that to a browser would publish the token to anyone who can\nread a network log.\n\nNot written to `audit_log`: the review queue loads these images constantly\nand an entry per render would bury the entries that matter. The read is\nlogged instead, and only a reviewer can ask for one.",
+        "operationId": "proof_file_admin_api_v1_payments__payment_id__proof_file_get",
+        "parameters": [
+          {
+            "name": "payment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Payment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/payments/pending-proofs": {
+      "get": {
+        "tags": [
+          "admin:payments"
+        ],
+        "summary": "Pending Proofs",
+        "description": "The review queue, oldest first.",
+        "operationId": "pending_proofs_admin_api_v1_payments_pending_proofs_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProofOut"
+                  },
+                  "title": "Response Pending Proofs Admin Api V1 Payments Pending Proofs Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/payments/{payment_id}": {
+      "get": {
+        "tags": [
+          "admin:payments"
+        ],
+        "summary": "Get Payment",
+        "operationId": "get_payment_admin_api_v1_payments__payment_id__get",
+        "parameters": [
+          {
+            "name": "payment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Payment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/payments/proofs/{proof_id}/approve": {
+      "post": {
+        "tags": [
+          "admin:payments"
+        ],
+        "summary": "Approve Proof",
+        "operationId": "approve_proof_admin_api_v1_payments_proofs__proof_id__approve_post",
+        "parameters": [
+          {
+            "name": "proof_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Proof Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/payments/proofs/{proof_id}/reject": {
+      "post": {
+        "tags": [
+          "admin:payments"
+        ],
+        "summary": "Reject Proof",
+        "operationId": "reject_proof_admin_api_v1_payments_proofs__proof_id__reject_post",
+        "parameters": [
+          {
+            "name": "proof_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Proof Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RejectRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/markup/rules": {
+      "get": {
+        "tags": [
+          "admin:pricing"
+        ],
+        "summary": "List Rules",
+        "description": "Ordered from most to least specific, the way the cascade resolves them.",
+        "operationId": "list_rules_admin_api_v1_markup_rules_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MarkupRuleOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Rules Admin Api V1 Markup Rules Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "admin:pricing"
+        ],
+        "summary": "Create Rule",
+        "operationId": "create_rule_admin_api_v1_markup_rules_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkupRuleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkupRuleOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/markup/rules/{rule_id}": {
+      "patch": {
+        "tags": [
+          "admin:pricing"
+        ],
+        "summary": "Update Rule",
+        "operationId": "update_rule_admin_api_v1_markup_rules__rule_id__patch",
+        "parameters": [
+          {
+            "name": "rule_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Rule Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkupRuleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkupRuleOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "admin:pricing"
+        ],
+        "summary": "Delete Rule",
+        "operationId": "delete_rule_admin_api_v1_markup_rules__rule_id__delete",
+        "parameters": [
+          {
+            "name": "rule_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Rule Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/markup/preview": {
+      "post": {
+        "tags": [
+          "admin:pricing"
+        ],
+        "summary": "Preview",
+        "description": "Show the whole calculation, so a price can be explained rather than guessed.",
+        "operationId": "preview_admin_api_v1_markup_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkupPreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceBreakdownOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/fx/current": {
+      "get": {
+        "tags": [
+          "admin:pricing"
+        ],
+        "summary": "Current Rate",
+        "operationId": "current_rate_admin_api_v1_fx_current_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FxRateOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/fx/history": {
+      "get": {
+        "tags": [
+          "admin:pricing"
+        ],
+        "summary": "Rate History",
+        "operationId": "rate_history_admin_api_v1_fx_history_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "before_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Return rows with a smaller id",
+              "title": "Before Id"
+            },
+            "description": "Return rows with a smaller id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FxRateOut"
+                  },
+                  "title": "Response Rate History Admin Api V1 Fx History Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/fx/manual": {
+      "post": {
+        "tags": [
+          "admin:pricing"
+        ],
+        "summary": "Set Manual Rate",
+        "operationId": "set_manual_rate_admin_api_v1_fx_manual_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManualRateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FxRateOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/fx/mode": {
+      "patch": {
+        "tags": [
+          "admin:pricing"
+        ],
+        "summary": "Set Rate Mode",
+        "description": "With strict mode on, the CBU refresh writes nothing at all.",
+        "operationId": "set_rate_mode_admin_api_v1_fx_mode_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FxModeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "boolean"
+                  },
+                  "type": "object",
+                  "title": "Response Set Rate Mode Admin Api V1 Fx Mode Patch"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/broadcasts": {
+      "get": {
+        "tags": [
+          "admin:broadcasts"
+        ],
+        "summary": "List Broadcasts",
+        "operationId": "list_broadcasts_admin_api_v1_broadcasts_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "before_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Return rows with a smaller id",
+              "title": "Before Id"
+            },
+            "description": "Return rows with a smaller id"
+          },
+          {
+            "name": "broadcast_status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/BroadcastStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Broadcast Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_BroadcastOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "admin:broadcasts"
+        ],
+        "summary": "Create Broadcast",
+        "operationId": "create_broadcast_admin_api_v1_broadcasts_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BroadcastCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BroadcastOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/broadcasts/preview": {
+      "post": {
+        "tags": [
+          "admin:broadcasts"
+        ],
+        "summary": "Preview Audience",
+        "description": "How many users this filter reaches, before anything is created.",
+        "operationId": "preview_audience_admin_api_v1_broadcasts_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AudienceFilter"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AudiencePreviewOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/broadcasts/{broadcast_id}": {
+      "get": {
+        "tags": [
+          "admin:broadcasts"
+        ],
+        "summary": "Get Broadcast",
+        "operationId": "get_broadcast_admin_api_v1_broadcasts__broadcast_id__get",
+        "parameters": [
+          {
+            "name": "broadcast_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Broadcast Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BroadcastOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/broadcasts/{broadcast_id}/start": {
+      "post": {
+        "tags": [
+          "admin:broadcasts"
+        ],
+        "summary": "Start Broadcast",
+        "description": "Freeze the audience, then hand the sending to the worker.",
+        "operationId": "start_broadcast_admin_api_v1_broadcasts__broadcast_id__start_post",
+        "parameters": [
+          {
+            "name": "broadcast_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Broadcast Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BroadcastOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/broadcasts/{broadcast_id}/cancel": {
+      "post": {
+        "tags": [
+          "admin:broadcasts"
+        ],
+        "summary": "Cancel Broadcast",
+        "operationId": "cancel_broadcast_admin_api_v1_broadcasts__broadcast_id__cancel_post",
+        "parameters": [
+          {
+            "name": "broadcast_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Broadcast Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BroadcastOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/stats/overview": {
+      "get": {
+        "tags": [
+          "admin:stats"
+        ],
+        "summary": "Overview",
+        "operationId": "overview_admin_api_v1_stats_overview_get",
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "today",
+                "7d",
+                "30d"
+              ],
+              "type": "string",
+              "default": "7d",
+              "title": "Period"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OverviewOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/stats/timeseries": {
+      "get": {
+        "tags": [
+          "admin:stats"
+        ],
+        "summary": "Timeseries",
+        "description": "One point per bucket, including the empty ones.\n\nA chart that skips quiet hours draws a line through them and reads as if the\nshop was busy, so gaps are filled with zero here rather than in the browser.",
+        "operationId": "timeseries_admin_api_v1_stats_timeseries_get",
+        "parameters": [
+          {
+            "name": "metric",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "revenue",
+                "profit",
+                "orders",
+                "users",
+                "topups"
+              ],
+              "type": "string",
+              "default": "revenue",
+              "title": "Metric"
+            }
+          },
+          {
+            "name": "interval",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "hour",
+                "day"
+              ],
+              "type": "string",
+              "default": "day",
+              "title": "Interval"
+            }
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "today",
+                "7d",
+                "30d"
+              ],
+              "type": "string",
+              "default": "7d",
+              "title": "Period"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeseriesOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/stats/top-products": {
+      "get": {
+        "tags": [
+          "admin:stats"
+        ],
+        "summary": "Top Products",
+        "operationId": "top_products_admin_api_v1_stats_top_products_get",
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "today",
+                "7d",
+                "30d"
+              ],
+              "type": "string",
+              "default": "7d",
+              "title": "Period"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "default": 10,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TopProductOut"
+                  },
+                  "title": "Response Top Products Admin Api V1 Stats Top Products Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/stats/funnel": {
+      "get": {
+        "tags": [
+          "admin:stats"
+        ],
+        "summary": "Funnel",
+        "description": "Registered -> ordered -> received.\n\nThe contract also names a \"browsed the catalogue\" step; the bot does not\nrecord one, and inventing it from message counts would be a guess presented\nas a measurement.",
+        "operationId": "funnel_admin_api_v1_stats_funnel_get",
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "today",
+                "7d",
+                "30d"
+              ],
+              "type": "string",
+              "default": "7d",
+              "title": "Period"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FunnelOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/system/openapi.json": {
+      "get": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "Openapi Schema",
+        "description": "The schema, for generating the frontend's types.\n\nServed here rather than at FastAPI's usual public path: the shape of every\nadmin endpoint is a map for anyone probing the server, and there is no\nreason to hand it out unauthenticated.\n\n    openapi-typescript https://<host>/admin/api/v1/system/openapi.json \\\n      --header \"Authorization: Bearer <access_token>\" -o src/api/schema.d.ts",
+        "operationId": "openapi_schema_admin_api_v1_system_openapi_json_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Openapi Schema Admin Api V1 System Openapi Json Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/system/health": {
+      "get": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "Health",
+        "description": "Fast checks only.\n\nNothing here calls a payment provider or FazerCards: a dashboard that polls\nwould then spend the shop's rate limit on being looked at. Those get their\nown endpoint, and what is reported here is whether they are configured.",
+        "operationId": "health_admin_api_v1_system_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/system/fazercards": {
+      "get": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "Fazercards",
+        "description": "Balance and plan, straight from upstream.",
+        "operationId": "fazercards_admin_api_v1_system_fazercards_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FazerCardsStatusOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/system/queue": {
+      "get": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "Queue",
+        "description": "Depth of arq's sorted set, split into work that is due and work that waits.",
+        "operationId": "queue_admin_api_v1_system_queue_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/system/failed-jobs": {
+      "get": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "Failed Jobs",
+        "description": "Jobs that ended in an exception.\n\narq keeps a result for an hour, so this is a recent-failures view rather than\na permanent record; anything older lives only in the logs.",
+        "operationId": "failed_jobs_admin_api_v1_system_failed_jobs_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FailedJobOut"
+                  },
+                  "title": "Response Failed Jobs Admin Api V1 System Failed Jobs Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/system/failed-jobs/{job_id}/retry": {
+      "post": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "Retry Failed Job",
+        "description": "Re-enqueue the same call.\n\narq deletes the job definition once it has failed for good, so the stored\nresult is the only place the arguments survive - and re-running is a new job,\nnot a resurrection of the old one.",
+        "operationId": "retry_failed_job_admin_api_v1_system_failed_jobs__job_id__retry_post",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Retry Failed Job Admin Api V1 System Failed Jobs  Job Id  Retry Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/system/webhooks": {
+      "get": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "Webhooks",
+        "operationId": "webhooks_admin_api_v1_system_webhooks_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookStatusOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/system/webhooks/test": {
+      "post": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "Test Webhook",
+        "description": "Send a signed event to our own public URL.\n\nPosting to the public address rather than calling the handler in-process is\nthe point: this is what proves the tunnel, the TLS certificate and the secret\nall still line up.",
+        "operationId": "test_webhook_admin_api_v1_system_webhooks_test_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookTestOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/catalog/categories": {
+      "get": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "List Categories",
+        "operationId": "list_categories_admin_api_v1_catalog_categories_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "before_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Return rows with a smaller id",
+              "title": "Before Id"
+            },
+            "description": "Return rows with a smaller id"
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_CategoryOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/catalog/offers": {
+      "get": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "List Offers",
+        "operationId": "list_offers_admin_api_v1_catalog_offers_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "before_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Return rows with a smaller id",
+              "title": "Before Id"
+            },
+            "description": "Return rows with a smaller id"
+          },
+          {
+            "name": "category_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_OfferOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/catalog/categories/{category_id}": {
+      "patch": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "Patch Category",
+        "operationId": "patch_category_admin_api_v1_catalog_categories__category_id__patch",
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Category Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/catalog/offers/{offer_id}": {
+      "patch": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "Patch Offer",
+        "operationId": "patch_offer_admin_api_v1_catalog_offers__offer_id__patch",
+        "parameters": [
+          {
+            "name": "offer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Offer Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/catalog/sync": {
+      "post": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "Sync Catalog Now",
+        "operationId": "sync_catalog_now_admin_api_v1_catalog_sync_post",
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Sync Catalog Now Admin Api V1 Catalog Sync Post"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/settings": {
+      "get": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "Read Settings",
+        "operationId": "read_settings_admin_api_v1_settings_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Read Settings Admin Api V1 Settings Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "Patch Settings",
+        "operationId": "patch_settings_admin_api_v1_settings_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SettingsPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Patch Settings Admin Api V1 Settings Patch"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/admins": {
+      "get": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "List Admins",
+        "operationId": "list_admins_admin_api_v1_admins_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AdminOut"
+                  },
+                  "type": "array",
+                  "title": "Response List Admins Admin Api V1 Admins Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "Create Admin",
+        "operationId": "create_admin_admin_api_v1_admins_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/admins/{admin_id}": {
+      "patch": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "Patch Admin",
+        "operationId": "patch_admin_admin_api_v1_admins__admin_id__patch",
+        "parameters": [
+          {
+            "name": "admin_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Admin Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminPatchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/api/v1/audit": {
+      "get": {
+        "tags": [
+          "admin:system"
+        ],
+        "summary": "List Audit",
+        "operationId": "list_audit_admin_api_v1_audit_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "before_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Return rows with a smaller id",
+              "title": "Before Id"
+            },
+            "description": "Return rows with a smaller id"
+          },
+          {
+            "name": "actor_admin_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Actor Admin Id"
+            }
+          },
+          {
+            "name": "action",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Action"
+            }
+          },
+          {
+            "name": "target_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Target Type"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_AuditEntryOut_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AdminCreateRequest": {
+        "properties": {
+          "tg_id": {
+            "type": "integer",
+            "title": "Tg Id"
+          },
+          "role": {
+            "$ref": "#/components/schemas/AdminRole"
+          },
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 128
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tg_id",
+          "role"
+        ],
+        "title": "AdminCreateRequest"
+      },
+      "AdminOut": {
+        "properties": {
+          "id": {
+            "title": "Id"
+          },
+          "tg_id": {
+            "title": "Tg Id"
+          },
+          "username": {
+            "title": "Username"
+          },
+          "full_name": {
+            "title": "Full Name"
+          },
+          "role": {},
+          "is_active": {
+            "title": "Is Active"
+          },
+          "last_login_at": {
+            "title": "Last Login At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "tg_id",
+          "username",
+          "full_name",
+          "role",
+          "is_active",
+          "last_login_at"
+        ],
+        "title": "AdminOut"
+      },
+      "AdminPatchRequest": {
+        "properties": {
+          "role": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AdminRole"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          }
+        },
+        "type": "object",
+        "title": "AdminPatchRequest"
+      },
+      "AdminRole": {
+        "type": "string",
+        "enum": [
+          "owner",
+          "admin",
+          "support",
+          "viewer"
+        ],
+        "title": "AdminRole"
+      },
+      "AudienceFilter": {
+        "properties": {
+          "languages": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/Language"
+                },
+                "type": "array",
+                "minItems": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Languages",
+            "description": "Any of these; omit for all"
+          },
+          "include_blocked": {
+            "type": "boolean",
+            "title": "Include Blocked",
+            "default": false
+          },
+          "balance_min": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Balance Min"
+          },
+          "balance_max": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Balance Max"
+          },
+          "has_ordered": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Has Ordered",
+            "description": "True: only buyers. False: only users who never ordered"
+          },
+          "seen_after": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seen After",
+            "description": "Last bot activity after this"
+          },
+          "registered_from": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registered From"
+          },
+          "registered_to": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Registered To"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "AudienceFilter",
+        "description": "An empty filter means every non-blocked user."
+      },
+      "AudiencePreviewOut": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total"
+        ],
+        "title": "AudiencePreviewOut"
+      },
+      "AuditEntryOut": {
+        "properties": {
+          "id": {
+            "title": "Id"
+          },
+          "actor_admin_id": {
+            "title": "Actor Admin Id"
+          },
+          "actor_tg_id": {
+            "title": "Actor Tg Id"
+          },
+          "action": {
+            "title": "Action"
+          },
+          "target_type": {
+            "title": "Target Type"
+          },
+          "target_id": {
+            "title": "Target Id"
+          },
+          "before": {
+            "title": "Before"
+          },
+          "after": {
+            "title": "After"
+          },
+          "comment": {
+            "title": "Comment"
+          },
+          "created_at": {
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "actor_admin_id",
+          "actor_tg_id",
+          "action",
+          "target_type",
+          "target_id",
+          "before",
+          "after",
+          "comment",
+          "created_at"
+        ],
+        "title": "AuditEntryOut"
+      },
+      "BalanceAdjustRequest": {
+        "properties": {
+          "amount_uzs": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Amount Uzs",
+            "description": "Positive credits, negative debits"
+          },
+          "comment": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 3,
+            "title": "Comment"
+          }
+        },
+        "type": "object",
+        "required": [
+          "amount_uzs",
+          "comment"
+        ],
+        "title": "BalanceAdjustRequest"
+      },
+      "BlockRequest": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 3,
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reason"
+        ],
+        "title": "BlockRequest"
+      },
+      "Body_click_complete_hooks_click_complete_post": {
+        "properties": {
+          "click_trans_id": {
+            "type": "string",
+            "title": "Click Trans Id"
+          },
+          "service_id": {
+            "type": "string",
+            "title": "Service Id"
+          },
+          "merchant_trans_id": {
+            "type": "string",
+            "title": "Merchant Trans Id"
+          },
+          "merchant_prepare_id": {
+            "type": "string",
+            "title": "Merchant Prepare Id"
+          },
+          "amount": {
+            "type": "string",
+            "title": "Amount"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "sign_time": {
+            "type": "string",
+            "title": "Sign Time"
+          },
+          "sign_string": {
+            "type": "string",
+            "title": "Sign String"
+          },
+          "error": {
+            "type": "string",
+            "title": "Error",
+            "default": "0"
+          }
+        },
+        "type": "object",
+        "required": [
+          "click_trans_id",
+          "service_id",
+          "merchant_trans_id",
+          "merchant_prepare_id",
+          "amount",
+          "action",
+          "sign_time",
+          "sign_string"
+        ],
+        "title": "Body_click_complete_hooks_click_complete_post"
+      },
+      "Body_click_prepare_hooks_click_prepare_post": {
+        "properties": {
+          "click_trans_id": {
+            "type": "string",
+            "title": "Click Trans Id"
+          },
+          "service_id": {
+            "type": "string",
+            "title": "Service Id"
+          },
+          "merchant_trans_id": {
+            "type": "string",
+            "title": "Merchant Trans Id"
+          },
+          "amount": {
+            "type": "string",
+            "title": "Amount"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "sign_time": {
+            "type": "string",
+            "title": "Sign Time"
+          },
+          "sign_string": {
+            "type": "string",
+            "title": "Sign String"
+          }
+        },
+        "type": "object",
+        "required": [
+          "click_trans_id",
+          "service_id",
+          "merchant_trans_id",
+          "amount",
+          "action",
+          "sign_time",
+          "sign_string"
+        ],
+        "title": "Body_click_prepare_hooks_click_prepare_post"
+      },
+      "BroadcastButton": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "maxLength": 2083,
+            "minLength": 1,
+            "format": "uri",
+            "title": "Url"
+          },
+          "text_uz": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Text Uz"
+          },
+          "text_ru": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text Ru"
+          },
+          "text_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text En"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "url",
+          "text_uz"
+        ],
+        "title": "BroadcastButton"
+      },
+      "BroadcastCreateRequest": {
+        "properties": {
+          "audience": {
+            "$ref": "#/components/schemas/AudienceFilter"
+          },
+          "text_uz": {
+            "type": "string",
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Text Uz"
+          },
+          "text_ru": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4096
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text Ru"
+          },
+          "text_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4096
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text En"
+          },
+          "buttons": {
+            "items": {
+              "$ref": "#/components/schemas/BroadcastButton"
+            },
+            "type": "array",
+            "maxItems": 5,
+            "title": "Buttons"
+          },
+          "scheduled_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scheduled At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "text_uz"
+        ],
+        "title": "BroadcastCreateRequest"
+      },
+      "BroadcastOut": {
+        "properties": {
+          "id": {
+            "title": "Id"
+          },
+          "status": {
+            "title": "Status"
+          },
+          "audience": {
+            "title": "Audience"
+          },
+          "text_uz": {
+            "title": "Text Uz"
+          },
+          "text_ru": {
+            "title": "Text Ru"
+          },
+          "text_en": {
+            "title": "Text En"
+          },
+          "buttons": {
+            "title": "Buttons"
+          },
+          "scheduled_at": {
+            "title": "Scheduled At"
+          },
+          "started_at": {
+            "title": "Started At"
+          },
+          "finished_at": {
+            "title": "Finished At"
+          },
+          "total_count": {
+            "title": "Total Count"
+          },
+          "sent_count": {
+            "title": "Sent Count"
+          },
+          "blocked_count": {
+            "title": "Blocked Count"
+          },
+          "failed_count": {
+            "title": "Failed Count"
+          },
+          "created_by_admin_id": {
+            "title": "Created By Admin Id"
+          },
+          "created_at": {
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "audience",
+          "text_uz",
+          "text_ru",
+          "text_en",
+          "buttons",
+          "scheduled_at",
+          "started_at",
+          "finished_at",
+          "total_count",
+          "sent_count",
+          "blocked_count",
+          "failed_count",
+          "created_by_admin_id",
+          "created_at"
+        ],
+        "title": "BroadcastOut"
+      },
+      "BroadcastStatus": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "scheduled",
+          "running",
+          "finished",
+          "cancelled"
+        ],
+        "title": "BroadcastStatus"
+      },
+      "CategoryOut": {
+        "properties": {
+          "id": {
+            "title": "Id"
+          },
+          "kind": {
+            "title": "Kind"
+          },
+          "external_id": {
+            "title": "External Id"
+          },
+          "name": {
+            "title": "Name"
+          },
+          "is_active": {
+            "title": "Is Active"
+          },
+          "is_visible": {
+            "title": "Is Visible"
+          },
+          "sort_order": {
+            "title": "Sort Order"
+          },
+          "spic": {
+            "title": "Spic"
+          },
+          "package_code": {
+            "title": "Package Code"
+          },
+          "vat_percent": {
+            "title": "Vat Percent"
+          },
+          "synced_at": {
+            "title": "Synced At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "external_id",
+          "name",
+          "is_active",
+          "is_visible",
+          "sort_order",
+          "spic",
+          "package_code",
+          "vat_percent",
+          "synced_at"
+        ],
+        "title": "CategoryOut"
+      },
+      "CategoryPatch": {
+        "properties": {
+          "is_visible": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Visible"
+          },
+          "sort_order": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sort Order"
+          },
+          "spic": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 17
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spic"
+          },
+          "package_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Package Code"
+          },
+          "vat_percent": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vat Percent"
+          }
+        },
+        "type": "object",
+        "title": "CategoryPatch"
+      },
+      "CheckOut": {
+        "properties": {
+          "name": {
+            "title": "Name"
+          },
+          "status": {
+            "title": "Status"
+          },
+          "detail": {
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "status"
+        ],
+        "title": "CheckOut"
+      },
+      "FailedJobOut": {
+        "properties": {
+          "job_id": {
+            "title": "Job Id"
+          },
+          "function": {
+            "title": "Function"
+          },
+          "args": {
+            "title": "Args"
+          },
+          "attempts": {
+            "title": "Attempts"
+          },
+          "error": {
+            "title": "Error"
+          },
+          "finished_at": {
+            "title": "Finished At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "job_id",
+          "function",
+          "args",
+          "attempts",
+          "error",
+          "finished_at"
+        ],
+        "title": "FailedJobOut"
+      },
+      "FazerCardsStatusOut": {
+        "properties": {
+          "reachable": {
+            "title": "Reachable"
+          },
+          "balance_usd": {
+            "title": "Balance Usd"
+          },
+          "currency": {
+            "title": "Currency"
+          },
+          "login": {
+            "title": "Login"
+          },
+          "plan": {
+            "title": "Plan"
+          },
+          "subscription_active": {
+            "title": "Subscription Active"
+          },
+          "low_balance": {
+            "title": "Low Balance"
+          },
+          "error": {
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reachable"
+        ],
+        "title": "FazerCardsStatusOut"
+      },
+      "FunnelOut": {
+        "properties": {
+          "users": {
+            "title": "Users"
+          },
+          "users_with_order": {
+            "title": "Users With Order"
+          },
+          "users_with_completed_order": {
+            "title": "Users With Completed Order"
+          },
+          "orders": {
+            "title": "Orders"
+          },
+          "orders_completed": {
+            "title": "Orders Completed"
+          }
+        },
+        "type": "object",
+        "required": [
+          "users",
+          "users_with_order",
+          "users_with_completed_order",
+          "orders",
+          "orders_completed"
+        ],
+        "title": "FunnelOut",
+        "description": "Only steps the bot actually records. Catalogue views are not instrumented."
+      },
+      "FxModeRequest": {
+        "properties": {
+          "strict_manual": {
+            "type": "boolean",
+            "title": "Strict Manual"
+          }
+        },
+        "type": "object",
+        "required": [
+          "strict_manual"
+        ],
+        "title": "FxModeRequest"
+      },
+      "FxRateOut": {
+        "properties": {
+          "id": {
+            "title": "Id"
+          },
+          "rate": {
+            "title": "Rate"
+          },
+          "source": {
+            "title": "Source"
+          },
+          "note": {
+            "title": "Note"
+          },
+          "observed_at": {
+            "title": "Observed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "rate",
+          "source",
+          "note",
+          "observed_at"
+        ],
+        "title": "FxRateOut"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthOut": {
+        "properties": {
+          "status": {
+            "title": "Status"
+          },
+          "checks": {
+            "title": "Checks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "checks"
+        ],
+        "title": "HealthOut"
+      },
+      "Language": {
+        "type": "string",
+        "enum": [
+          "uz",
+          "ru",
+          "en"
+        ],
+        "title": "Language"
+      },
+      "LedgerEntryOut": {
+        "properties": {
+          "id": {
+            "title": "Id"
+          },
+          "amount_uzs": {
+            "title": "Amount Uzs"
+          },
+          "balance_after": {
+            "title": "Balance After"
+          },
+          "kind": {
+            "title": "Kind"
+          },
+          "ref_type": {
+            "title": "Ref Type"
+          },
+          "ref_id": {
+            "title": "Ref Id"
+          },
+          "comment": {
+            "title": "Comment"
+          },
+          "created_at": {
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "amount_uzs",
+          "balance_after",
+          "kind",
+          "ref_type",
+          "ref_id",
+          "comment",
+          "created_at"
+        ],
+        "title": "LedgerEntryOut"
+      },
+      "ManualRateRequest": {
+        "properties": {
+          "rate": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Rate"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rate"
+        ],
+        "title": "ManualRateRequest"
+      },
+      "MarkupPreviewRequest": {
+        "properties": {
+          "offer_id": {
+            "type": "integer",
+            "title": "Offer Id"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Quantity",
+            "default": 1
+          }
+        },
+        "type": "object",
+        "required": [
+          "offer_id"
+        ],
+        "title": "MarkupPreviewRequest"
+      },
+      "MarkupRuleOut": {
+        "properties": {
+          "id": {
+            "title": "Id"
+          },
+          "scope": {
+            "title": "Scope"
+          },
+          "product_kind": {
+            "title": "Product Kind"
+          },
+          "category_id": {
+            "title": "Category Id"
+          },
+          "offer_id": {
+            "title": "Offer Id"
+          },
+          "markup_pct": {
+            "title": "Markup Pct"
+          },
+          "markup_fixed_uzs": {
+            "title": "Markup Fixed Uzs"
+          },
+          "round_to_uzs": {
+            "title": "Round To Uzs"
+          },
+          "is_active": {
+            "title": "Is Active"
+          },
+          "note": {
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "scope",
+          "product_kind",
+          "category_id",
+          "offer_id",
+          "markup_pct",
+          "markup_fixed_uzs",
+          "round_to_uzs",
+          "is_active",
+          "note"
+        ],
+        "title": "MarkupRuleOut"
+      },
+      "MarkupRuleRequest": {
+        "properties": {
+          "scope": {
+            "type": "string",
+            "title": "Scope"
+          },
+          "product_kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Kind"
+          },
+          "category_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category Id"
+          },
+          "offer_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Offer Id"
+          },
+          "markup_pct": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 999.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Markup Pct"
+          },
+          "markup_fixed_uzs": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Markup Fixed Uzs",
+            "default": "0"
+          },
+          "round_to_uzs": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Round To Uzs",
+            "default": 100
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "scope",
+          "markup_pct"
+        ],
+        "title": "MarkupRuleRequest"
+      },
+      "MeOut": {
+        "properties": {
+          "admin": {
+            "$ref": "#/components/schemas/AdminOut"
+          },
+          "permissions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Permissions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "admin",
+          "permissions"
+        ],
+        "title": "MeOut"
+      },
+      "OfferOut": {
+        "properties": {
+          "id": {
+            "title": "Id"
+          },
+          "category_id": {
+            "title": "Category Id"
+          },
+          "external_id": {
+            "title": "External Id"
+          },
+          "name": {
+            "title": "Name"
+          },
+          "price_usd": {
+            "title": "Price Usd"
+          },
+          "stock": {
+            "title": "Stock"
+          },
+          "min_quantity": {
+            "title": "Min Quantity"
+          },
+          "max_quantity": {
+            "title": "Max Quantity"
+          },
+          "is_active": {
+            "title": "Is Active"
+          },
+          "is_visible": {
+            "title": "Is Visible"
+          },
+          "spic": {
+            "title": "Spic"
+          },
+          "package_code": {
+            "title": "Package Code"
+          },
+          "vat_percent": {
+            "title": "Vat Percent"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "category_id",
+          "external_id",
+          "name",
+          "price_usd",
+          "stock",
+          "min_quantity",
+          "max_quantity",
+          "is_active",
+          "is_visible",
+          "spic",
+          "package_code",
+          "vat_percent"
+        ],
+        "title": "OfferOut"
+      },
+      "OfferPatch": {
+        "properties": {
+          "is_visible": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Visible"
+          },
+          "spic": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 17
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spic"
+          },
+          "package_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Package Code"
+          },
+          "vat_percent": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vat Percent"
+          }
+        },
+        "type": "object",
+        "title": "OfferPatch"
+      },
+      "OrderDetailOut": {
+        "properties": {
+          "id": {
+            "title": "Id"
+          },
+          "public_id": {
+            "title": "Public Id"
+          },
+          "user_id": {
+            "title": "User Id"
+          },
+          "product_kind": {
+            "title": "Product Kind"
+          },
+          "quantity": {
+            "title": "Quantity"
+          },
+          "price_uzs": {
+            "title": "Price Uzs"
+          },
+          "profit_uzs": {
+            "title": "Profit Uzs"
+          },
+          "status": {
+            "title": "Status"
+          },
+          "provider_order_id": {
+            "title": "Provider Order Id"
+          },
+          "provider_status": {
+            "title": "Provider Status"
+          },
+          "error_message": {
+            "title": "Error Message"
+          },
+          "created_at": {
+            "title": "Created At"
+          },
+          "completed_at": {
+            "title": "Completed At"
+          },
+          "offer_snapshot": {
+            "title": "Offer Snapshot"
+          },
+          "input_fields": {
+            "title": "Input Fields"
+          },
+          "cost_usd": {
+            "title": "Cost Usd"
+          },
+          "fx_rate": {
+            "title": "Fx Rate"
+          },
+          "markup_pct": {
+            "title": "Markup Pct"
+          },
+          "markup_rule_id": {
+            "title": "Markup Rule Id"
+          },
+          "attempts": {
+            "title": "Attempts"
+          },
+          "events": {
+            "title": "Events"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "public_id",
+          "user_id",
+          "product_kind",
+          "quantity",
+          "price_uzs",
+          "profit_uzs",
+          "status",
+          "provider_order_id",
+          "provider_status",
+          "error_message",
+          "created_at",
+          "completed_at",
+          "offer_snapshot",
+          "input_fields",
+          "cost_usd",
+          "fx_rate",
+          "markup_pct",
+          "markup_rule_id",
+          "attempts",
+          "events"
+        ],
+        "title": "OrderDetailOut"
+      },
+      "OrderEventOut": {
+        "properties": {
+          "id": {
+            "title": "Id"
+          },
+          "source": {
+            "title": "Source"
+          },
+          "event": {
+            "title": "Event"
+          },
+          "received_at": {
+            "title": "Received At"
+          },
+          "processed_at": {
+            "title": "Processed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "source",
+          "event",
+          "received_at",
+          "processed_at"
+        ],
+        "title": "OrderEventOut"
+      },
+      "OrderOut": {
+        "properties": {
+          "id": {
+            "title": "Id"
+          },
+          "public_id": {
+            "title": "Public Id"
+          },
+          "user_id": {
+            "title": "User Id"
+          },
+          "product_kind": {
+            "title": "Product Kind"
+          },
+          "quantity": {
+            "title": "Quantity"
+          },
+          "price_uzs": {
+            "title": "Price Uzs"
+          },
+          "profit_uzs": {
+            "title": "Profit Uzs"
+          },
+          "status": {
+            "title": "Status"
+          },
+          "provider_order_id": {
+            "title": "Provider Order Id"
+          },
+          "provider_status": {
+            "title": "Provider Status"
+          },
+          "error_message": {
+            "title": "Error Message"
+          },
+          "created_at": {
+            "title": "Created At"
+          },
+          "completed_at": {
+            "title": "Completed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "public_id",
+          "user_id",
+          "product_kind",
+          "quantity",
+          "price_uzs",
+          "profit_uzs",
+          "status",
+          "provider_order_id",
+          "provider_status",
+          "error_message",
+          "created_at",
+          "completed_at"
+        ],
+        "title": "OrderOut"
+      },
+      "OverviewOut": {
+        "properties": {
+          "revenue_uzs": {
+            "title": "Revenue Uzs"
+          },
+          "profit_uzs": {
+            "title": "Profit Uzs"
+          },
+          "orders_total": {
+            "title": "Orders Total"
+          },
+          "orders_by_status": {
+            "title": "Orders By Status"
+          },
+          "new_users": {
+            "title": "New Users"
+          },
+          "topups_uzs": {
+            "title": "Topups Uzs"
+          },
+          "refunds_uzs": {
+            "title": "Refunds Uzs"
+          },
+          "pending_proofs": {
+            "title": "Pending Proofs"
+          },
+          "failed_orders": {
+            "title": "Failed Orders"
+          }
+        },
+        "type": "object",
+        "required": [
+          "revenue_uzs",
+          "profit_uzs",
+          "orders_total",
+          "orders_by_status",
+          "new_users",
+          "topups_uzs",
+          "refunds_uzs",
+          "pending_proofs",
+          "failed_orders"
+        ],
+        "title": "OverviewOut"
+      },
+      "Page_AuditEntryOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AuditEntryOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          },
+          "has_more": {
+            "type": "boolean",
+            "title": "Has More",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "Page[AuditEntryOut]"
+      },
+      "Page_BroadcastOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/BroadcastOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          },
+          "has_more": {
+            "type": "boolean",
+            "title": "Has More",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "Page[BroadcastOut]"
+      },
+      "Page_CategoryOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CategoryOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          },
+          "has_more": {
+            "type": "boolean",
+            "title": "Has More",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "Page[CategoryOut]"
+      },
+      "Page_LedgerEntryOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/LedgerEntryOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          },
+          "has_more": {
+            "type": "boolean",
+            "title": "Has More",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "Page[LedgerEntryOut]"
+      },
+      "Page_OfferOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OfferOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          },
+          "has_more": {
+            "type": "boolean",
+            "title": "Has More",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "Page[OfferOut]"
+      },
+      "Page_OrderOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OrderOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          },
+          "has_more": {
+            "type": "boolean",
+            "title": "Has More",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "Page[OrderOut]"
+      },
+      "Page_PaymentOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PaymentOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          },
+          "has_more": {
+            "type": "boolean",
+            "title": "Has More",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "Page[PaymentOut]"
+      },
+      "Page_UserOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/UserOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          },
+          "has_more": {
+            "type": "boolean",
+            "title": "Has More",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "Page[UserOut]"
+      },
+      "PaymentOut": {
+        "properties": {
+          "id": {
+            "title": "Id"
+          },
+          "public_id": {
+            "title": "Public Id"
+          },
+          "user_id": {
+            "title": "User Id"
+          },
+          "provider": {
+            "title": "Provider"
+          },
+          "amount_uzs": {
+            "title": "Amount Uzs"
+          },
+          "status": {
+            "title": "Status"
+          },
+          "credited_at": {
+            "title": "Credited At"
+          },
+          "created_at": {
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "public_id",
+          "user_id",
+          "provider",
+          "amount_uzs",
+          "status",
+          "credited_at",
+          "created_at"
+        ],
+        "title": "PaymentOut"
+      },
+      "PriceBreakdownOut": {
+        "properties": {
+          "quantity": {
+            "title": "Quantity"
+          },
+          "unit_cost_usd": {
+            "title": "Unit Cost Usd"
+          },
+          "cost_usd": {
+            "title": "Cost Usd"
+          },
+          "fx_rate": {
+            "title": "Fx Rate"
+          },
+          "markup_rule_id": {
+            "title": "Markup Rule Id"
+          },
+          "markup_pct": {
+            "title": "Markup Pct"
+          },
+          "markup_fixed_uzs": {
+            "title": "Markup Fixed Uzs"
+          },
+          "round_to_uzs": {
+            "title": "Round To Uzs"
+          },
+          "price_uzs": {
+            "title": "Price Uzs"
+          },
+          "profit_uzs": {
+            "title": "Profit Uzs"
+          }
+        },
+        "type": "object",
+        "required": [
+          "quantity",
+          "unit_cost_usd",
+          "cost_usd",
+          "fx_rate",
+          "markup_rule_id",
+          "markup_pct",
+          "markup_fixed_uzs",
+          "round_to_uzs",
+          "price_uzs",
+          "profit_uzs"
+        ],
+        "title": "PriceBreakdownOut"
+      },
+      "ProofOut": {
+        "properties": {
+          "id": {
+            "title": "Id"
+          },
+          "payment_id": {
+            "title": "Payment Id"
+          },
+          "tg_file_id": {
+            "title": "Tg File Id"
+          },
+          "decision": {
+            "title": "Decision"
+          },
+          "reviewed_by_tg_id": {
+            "title": "Reviewed By Tg Id"
+          },
+          "reviewed_at": {
+            "title": "Reviewed At"
+          },
+          "reject_reason": {
+            "title": "Reject Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "payment_id",
+          "tg_file_id",
+          "decision",
+          "reviewed_by_tg_id",
+          "reviewed_at",
+          "reject_reason"
+        ],
+        "title": "ProofOut"
+      },
+      "QueueOut": {
+        "properties": {
+          "queued": {
+            "title": "Queued"
+          },
+          "ready": {
+            "title": "Ready"
+          },
+          "deferred": {
+            "title": "Deferred"
+          },
+          "in_progress": {
+            "title": "In Progress"
+          },
+          "worker_seen_at": {
+            "title": "Worker Seen At"
+          },
+          "worker_alive": {
+            "title": "Worker Alive"
+          }
+        },
+        "type": "object",
+        "required": [
+          "queued",
+          "ready",
+          "deferred",
+          "in_progress",
+          "worker_seen_at",
+          "worker_alive"
+        ],
+        "title": "QueueOut"
+      },
+      "RefreshRequest": {
+        "properties": {
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "refresh_token"
+        ],
+        "title": "RefreshRequest"
+      },
+      "RefundRequest": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 3,
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reason"
+        ],
+        "title": "RefundRequest"
+      },
+      "RejectRequest": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 3,
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reason"
+        ],
+        "title": "RejectRequest"
+      },
+      "SettingsPatch": {
+        "properties": {
+          "values": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Values"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "values"
+        ],
+        "title": "SettingsPatch"
+      },
+      "TelegramLoginRequest": {
+        "properties": {
+          "init_data": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Init Data"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "title": "TelegramLoginRequest",
+        "description": "Either the Login Widget fields or a Mini App `init_data` string."
+      },
+      "TimeseriesOut": {
+        "properties": {
+          "metric": {
+            "title": "Metric"
+          },
+          "interval": {
+            "title": "Interval"
+          },
+          "points": {
+            "title": "Points"
+          }
+        },
+        "type": "object",
+        "required": [
+          "metric",
+          "interval",
+          "points"
+        ],
+        "title": "TimeseriesOut"
+      },
+      "TimeseriesPointOut": {
+        "properties": {
+          "bucket": {
+            "title": "Bucket"
+          },
+          "value": {
+            "title": "Value"
+          }
+        },
+        "type": "object",
+        "required": [
+          "bucket",
+          "value"
+        ],
+        "title": "TimeseriesPointOut"
+      },
+      "TokenPairOut": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "access_expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Access Expires At"
+          },
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          },
+          "admin": {
+            "$ref": "#/components/schemas/AdminOut"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "access_expires_at",
+          "refresh_token",
+          "admin"
+        ],
+        "title": "TokenPairOut"
+      },
+      "TopProductOut": {
+        "properties": {
+          "offer_id": {
+            "title": "Offer Id"
+          },
+          "name": {
+            "title": "Name"
+          },
+          "product_kind": {
+            "title": "Product Kind"
+          },
+          "orders": {
+            "title": "Orders"
+          },
+          "quantity": {
+            "title": "Quantity"
+          },
+          "revenue_uzs": {
+            "title": "Revenue Uzs"
+          },
+          "profit_uzs": {
+            "title": "Profit Uzs"
+          }
+        },
+        "type": "object",
+        "required": [
+          "offer_id",
+          "name",
+          "product_kind",
+          "orders",
+          "quantity",
+          "revenue_uzs",
+          "profit_uzs"
+        ],
+        "title": "TopProductOut"
+      },
+      "UserDetailOut": {
+        "properties": {
+          "id": {
+            "title": "Id"
+          },
+          "tg_id": {
+            "title": "Tg Id"
+          },
+          "username": {
+            "title": "Username"
+          },
+          "first_name": {
+            "title": "First Name"
+          },
+          "language": {
+            "title": "Language"
+          },
+          "is_blocked": {
+            "title": "Is Blocked"
+          },
+          "created_at": {
+            "title": "Created At"
+          },
+          "last_seen_at": {
+            "title": "Last Seen At"
+          },
+          "balance_uzs": {
+            "title": "Balance Uzs"
+          },
+          "orders_total": {
+            "title": "Orders Total"
+          },
+          "spent_uzs": {
+            "title": "Spent Uzs"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "tg_id",
+          "username",
+          "first_name",
+          "language",
+          "is_blocked",
+          "created_at",
+          "last_seen_at",
+          "balance_uzs",
+          "orders_total",
+          "spent_uzs"
+        ],
+        "title": "UserDetailOut"
+      },
+      "UserOut": {
+        "properties": {
+          "id": {
+            "title": "Id"
+          },
+          "tg_id": {
+            "title": "Tg Id"
+          },
+          "username": {
+            "title": "Username"
+          },
+          "first_name": {
+            "title": "First Name"
+          },
+          "language": {
+            "title": "Language"
+          },
+          "is_blocked": {
+            "title": "Is Blocked"
+          },
+          "created_at": {
+            "title": "Created At"
+          },
+          "last_seen_at": {
+            "title": "Last Seen At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "tg_id",
+          "username",
+          "first_name",
+          "language",
+          "is_blocked",
+          "created_at",
+          "last_seen_at"
+        ],
+        "title": "UserOut"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WebhookDeliveryOut": {
+        "properties": {
+          "id": {
+            "title": "Id"
+          },
+          "event": {
+            "title": "Event"
+          },
+          "source": {
+            "title": "Source"
+          },
+          "order_id": {
+            "title": "Order Id"
+          },
+          "provider_order_id": {
+            "title": "Provider Order Id"
+          },
+          "received_at": {
+            "title": "Received At"
+          },
+          "processed_at": {
+            "title": "Processed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "event",
+          "source",
+          "order_id",
+          "provider_order_id",
+          "received_at",
+          "processed_at"
+        ],
+        "title": "WebhookDeliveryOut"
+      },
+      "WebhookStatusOut": {
+        "properties": {
+          "url": {
+            "title": "Url"
+          },
+          "secret_configured": {
+            "title": "Secret Configured"
+          },
+          "deliveries": {
+            "title": "Deliveries"
+          }
+        },
+        "type": "object",
+        "required": [
+          "url",
+          "secret_configured",
+          "deliveries"
+        ],
+        "title": "WebhookStatusOut"
+      },
+      "WebhookTestOut": {
+        "properties": {
+          "delivered": {
+            "title": "Delivered"
+          },
+          "status_code": {
+            "title": "Status Code"
+          },
+          "body": {
+            "title": "Body"
+          },
+          "error": {
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "delivered"
+        ],
+        "title": "WebhookTestOut"
+      }
+    }
+  }
+}
