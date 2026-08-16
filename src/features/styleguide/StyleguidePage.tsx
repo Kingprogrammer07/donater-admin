@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,7 +38,7 @@ export function StyleguidePage() {
           <div className="flex items-center gap-1 rounded-sm border border-hairline bg-surface p-0.5">
             <button
               onClick={() => setTheme("light")}
-              className={`flex items-center gap-1.5 rounded-sm px-2 py-1 text-xs transition-colors ${
+              className={`flex items-center justify-center gap-1.5 rounded-sm px-2 py-1 text-xs transition-colors pointer-coarse:min-h-[44px] pointer-coarse:min-w-[44px] ${
                 theme === "light"
                   ? "bg-surface-2 text-fg font-medium"
                   : "text-fg-muted hover:text-fg"
@@ -50,7 +50,7 @@ export function StyleguidePage() {
             </button>
             <button
               onClick={() => setTheme("dark")}
-              className={`flex items-center gap-1.5 rounded-sm px-2 py-1 text-xs transition-colors ${
+              className={`flex items-center justify-center gap-1.5 rounded-sm px-2 py-1 text-xs transition-colors pointer-coarse:min-h-[44px] pointer-coarse:min-w-[44px] ${
                 theme === "dark"
                   ? "bg-surface-2 text-fg font-medium"
                   : "text-fg-muted hover:text-fg"
@@ -62,7 +62,7 @@ export function StyleguidePage() {
             </button>
             <button
               onClick={() => setTheme("system")}
-              className={`flex items-center gap-1.5 rounded-sm px-2 py-1 text-xs transition-colors ${
+              className={`flex items-center justify-center gap-1.5 rounded-sm px-2 py-1 text-xs transition-colors pointer-coarse:min-h-[44px] pointer-coarse:min-w-[44px] ${
                 theme === "system"
                   ? "bg-surface-2 text-fg font-medium"
                   : "text-fg-muted hover:text-fg"
@@ -164,7 +164,7 @@ export function StyleguidePage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-6 rounded-md bg-surface p-4 border border-hairline">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs text-fg-subtle">Dot:</span>
               <Badge variant="ok">Muvaffaqiyatli</Badge>
               <Badge variant="warn">Kutilmoqda</Badge>
@@ -173,7 +173,7 @@ export function StyleguidePage() {
               <Badge variant="brand">Faol sessiya</Badge>
             </div>
             <div className="h-4 w-px bg-hairline hidden md:block" />
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs text-fg-subtle">Subtle:</span>
               <Badge variant="ok" styleType="subtle">To'langan</Badge>
               <Badge variant="warn" styleType="subtle">Tekshiruvda</Badge>
@@ -319,17 +319,17 @@ export function StyleguidePage() {
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-fg">Oddiy Input</label>
               <Input placeholder="Foydalanuvchi qidirish..." />
-              <span className="text-[11px] text-fg-subtle">Username yoki Telegram ID</span>
+              <span className="text-xs text-fg-subtle">Username yoki Telegram ID</span>
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-status-fail">Xatolik (422)</label>
               <Input error defaultValue="not-a-number" />
-              <span className="text-[11px] text-status-fail">Summa kamida 2 000 so'm bo'lishi shart</span>
+              <span className="text-xs text-status-fail">Summa kamida 2 000 so'm bo'lishi shart</span>
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-fg-muted">O'chirilgan</label>
               <Input disabled defaultValue="Muzlatilgan qiymat" />
-              <span className="text-[11px] text-fg-subtle">Faqat o'qish uchun</span>
+              <span className="text-xs text-fg-subtle">Faqat o'qish uchun</span>
             </div>
           </div>
         </section>
@@ -461,8 +461,8 @@ function ColorSwatch({
       </div>
       <div className="mt-1.5 space-y-0.5">
         <div className="text-xs font-medium text-fg truncate">{name}</div>
-        <div className="text-[10px] font-mono text-fg-subtle truncate">{token}</div>
-        <div className="text-[10px] font-mono text-fg-muted">{hex}</div>
+        <div className="text-xs font-mono text-fg-subtle truncate">{token}</div>
+        <div className="text-xs font-mono text-fg-muted">{hex}</div>
       </div>
     </div>
   );

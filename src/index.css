@@ -9,7 +9,9 @@
     --surface-2: #F1F3F6;
     --fg: #0F1115;
     --fg-muted: #5B6472;
-    --fg-subtle: #8A94A6;
+    /* Measured, not eyeballed: 4.74:1 on surface, 4.70:1 on surface-2. The
+       previous #8A94A6 was 3.06:1 and failed WCAG AA for text. */
+    --fg-subtle: #646D7B;
     --hairline: rgba(15, 17, 21, 0.08);
 
     --brand: #2A4FD7;
@@ -21,6 +23,8 @@
     --status-warn-bg: rgba(161, 92, 0, 0.08);
     --status-fail: #B3261E;
     --status-fail-bg: rgba(179, 38, 30, 0.08);
+    --status-neutral: #5B6472;
+    --status-neutral-bg: rgba(91, 100, 114, 0.08);
 
     --radius-sm: 8px;
     --radius-md: 12px;
@@ -42,7 +46,8 @@
     --surface-2: #1B1E24;
     --fg: #EDF0F5;
     --fg-muted: #A0A8B8;
-    --fg-subtle: #6C7484;
+    /* 5.38:1 on surface, 4.91:1 on surface-2. #6C7484 was 3.89:1. */
+    --fg-subtle: #828C9C;
     --hairline: rgba(255, 255, 255, 0.08);
 
     --brand: #7C9BFF;
@@ -54,6 +59,8 @@
     --status-warn-bg: rgba(245, 183, 89, 0.12);
     --status-fail: #FF7B72;
     --status-fail-bg: rgba(255, 123, 114, 0.12);
+    --status-neutral: #A0A8B8;
+    --status-neutral-bg: rgba(160, 168, 184, 0.12);
 
     --elevation-1: none;
     --elevation-2: none;

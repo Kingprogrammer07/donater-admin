@@ -1,3 +1,5 @@
+import plugin from "tailwindcss/plugin";
+
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ["class"],
@@ -84,5 +86,13 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    //  Tailwind 3 has no built-in `pointer-coarse` variant, so every
+    //  `pointer-coarse:min-h-[44px]` in the components was silently doing
+    //  nothing and touch targets stayed at their desktop height.
+    plugin(({ addVariant }) => {
+      addVariant("pointer-coarse", "@media (pointer: coarse)");
+      addVariant("pointer-fine", "@media (pointer: fine)");
+    }),
+  ],
 };

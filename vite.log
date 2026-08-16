@@ -1,0 +1,11 @@
+
+> donater-admin@0.1.0 dev
+> vite
+
+
+  VITE v6.4.3  ready in 261 ms
+
+  ➜  Local:   http://localhost:5173/admin/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+2:31:37 AM [vite] (client) hmr update /src/features/styleguide/StyleguidePage.tsx, /src/index.css
