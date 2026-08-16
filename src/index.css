@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: #1E40AF;
+    --color-on-primary: #FFFFFF;
+    --color-secondary: #3B82F6;
+    --color-accent: #D97706;
+    --color-background: #F8FAFC;
+    --color-surface: #FFFFFF;
+    --color-foreground: #1E3A8A;
+    --color-muted: #E9EEF6;
+    --color-muted-foreground: #64748B;
+    --color-border: #DBEAFE;
+    --color-destructive: #DC2626;
+    --color-ring: #1E40AF;
+
+    --status-ok: #16A34A;
+    --status-ok-bg: #DCFCE7;
+    --status-warn: #D97706;
+    --status-warn-bg: #FEF3C7;
+    --status-fail: #DC2626;
+    --status-fail-bg: #FEE2E2;
+    --status-neutral: #64748B;
+    --status-neutral-bg: #F1F5F9;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+
+    --elevation-1: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --elevation-2: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --elevation-3: 0 20px 25px -5px rgb(0 0 0 / 0.15), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+    --safe-area-top: env(safe-area-inset-top, 0px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-left: env(safe-area-inset-left, 0px);
+    --safe-area-right: env(safe-area-inset-right, 0px);
+  }
+
+  .dark {
+    --color-primary: #60A5FA;
+    --color-on-primary: #0B1220;
+    --color-secondary: #38BDF8;
+    --color-accent: #F0B429;
+    --color-background: #0B1220;
+    --color-surface: #131C2E;
+    --color-foreground: #E6EDF7;
+    --color-muted: #1E293B;
+    --color-muted-foreground: #93A4BF;
+    --color-border: #24324A;
+    --color-destructive: #F87171;
+    --color-ring: #60A5FA;
+
+    --status-ok: #4ADE80;
+    --status-ok-bg: #064E3B;
+    --status-warn: #FBBF24;
+    --status-warn-bg: #78350F;
+    --status-fail: #F87171;
+    --status-fail-bg: #7F1D1D;
+    --status-neutral: #94A3B8;
+    --status-neutral-bg: #1E293B;
+
+    --elevation-1: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --elevation-2: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+    --elevation-3: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5);
+  }
+
+  * {
+    @apply border-border;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    color-scheme: light dark;
+    touch-action: manipulation;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* iOS Safari auto-zoom prevention */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+@layer utilities {
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .safe-pt {
+    padding-top: max(var(--safe-area-top), 0px);
+  }
+
+  .safe-pb {
+    padding-bottom: max(var(--safe-area-bottom), 0px);
+  }
+
+  .safe-pl {
+    padding-left: max(var(--safe-area-left), 0px);
+  }
+
+  .safe-pr {
+    padding-right: max(var(--safe-area-right), 0px);
+  }
+
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .backdrop-blur,
+  .backdrop-blur-sm,
+  .backdrop-blur-md,
+  .backdrop-blur-lg {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background-color: var(--color-surface) !important;
+  }
+}
