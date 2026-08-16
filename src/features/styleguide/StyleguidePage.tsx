@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Icons } from "@/components/icons";
 import { useTheme } from "@/lib/theme";
@@ -16,32 +15,33 @@ export function StyleguidePage() {
   const [reducedMotionSim, setReducedMotionSim] = useState(false);
 
   return (
-    <div className="min-h-[100dvh] w-full bg-background text-foreground safe-pt safe-pb safe-pl safe-pr transition-colors duration-150">
-      {/* Top Header */}
-      <header className="sticky top-0 z-40 border-b border-border bg-surface/90 backdrop-blur-md px-4 py-3 sm:px-6">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
+    <div className="min-h-[100dvh] w-full bg-canvas text-fg safe-pt safe-pb safe-pl safe-pr">
+      {/* Floating Translucent Top Navbar */}
+      <header className="sticky top-0 z-40 border-b border-hairline bg-canvas/80 backdrop-blur-md px-4 py-3 sm:px-6">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold shadow-1">
+            <span className="flex size-7 items-center justify-center rounded-sm bg-fg text-canvas font-mono text-xs font-bold">
               D
-            </div>
+            </span>
             <div>
-              <h1 className="text-base sm:text-lg font-bold tracking-tight text-foreground">
-                Donater Admin — Styleguide
+              <h1 className="text-sm font-semibold tracking-tight text-fg">
+                Donater Admin
               </h1>
-              <p className="text-xs text-muted-foreground">
-                Step 0 (Poydevor) Token &amp; Component Verification
-              </p>
             </div>
+            <span className="hidden sm:inline-block text-xs text-fg-subtle">/</span>
+            <span className="hidden sm:inline-block text-xs text-fg-muted font-medium">
+              Styleguide
+            </span>
           </div>
 
           {/* Theme switcher */}
-          <div className="flex items-center gap-1 rounded-md border border-border bg-muted p-1">
+          <div className="flex items-center gap-1 rounded-sm border border-hairline bg-surface p-0.5">
             <button
               onClick={() => setTheme("light")}
-              className={`flex items-center gap-1.5 rounded-sm px-2.5 py-1 text-xs font-medium transition-all ${
+              className={`flex items-center gap-1.5 rounded-sm px-2 py-1 text-xs transition-colors ${
                 theme === "light"
-                  ? "bg-surface text-foreground shadow-1"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-surface-2 text-fg font-medium"
+                  : "text-fg-muted hover:text-fg"
               }`}
               title="Light theme"
             >
@@ -50,10 +50,10 @@ export function StyleguidePage() {
             </button>
             <button
               onClick={() => setTheme("dark")}
-              className={`flex items-center gap-1.5 rounded-sm px-2.5 py-1 text-xs font-medium transition-all ${
+              className={`flex items-center gap-1.5 rounded-sm px-2 py-1 text-xs transition-colors ${
                 theme === "dark"
-                  ? "bg-surface text-foreground shadow-1"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-surface-2 text-fg font-medium"
+                  : "text-fg-muted hover:text-fg"
               }`}
               title="Dark theme"
             >
@@ -62,552 +62,372 @@ export function StyleguidePage() {
             </button>
             <button
               onClick={() => setTheme("system")}
-              className={`flex items-center gap-1.5 rounded-sm px-2.5 py-1 text-xs font-medium transition-all ${
+              className={`flex items-center gap-1.5 rounded-sm px-2 py-1 text-xs transition-colors ${
                 theme === "system"
-                  ? "bg-surface text-foreground shadow-1"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-surface-2 text-fg font-medium"
+                  : "text-fg-muted hover:text-fg"
               }`}
               title="System theme"
             >
               <Icons.Laptop size="sm" />
-              <span className="hidden sm:inline">System ({resolvedTheme})</span>
+              <span className="hidden sm:inline">Auto ({resolvedTheme})</span>
             </button>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="mx-auto max-w-7xl space-y-8 p-4 sm:p-6 lg:p-8">
-        {/* Intro banner */}
-        <div className="rounded-md border border-primary/20 bg-primary/5 p-4 sm:p-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <div className="flex items-center gap-2 font-semibold text-primary">
-                <Icons.Shield size="sm" />
-                <span>Poydevor (Foundation) Qoidalari</span>
-              </div>
-              <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
-                Data-dense dizayn tokenlari: 4/8 spacing, 6/10/14px radius, tabular-nums,
-                iOS Safari 16px input &amp; 44pt touch targets, Apple spring presets.
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="ok">TypeScript Strict</Badge>
-              <Badge variant="neutral">Vite + React 19</Badge>
-            </div>
-          </div>
+      {/* Main Content Container with whitespace hierarchy: 40px+ between sections */}
+      <main className="mx-auto max-w-5xl space-y-12 px-4 py-8 sm:px-6">
+        {/* Large Title Section */}
+        <div>
+          <div className="label-caps mb-1">0-Qadam · Poydevor</div>
+          <h2 className="text-display text-fg">
+            Dizayn Tili &amp; Tokenlar
+          </h2>
+          <p className="mt-1 text-sm text-fg-muted max-w-2xl">
+            Neytral asos (95%), bitta brend rangi, qora/oq primary tugma, hairline ajratgichlar,
+            va tabular raqamlar.
+          </p>
         </div>
 
-        {/* 1. Color Palette Tokens */}
+        {/* 1. Neytral va Brend Shkalasi (§1.1) */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between border-b border-border pb-2">
-            <h2 className="text-lg font-bold tracking-tight">1. Rang Tokenlari (§1.1 &amp; §1.2)</h2>
-            <span className="text-xs text-muted-foreground font-mono">
-              Current: {resolvedTheme.toUpperCase()}
+          <div className="flex items-center justify-between border-b border-hairline pb-2">
+            <h3 className="text-title text-fg">1. Neytral &amp; Brend Tokenlari</h3>
+            <span className="text-xs font-mono text-fg-subtle">
+              Theme: {resolvedTheme.toUpperCase()}
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
             <ColorSwatch
-              name="Primary"
-              variable="--color-primary"
-              lightHex="#1E40AF"
-              darkHex="#60A5FA"
-              bgClass="bg-primary"
-              textClass="text-primary-foreground"
-            />
-            <ColorSwatch
-              name="Secondary"
-              variable="--color-secondary"
-              lightHex="#3B82F6"
-              darkHex="#38BDF8"
-              bgClass="bg-secondary"
-              textClass="text-primary-foreground"
-            />
-            <ColorSwatch
-              name="Accent"
-              variable="--color-accent"
-              lightHex="#D97706"
-              darkHex="#F0B429"
-              bgClass="bg-accent"
-              textClass="text-primary-foreground"
-            />
-            <ColorSwatch
-              name="Background"
-              variable="--color-background"
-              lightHex="#F8FAFC"
-              darkHex="#0B1220"
-              bgClass="bg-background"
-              textClass="text-foreground"
+              name="Canvas"
+              token="--canvas"
+              hex={resolvedTheme === "dark" ? "#0C0D10" : "#F7F8FA"}
+              bgStyle="bg-canvas"
+              textStyle="text-fg"
               border
             />
             <ColorSwatch
               name="Surface"
-              variable="--color-surface"
-              lightHex="#FFFFFF"
-              darkHex="#131C2E"
-              bgClass="bg-surface"
-              textClass="text-foreground"
+              token="--surface"
+              hex={resolvedTheme === "dark" ? "#131519" : "#FFFFFF"}
+              bgStyle="bg-surface"
+              textStyle="text-fg"
               border
             />
             <ColorSwatch
-              name="Muted"
-              variable="--color-muted"
-              lightHex="#E9EEF6"
-              darkHex="#1E293B"
-              bgClass="bg-muted"
-              textClass="text-muted-foreground"
-              border
+              name="Surface-2"
+              token="--surface-2"
+              hex={resolvedTheme === "dark" ? "#1B1E24" : "#F1F3F6"}
+              bgStyle="bg-surface-2"
+              textStyle="text-fg"
             />
             <ColorSwatch
-              name="Border"
-              variable="--color-border"
-              lightHex="#DBEAFE"
-              darkHex="#24324A"
-              bgClass="bg-border"
-              textClass="text-foreground"
+              name="Text Main"
+              token="--fg"
+              hex={resolvedTheme === "dark" ? "#EDF0F5" : "#0F1115"}
+              bgStyle="bg-fg"
+              textStyle="text-canvas"
             />
             <ColorSwatch
-              name="Destructive"
-              variable="--color-destructive"
-              lightHex="#DC2626"
-              darkHex="#F87171"
-              bgClass="bg-destructive"
-              textClass="text-primary-foreground"
+              name="Text Muted"
+              token="--fg-muted"
+              hex={resolvedTheme === "dark" ? "#A0A8B8" : "#5B6472"}
+              bgStyle="bg-surface-2"
+              textStyle="text-fg-muted"
             />
             <ColorSwatch
-              name="Status OK"
-              variable="--status-ok"
-              lightHex="#16A34A"
-              darkHex="#4ADE80"
-              bgClass="bg-status-ok-bg"
-              textClass="text-status-ok"
-              border
+              name="Hairline"
+              token="--hairline"
+              hex={resolvedTheme === "dark" ? "rgba(255,255,255,.08)" : "rgba(15,17,21,.08)"}
+              bgStyle="bg-surface border border-hairline"
+              textStyle="text-fg-subtle"
             />
             <ColorSwatch
-              name="Status Warn"
-              variable="--status-warn"
-              lightHex="#D97706"
-              darkHex="#FBBF24"
-              bgClass="bg-status-warn-bg"
-              textClass="text-status-warn"
-              border
-            />
-            <ColorSwatch
-              name="Status Fail"
-              variable="--status-fail"
-              lightHex="#DC2626"
-              darkHex="#F87171"
-              bgClass="bg-status-fail-bg"
-              textClass="text-status-fail"
-              border
-            />
-            <ColorSwatch
-              name="Status Neutral"
-              variable="--status-neutral"
-              lightHex="#64748B"
-              darkHex="#94A3B8"
-              bgClass="bg-status-neutral-bg"
-              textClass="text-status-neutral"
-              border
+              name="Brand"
+              token="--brand"
+              hex={resolvedTheme === "dark" ? "#7C9BFF" : "#2A4FD7"}
+              bgStyle="bg-brand"
+              textStyle="text-canvas"
             />
           </div>
         </section>
 
-        {/* 2. Typography & Tabular Numbers */}
+        {/* 2. Status Indikatorlari */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between border-b border-border pb-2">
-            <h2 className="text-lg font-bold tracking-tight">2. Tipografika &amp; Tabular Raqamlar</h2>
-            <span className="text-xs text-muted-foreground font-mono">12 / 14 / 16 / 18 / 24 / 32 px</span>
+          <div className="border-b border-hairline pb-2">
+            <h3 className="text-title text-fg">2. Holat (Status) Indikatorlari</h3>
+            <p className="text-xs text-fg-muted mt-0.5">
+              To'ldirilgan kamalak pill emas — nuqta/ikonka + matn.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            {/* Font Scale */}
-            <Card elevation={1}>
-              <CardHeader>
-                <CardTitle>Shkala va Matn Ierarxiyasi</CardTitle>
-                <CardDescription>system-ui font oilasi va o'lcham tokenlari</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-baseline justify-between border-b border-border/50 pb-1.5">
-                  <span className="text-4xl font-bold tracking-tight">32px Sarlavha (4xl)</span>
-                  <span className="text-xs text-muted-foreground font-mono">font-bold -0.02em</span>
-                </div>
-                <div className="flex items-baseline justify-between border-b border-border/50 pb-1.5">
-                  <span className="text-2xl font-semibold tracking-tight">24px Bo'lim (2xl)</span>
-                  <span className="text-xs text-muted-foreground font-mono">font-semibold -0.02em</span>
-                </div>
-                <div className="flex items-baseline justify-between border-b border-border/50 pb-1.5">
-                  <span className="text-lg font-semibold">18px Karta Sarlavhasi (lg)</span>
-                  <span className="text-xs text-muted-foreground font-mono">font-semibold</span>
-                </div>
-                <div className="flex items-baseline justify-between border-b border-border/50 pb-1.5">
-                  <span className="text-base font-normal">16px Asosiy Matn / Input (base)</span>
-                  <span className="text-xs text-muted-foreground font-mono">font-normal 1.5</span>
-                </div>
-                <div className="flex items-baseline justify-between border-b border-border/50 pb-1.5">
-                  <span className="text-sm font-medium text-foreground">14px Jadval / Tugma (sm)</span>
-                  <span className="text-xs text-muted-foreground font-mono">font-medium</span>
-                </div>
-                <div className="flex items-baseline justify-between">
-                  <span className="text-xs text-muted-foreground">12px Ikkilamchi / Badge (xs)</span>
-                  <span className="text-xs text-muted-foreground font-mono">text-muted-foreground</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Monospace & Tabular Numbers */}
-            <Card elevation={1}>
-              <CardHeader>
-                <CardTitle>Tabular Raqamlar va Monospace ID</CardTitle>
-                <CardDescription>
-                  Pul va ID ustunlari raqam o'zgarganda gorizontal siljimaydi
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead>
-                      <tr className="border-b border-border text-xs text-muted-foreground">
-                        <th className="py-2 font-medium">Foydalanuvchi ID</th>
-                        <th className="py-2 font-medium">Holat</th>
-                        <th className="py-2 text-right font-medium">Balans (UZS)</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border/50">
-                      <tr>
-                        <td className="py-2.5 font-mono text-xs text-muted-foreground">usr_9a4f21008</td>
-                        <td className="py-2.5"><Badge variant="ok">Faol</Badge></td>
-                        <td className="py-2.5 text-right font-mono font-medium tabular-nums">125 000,00 so'm</td>
-                      </tr>
-                      <tr>
-                        <td className="py-2.5 font-mono text-xs text-muted-foreground">usr_117b90442</td>
-                        <td className="py-2.5"><Badge variant="warn">Kutilmoqda</Badge></td>
-                        <td className="py-2.5 text-right font-mono font-medium tabular-nums">1 850 000,00 so'm</td>
-                      </tr>
-                      <tr>
-                        <td className="py-2.5 font-mono text-xs text-muted-foreground">usr_882cc3910</td>
-                        <td className="py-2.5"><Badge variant="fail">Bloklangan</Badge></td>
-                        <td className="py-2.5 text-right font-mono font-medium tabular-nums">0,00 so'm</td>
-                      </tr>
-                      <tr>
-                        <td className="py-2.5 font-mono text-xs text-muted-foreground">usr_0034aef99</td>
-                        <td className="py-2.5"><Badge variant="neutral">Yangi</Badge></td>
-                        <td className="py-2.5 text-right font-mono font-medium tabular-nums">2 400,00 so'm</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
+          <div className="flex flex-wrap items-center gap-6 rounded-md bg-surface p-4 border border-hairline">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-fg-subtle">Dot:</span>
+              <Badge variant="ok">Muvaffaqiyatli</Badge>
+              <Badge variant="warn">Kutilmoqda</Badge>
+              <Badge variant="fail">Xatolik</Badge>
+              <Badge variant="neutral">Bajarilmadi</Badge>
+              <Badge variant="brand">Faol sessiya</Badge>
+            </div>
+            <div className="h-4 w-px bg-hairline hidden md:block" />
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-fg-subtle">Subtle:</span>
+              <Badge variant="ok" styleType="subtle">To'langan</Badge>
+              <Badge variant="warn" styleType="subtle">Tekshiruvda</Badge>
+              <Badge variant="fail" styleType="subtle">Bekor qilingan</Badge>
+              <Badge variant="neutral" styleType="subtle">Arxiv</Badge>
+            </div>
           </div>
         </section>
 
-        {/* 3. Button States & Interactive pointerdown feedback */}
+        {/* 3. Tipografika va Tabular Raqamlar */}
         <section className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-2">
+          <div className="border-b border-hairline pb-2">
+            <h3 className="text-title text-fg">3. Tipografika &amp; Tabular Raqamlar</h3>
+            <p className="text-xs text-fg-muted mt-0.5">
+              Display 30/600, Title 20/600, Body 14/400, Label 12 CAPS. Pul ustunlari tabular.
+            </p>
+          </div>
+
+          {/* Grouped Inset Data Table (No card-in-card) */}
+          <div className="rounded-md bg-surface border border-hairline overflow-hidden">
+            <div className="px-4 py-3 border-b border-hairline flex items-center justify-between">
+              <span className="label-caps">Oxirgi Ledger Yozuvlari</span>
+              <span className="text-xs font-mono text-fg-subtle">4 ta qator</span>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-hairline text-xs text-fg-muted">
+                    <th className="px-4 py-2.5 font-medium">Tranzaksiya / ID</th>
+                    <th className="px-4 py-2.5 font-medium">Foydalanuvchi</th>
+                    <th className="px-4 py-2.5 font-medium">Holat</th>
+                    <th className="px-4 py-2.5 text-right font-medium">Summa (UZS)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-hairline">
+                  <tr className="hover:bg-surface-2/50 transition-colors">
+                    <td className="px-4 py-3 font-mono text-xs text-fg-muted">tx_88204b1</td>
+                    <td className="px-4 py-3 text-sm text-fg font-medium">@kingdev</td>
+                    <td className="px-4 py-3"><Badge variant="ok">To'ldirildi</Badge></td>
+                    <td className="px-4 py-3 text-right font-mono font-medium tabular-nums text-fg">
+                      +150 000,00 so'm
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-surface-2/50 transition-colors">
+                    <td className="px-4 py-3 font-mono text-xs text-fg-muted">tx_88204b2</td>
+                    <td className="px-4 py-3 text-sm text-fg font-medium">@alex_uz</td>
+                    <td className="px-4 py-3"><Badge variant="warn">Tekshirilmoqda</Badge></td>
+                    <td className="px-4 py-3 text-right font-mono font-medium tabular-nums text-fg">
+                      +1 250 000,00 so'm
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-surface-2/50 transition-colors">
+                    <td className="px-4 py-3 font-mono text-xs text-fg-muted">tx_88204b3</td>
+                    <td className="px-4 py-3 text-sm text-fg font-medium">@nodir_99</td>
+                    <td className="px-4 py-3"><Badge variant="fail">Rad etildi</Badge></td>
+                    <td className="px-4 py-3 text-right font-mono font-medium tabular-nums text-fg-muted">
+                      0,00 so'm
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-surface-2/50 transition-colors">
+                    <td className="px-4 py-3 font-mono text-xs text-fg-muted">tx_88204b4</td>
+                    <td className="px-4 py-3 text-sm text-fg font-medium">@jasur_m</td>
+                    <td className="px-4 py-3"><Badge variant="neutral">Hold</Badge></td>
+                    <td className="px-4 py-3 text-right font-mono font-medium tabular-nums text-fg">
+                      -45 000,00 so'm
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        {/* 4. Tugma Holatlari (§1.1 & §3.5) */}
+        <section className="space-y-4">
+          <div className="border-b border-hairline pb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <h2 className="text-lg font-bold tracking-tight">3. Tugma Holatlari (§3.5 Apple uslubi)</h2>
-              <p className="text-xs text-muted-foreground">
-                Javob pointerdown da (scale 0.97), min touch target 44pt
+              <h3 className="text-title text-fg">4. Tugmalar (Bitta Primary, Jim Secondary)</h3>
+              <p className="text-xs text-fg-muted mt-0.5">
+                Primary = qora/oq to'ldirilgan; Secondary = surface + hairline; pointerdown javob ≤100ms.
               </p>
             </div>
             <Button
-              variant="outline"
+              variant="secondary"
               size="sm"
               onClick={() => setButtonLoading((v) => !v)}
             >
               <Icons.Refresh size="sm" />
-              <span>Loading Holatini {buttonLoading ? "O'chirish" : "Yoqish"}</span>
+              <span>Loading: {buttonLoading ? "Yoqilgan" : "O'chiq"}</span>
             </Button>
           </div>
 
-          <Card elevation={1}>
-            <CardContent className="p-4 sm:p-6 space-y-6">
-              {/* Variants row */}
-              <div>
-                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                  Variantlar (Har biri bosilganda spring javob beradi)
-                </h4>
-                <div className="flex flex-wrap items-center gap-3">
-                  <Button variant="primary" isLoading={buttonLoading}>
-                    <Icons.Check size="sm" />
-                    <span>Primary</span>
-                  </Button>
-                  <Button variant="secondary" isLoading={buttonLoading}>
-                    <Icons.TrendingUp size="sm" />
-                    <span>Secondary</span>
-                  </Button>
-                  <Button variant="destructive" isLoading={buttonLoading}>
-                    <Icons.Trash size="sm" />
-                    <span>Destructive</span>
-                  </Button>
-                  <Button variant="outline" isLoading={buttonLoading}>
-                    <Icons.FileText size="sm" />
-                    <span>Outline</span>
-                  </Button>
-                  <Button variant="ghost" isLoading={buttonLoading}>
-                    <Icons.Eye size="sm" />
-                    <span>Ghost</span>
-                  </Button>
-                  <Button disabled>
-                    <Icons.Lock size="sm" />
-                    <span>Disabled</span>
-                  </Button>
-                </div>
-              </div>
-
-              {/* Sizes row */}
-              <div>
-                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                  O'lcham Tokenlari (sm: 32px, md: 44px min-touch, lg: 48px, icon)
-                </h4>
-                <div className="flex flex-wrap items-center gap-3">
-                  <Button size="sm" variant="primary">
-                    <span>Small (32px)</span>
-                  </Button>
-                  <Button size="md" variant="primary">
-                    <span>Medium (44px min)</span>
-                  </Button>
-                  <Button size="lg" variant="primary">
-                    <span>Large (48px)</span>
-                  </Button>
-                  <Button size="icon" variant="outline" title="Icon action">
-                    <Icons.Plus size="md" />
-                  </Button>
-                  <Button size="icon" variant="ghost" title="Settings action">
-                    <Icons.Settings size="md" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-
-        {/* 4. Form Controls & Inputs (16px font-size for iOS) */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between border-b border-border pb-2">
+          <div className="rounded-md bg-surface p-4 sm:p-5 border border-hairline space-y-5">
             <div>
-              <h2 className="text-lg font-bold tracking-tight">4. Forma Elementlari &amp; iOS 16px Input</h2>
-              <p className="text-xs text-muted-foreground">
-                Safari fokusda sahifani avtomatik kattalashtirmasligi uchun font-size ≥ 16px
-              </p>
+              <div className="label-caps mb-2">Variantlar</div>
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Single filled primary button on screen */}
+                <Button variant="primary" isLoading={buttonLoading}>
+                  <span>Asosiy Harakat (Primary)</span>
+                </Button>
+                <Button variant="secondary" isLoading={buttonLoading}>
+                  <span>Ikkilamchi (Secondary)</span>
+                </Button>
+                <Button variant="ghost" isLoading={buttonLoading}>
+                  <span>Ghost</span>
+                </Button>
+                <Button variant="destructive" isLoading={buttonLoading}>
+                  <span>Destructive</span>
+                </Button>
+                <Button disabled>
+                  <span>Disabled</span>
+                </Button>
+              </div>
+            </div>
+
+            <div className="border-t border-hairline pt-4">
+              <div className="label-caps mb-2">O'lchamlar (xs 28px, sm 32px, md 36px, touch 44px)</div>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button size="xs" variant="secondary">XS 28px</Button>
+                <Button size="sm" variant="secondary">SM 32px</Button>
+                <Button size="md" variant="secondary">MD 36px</Button>
+                <Button size="icon" variant="secondary" title="Qidiruv">
+                  <Icons.Search size="sm" />
+                </Button>
+                <Button size="icon" variant="ghost" title="Sozlamalar">
+                  <Icons.Settings size="sm" />
+                </Button>
+              </div>
             </div>
           </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <Card elevation={1}>
-              <CardContent className="p-4 sm:p-5 space-y-2">
-                <label className="text-xs font-medium text-foreground">Oddiy Input (Normal)</label>
-                <Input placeholder="Foydalanuvchi tg_id yoki username..." />
-                <p className="text-xs text-muted-foreground">Qidiruv yoki oddiy qiymat kiritish</p>
-              </CardContent>
-            </Card>
-
-            <Card elevation={1}>
-              <CardContent className="p-4 sm:p-5 space-y-2">
-                <label className="text-xs font-medium text-destructive">Xatolik Holati (Error 422)</label>
-                <Input error defaultValue="not-a-number" />
-                <p className="text-xs text-destructive">Summa 2000 so'mdan kam bo'lmasligi kerak</p>
-              </CardContent>
-            </Card>
-
-            <Card elevation={1}>
-              <CardContent className="p-4 sm:p-5 space-y-2">
-                <label className="text-xs font-medium text-muted-foreground">O'chirilgan (Disabled)</label>
-                <Input disabled defaultValue="O'zgartirib bo'lmaydigan qiymat" />
-                <p className="text-xs text-muted-foreground">Ruxsat yetmagan yoki muzlatilgan</p>
-              </CardContent>
-            </Card>
-          </div>
         </section>
 
-        {/* 5. Elevation & Radius Scales */}
+        {/* 5. Forma Elementlari & iOS 16px Baseline */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between border-b border-border pb-2">
-            <h2 className="text-lg font-bold tracking-tight">5. Soya (Elevation) &amp; Radius Shkalasi</h2>
-            <span className="text-xs text-muted-foreground font-mono">0 / 1 / 2 / 3 &amp; 6 / 10 / 14 px</span>
+          <div className="border-b border-hairline pb-2">
+            <h3 className="text-title text-fg">5. Forma Elementlari (16px iOS Input)</h3>
+            <p className="text-xs text-fg-muted mt-0.5">
+              Input font-size doim 16px (Safari auto-zoom'ning oldini oladi).
+            </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            <Card elevation={0} className="p-4 text-center">
-              <span className="text-xs font-mono font-semibold text-muted-foreground">Elevation 0</span>
-              <p className="mt-1 text-xs text-muted-foreground">Shadow yo'q (Tekis yuza)</p>
-            </Card>
-            <Card elevation={1} className="p-4 text-center">
-              <span className="text-xs font-mono font-semibold text-foreground">Elevation 1</span>
-              <p className="mt-1 text-xs text-muted-foreground">Karta &amp; Jadval yuzasi</p>
-            </Card>
-            <Card elevation={2} className="p-4 text-center">
-              <span className="text-xs font-mono font-semibold text-foreground">Elevation 2</span>
-              <p className="mt-1 text-xs text-muted-foreground">Dropdown &amp; Popover</p>
-            </Card>
-            <Card elevation={3} className="p-4 text-center">
-              <span className="text-xs font-mono font-semibold text-foreground">Elevation 3</span>
-              <p className="mt-1 text-xs text-muted-foreground">Modal &amp; Drawer</p>
-            </Card>
-          </div>
-        </section>
-
-        {/* 6. Skeleton Loader states */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between border-b border-border pb-2">
-            <div>
-              <h2 className="text-lg font-bold tracking-tight">6. Yuklanish Holatlari (Skeleton, spinner emas)</h2>
-              <p className="text-xs text-muted-foreground">
-                Yuklanish 300ms dan oshganda haqiqiy tartib shaklini takrorlovchi skelet
-              </p>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-fg">Oddiy Input</label>
+              <Input placeholder="Foydalanuvchi qidirish..." />
+              <span className="text-[11px] text-fg-subtle">Username yoki Telegram ID</span>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-status-fail">Xatolik (422)</label>
+              <Input error defaultValue="not-a-number" />
+              <span className="text-[11px] text-status-fail">Summa kamida 2 000 so'm bo'lishi shart</span>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-fg-muted">O'chirilgan</label>
+              <Input disabled defaultValue="Muzlatilgan qiymat" />
+              <span className="text-[11px] text-fg-subtle">Faqat o'qish uchun</span>
             </div>
           </div>
-
-          <Card elevation={1}>
-            <CardContent className="p-4 sm:p-6 space-y-4">
-              <div className="flex items-center gap-3">
-                <Skeleton className="size-10 rounded-md" />
-                <div className="space-y-2 flex-1">
-                  <Skeleton className="h-4 w-1/3" />
-                  <Skeleton className="h-3 w-1/2" />
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-3 pt-2">
-                <Skeleton className="h-20 rounded-md" />
-                <Skeleton className="h-20 rounded-md" />
-                <Skeleton className="h-20 rounded-md" />
-              </div>
-            </CardContent>
-          </Card>
         </section>
 
-        {/* 7. Motion Spring Presets & a11y reduced-motion */}
+        {/* 6. Motion & Accessibility */}
         <section className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-2">
+          <div className="border-b border-hairline pb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <h2 className="text-lg font-bold tracking-tight">7. Motion Presets &amp; Prefers-Reduced-Motion</h2>
-              <p className="text-xs text-muted-foreground">
-                Spring physics: bounce 0 (default), bouncy 0.2 (gestures), opacity crossfade (reduced)
+              <h3 className="text-title text-fg">6. Spring Motion &amp; a11y</h3>
+              <p className="text-xs text-fg-muted mt-0.5">
+                Critically damped spring (bounce: 0, ~0.3s) va prefers-reduced-motion.
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5 cursor-pointer">
+            <div className="flex items-center gap-3">
+              <label className="text-xs text-fg-muted flex items-center gap-1.5 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={reducedMotionSim}
                   onChange={(e) => setReducedMotionSim(e.target.checked)}
-                  className="rounded border-border"
+                  className="rounded border-hairline"
                 />
                 <span>Simulate Reduced Motion</span>
               </label>
               <Button
                 size="sm"
-                variant="primary"
+                variant="secondary"
                 onClick={() => setMotionBoxOpen((v) => !v)}
               >
-                <span>{motionBoxOpen ? "Yopish" : "Spring Animatsiyani Sinash"}</span>
+                <span>{motionBoxOpen ? "Yopish" : "Spring Sinash"}</span>
               </Button>
             </div>
           </div>
 
-          <Card elevation={1} className="overflow-hidden">
-            <CardContent className="p-4 sm:p-6">
-              <AnimatePresence mode="wait">
-                {motionBoxOpen ? (
-                  <motion.div
-                    key="open"
-                    initial={{ opacity: 0, y: reducedMotionSim ? 0 : -10, scale: reducedMotionSim ? 1 : 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: reducedMotionSim ? 0 : -8, scale: reducedMotionSim ? 1 : 0.98 }}
-                    transition={reducedMotionSim ? springPresets.reduced : springPresets.default}
-                    className="rounded-md border border-primary/30 bg-primary/10 p-5 text-foreground"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex size-10 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold">
-                        <Icons.Check size="md" />
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-semibold">Spring Motion Faol</h4>
-                        <p className="text-xs text-muted-foreground">
-                          {reducedMotionSim
-                            ? "Reduced motion rejimi: no-translation opacity crossfade."
-                            : "Critically damped spring: bounce=0, duration ~0.3s."}
-                        </p>
-                      </div>
+          <div className="rounded-md bg-surface p-4 border border-hairline overflow-hidden">
+            <AnimatePresence mode="wait">
+              {motionBoxOpen ? (
+                <motion.div
+                  key="open"
+                  initial={{ opacity: 0, y: reducedMotionSim ? 0 : -8, scale: reducedMotionSim ? 1 : 0.99 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: reducedMotionSim ? 0 : -6, scale: reducedMotionSim ? 1 : 0.99 }}
+                  transition={reducedMotionSim ? springPresets.reduced : springPresets.default}
+                  className="rounded-sm bg-surface-2 p-4 flex items-center gap-3"
+                >
+                  <Icons.CheckCircle size="md" className="text-status-ok" />
+                  <div>
+                    <div className="text-sm font-medium text-fg">Spring Motion Aktiv</div>
+                    <div className="text-xs text-fg-muted">
+                      {reducedMotionSim
+                        ? "Reduced motion: no-translation opacity crossfade (0.15s)."
+                        : "Apple-style critically damped spring (stiffness: 400, damping: 30)."}
                     </div>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="closed"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex items-center justify-center rounded-md border border-dashed border-border py-8 text-xs text-muted-foreground"
-                  >
-                    Yuqoridagi tugmani bosib spring animatsiyasini sinab ko'ring
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </CardContent>
-          </Card>
+                  </div>
+                </motion.div>
+              ) : (
+                <div className="py-4 text-center text-xs text-fg-subtle">
+                  Yuqoridagi tugmani bosing va spring harakatini sinab ko'ring
+                </div>
+              )}
+            </AnimatePresence>
+          </div>
         </section>
 
-        {/* 8. Lucide Icons Tokens */}
+        {/* 7. Skeleton & Loading States */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between border-b border-border pb-2">
-            <h2 className="text-lg font-bold tracking-tight">8. Lucide Ikonkalar (sm: 16px / md: 20px / lg: 24px)</h2>
-            <span className="text-xs text-muted-foreground font-mono">Stroke: 1.75px</span>
+          <div className="border-b border-hairline pb-2">
+            <h3 className="text-title text-fg">7. Yuklanish (Skeleton)</h3>
+            <p className="text-xs text-fg-muted mt-0.5">
+              300ms dan oshgan jarayonlar uchun layout shaklini takrorlovchi puls.
+            </p>
           </div>
 
-          <Card elevation={1}>
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex flex-wrap items-center gap-6">
-                <div className="flex flex-col items-center gap-1.5">
-                  <Icons.Users size="lg" className="text-primary" />
-                  <span className="text-xs font-mono text-muted-foreground">lg (24px)</span>
-                </div>
-                <div className="flex flex-col items-center gap-1.5">
-                  <Icons.Shield size="md" className="text-primary" />
-                  <span className="text-xs font-mono text-muted-foreground">md (20px)</span>
-                </div>
-                <div className="flex flex-col items-center gap-1.5">
-                  <Icons.CheckCircle size="sm" className="text-status-ok" />
-                  <span className="text-xs font-mono text-muted-foreground">sm (16px)</span>
-                </div>
-                <div className="flex flex-col items-center gap-1.5">
-                  <Icons.AlertTriangle size="sm" className="text-status-warn" />
-                  <span className="text-xs font-mono text-muted-foreground">warn</span>
-                </div>
-                <div className="flex flex-col items-center gap-1.5">
-                  <Icons.XCircle size="sm" className="text-status-fail" />
-                  <span className="text-xs font-mono text-muted-foreground">fail</span>
-                </div>
-                <div className="flex flex-col items-center gap-1.5">
-                  <Icons.Search size="md" className="text-muted-foreground" />
-                  <span className="text-xs font-mono text-muted-foreground">search</span>
-                </div>
-                <div className="flex flex-col items-center gap-1.5">
-                  <Icons.TrendingUp size="md" className="text-primary" />
-                  <span className="text-xs font-mono text-muted-foreground">stats</span>
-                </div>
-                <div className="flex flex-col items-center gap-1.5">
-                  <Icons.Dollar size="md" className="text-accent" />
-                  <span className="text-xs font-mono text-muted-foreground">money</span>
-                </div>
-                <div className="flex flex-col items-center gap-1.5">
-                  <Icons.Clock size="md" className="text-muted-foreground" />
-                  <span className="text-xs font-mono text-muted-foreground">clock</span>
-                </div>
-                <div className="flex flex-col items-center gap-1.5">
-                  <Icons.Smartphone size="md" className="text-secondary" />
-                  <span className="text-xs font-mono text-muted-foreground">mobile</span>
-                </div>
+          <div className="rounded-md bg-surface p-4 border border-hairline space-y-3">
+            <div className="flex items-center gap-3">
+              <Skeleton className="size-8 rounded-sm" />
+              <div className="space-y-1.5 flex-1">
+                <Skeleton className="h-3.5 w-1/4" />
+                <Skeleton className="h-3 w-1/3" />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+            <div className="grid grid-cols-3 gap-3 pt-2">
+              <Skeleton className="h-14 rounded-sm" />
+              <Skeleton className="h-14 rounded-sm" />
+              <Skeleton className="h-14 rounded-sm" />
+            </div>
+          </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="mt-12 border-t border-border bg-surface px-4 py-4 text-center text-xs text-muted-foreground">
-        Donater Admin Panel — Step 0 Foundation Token System
+      {/* Modern iOS Mobile Preview Footer Bar (Section 3.7) */}
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-hairline bg-canvas/80 backdrop-blur-md p-3 safe-pb">
+        <Button variant="primary" className="w-full min-h-[44px]">
+          Asosiy Amal (To'liq Kenglik)
+        </Button>
+      </div>
+
+      <footer className="mt-16 border-t border-hairline py-6 text-center text-xs text-fg-subtle">
+        Donater Admin — Step 0 Neutral Foundation System
       </footer>
     </div>
   );
@@ -615,39 +435,34 @@ export function StyleguidePage() {
 
 interface ColorSwatchProps {
   name: string;
-  variable: string;
-  lightHex: string;
-  darkHex: string;
-  bgClass: string;
-  textClass: string;
+  token: string;
+  hex: string;
+  bgStyle: string;
+  textStyle: string;
   border?: boolean;
 }
 
 function ColorSwatch({
   name,
-  variable,
-  lightHex,
-  darkHex,
-  bgClass,
-  textClass,
+  token,
+  hex,
+  bgStyle,
+  textStyle,
   border = false,
 }: ColorSwatchProps) {
-  const { resolvedTheme } = useTheme();
-  const currentHex = resolvedTheme === "dark" ? darkHex : lightHex;
-
   return (
-    <div className="rounded-md border border-border bg-surface p-2.5 shadow-1 transition-colors">
+    <div className="rounded-sm bg-surface p-2 border border-hairline transition-colors">
       <div
-        className={`h-12 w-full rounded-sm flex items-center justify-center font-mono text-xs font-semibold ${bgClass} ${textClass} ${
-          border ? "border border-border" : ""
+        className={`h-10 w-full rounded-sm flex items-center justify-center font-mono text-xs font-semibold ${bgStyle} ${textStyle} ${
+          border ? "border border-hairline" : ""
         }`}
       >
         Aa
       </div>
-      <div className="mt-2 space-y-0.5">
-        <div className="text-xs font-semibold text-foreground truncate">{name}</div>
-        <div className="text-[10px] font-mono text-muted-foreground truncate">{variable}</div>
-        <div className="text-[10px] font-mono font-medium text-foreground">{currentHex}</div>
+      <div className="mt-1.5 space-y-0.5">
+        <div className="text-xs font-medium text-fg truncate">{name}</div>
+        <div className="text-[10px] font-mono text-fg-subtle truncate">{token}</div>
+        <div className="text-[10px] font-mono text-fg-muted">{hex}</div>
       </div>
     </div>
   );

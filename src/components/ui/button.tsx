@@ -4,28 +4,27 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[transform,background-color,border-color,color,opacity] duration-100 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 disabled:active:scale-100 select-none",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-[transform,background-color,border-color,color,opacity] duration-100 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40 disabled:active:scale-100 select-none",
   {
     variants: {
       variant: {
         primary:
-          "bg-primary text-primary-foreground shadow-1 hover:brightness-105 active:brightness-95",
+          "bg-fg text-canvas shadow-1 hover:opacity-90 active:opacity-95",
         secondary:
-          "bg-secondary text-primary-foreground shadow-1 hover:brightness-105 active:brightness-95",
-        destructive:
-          "bg-destructive text-primary-foreground shadow-1 hover:brightness-105 active:brightness-95",
-        outline:
-          "border border-border bg-surface text-foreground shadow-1 hover:bg-muted active:bg-muted/80",
+          "bg-surface border border-hairline text-fg hover:bg-surface-2 active:bg-surface-2",
         ghost:
-          "text-foreground hover:bg-muted active:bg-muted/80",
-        accent:
-          "bg-accent text-primary-foreground shadow-1 hover:brightness-105 active:brightness-95",
+          "text-fg hover:bg-surface-2 active:bg-surface-2",
+        destructive:
+          "text-status-fail hover:bg-status-fail-bg active:bg-status-fail-bg",
+        "destructive-filled":
+          "bg-status-fail text-canvas hover:opacity-90 active:opacity-95",
       },
       size: {
-        sm: "h-8 px-3 text-xs rounded-sm min-w-[32px]",
-        md: "h-11 px-4 text-sm rounded-md min-h-[44px]", // 44px min touch target for iOS
-        lg: "h-12 px-6 text-base rounded-lg min-h-[48px]",
-        icon: "size-11 rounded-md min-h-[44px] min-w-[44px]",
+        xs: "h-7 px-2.5 text-xs rounded-sm min-w-[28px] pointer-coarse:min-h-[44px]",
+        sm: "h-8 px-3 text-xs rounded-sm min-w-[32px] pointer-coarse:min-h-[44px]",
+        md: "h-9 px-3.5 text-sm rounded-md min-w-[36px] pointer-coarse:min-h-[44px]",
+        lg: "h-10 px-4 text-sm rounded-md min-w-[40px] pointer-coarse:min-h-[44px]",
+        icon: "size-9 rounded-md min-w-[36px] pointer-coarse:min-h-[44px] pointer-coarse:min-w-[44px]",
       },
     },
     defaultVariants: {
@@ -53,7 +52,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isLoading ? (
           <>
-            <Loader2 className="size-4 animate-spin text-current" />
+            <Loader2 className="size-3.5 animate-spin text-current" />
             <span>{children}</span>
           </>
         ) : (

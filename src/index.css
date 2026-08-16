@@ -4,35 +4,31 @@
 
 @layer base {
   :root {
-    --color-primary: #1E40AF;
-    --color-on-primary: #FFFFFF;
-    --color-secondary: #3B82F6;
-    --color-accent: #D97706;
-    --color-background: #F8FAFC;
-    --color-surface: #FFFFFF;
-    --color-foreground: #1E3A8A;
-    --color-muted: #E9EEF6;
-    --color-muted-foreground: #64748B;
-    --color-border: #DBEAFE;
-    --color-destructive: #DC2626;
-    --color-ring: #1E40AF;
+    --canvas: #F7F8FA;
+    --surface: #FFFFFF;
+    --surface-2: #F1F3F6;
+    --fg: #0F1115;
+    --fg-muted: #5B6472;
+    --fg-subtle: #8A94A6;
+    --hairline: rgba(15, 17, 21, 0.08);
 
-    --status-ok: #16A34A;
-    --status-ok-bg: #DCFCE7;
-    --status-warn: #D97706;
-    --status-warn-bg: #FEF3C7;
-    --status-fail: #DC2626;
-    --status-fail-bg: #FEE2E2;
-    --status-neutral: #64748B;
-    --status-neutral-bg: #F1F5F9;
+    --brand: #2A4FD7;
+    --brand-muted: rgba(42, 79, 215, 0.08);
 
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 14px;
+    --status-ok: #0F7B3F;
+    --status-ok-bg: rgba(15, 123, 63, 0.08);
+    --status-warn: #A15C00;
+    --status-warn-bg: rgba(161, 92, 0, 0.08);
+    --status-fail: #B3261E;
+    --status-fail-bg: rgba(179, 38, 30, 0.08);
 
-    --elevation-1: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --elevation-2: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --elevation-3: 0 20px 25px -5px rgb(0 0 0 / 0.15), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+
+    --elevation-1: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+    --elevation-2: 0 4px 12px rgba(16, 24, 40, 0.08);
+    --elevation-3: 0 16px 40px rgba(16, 24, 40, 0.12);
 
     --safe-area-top: env(safe-area-inset-top, 0px);
     --safe-area-bottom: env(safe-area-inset-bottom, 0px);
@@ -41,46 +37,49 @@
   }
 
   .dark {
-    --color-primary: #60A5FA;
-    --color-on-primary: #0B1220;
-    --color-secondary: #38BDF8;
-    --color-accent: #F0B429;
-    --color-background: #0B1220;
-    --color-surface: #131C2E;
-    --color-foreground: #E6EDF7;
-    --color-muted: #1E293B;
-    --color-muted-foreground: #93A4BF;
-    --color-border: #24324A;
-    --color-destructive: #F87171;
-    --color-ring: #60A5FA;
+    --canvas: #0C0D10;
+    --surface: #131519;
+    --surface-2: #1B1E24;
+    --fg: #EDF0F5;
+    --fg-muted: #A0A8B8;
+    --fg-subtle: #6C7484;
+    --hairline: rgba(255, 255, 255, 0.08);
+
+    --brand: #7C9BFF;
+    --brand-muted: rgba(124, 155, 255, 0.12);
 
     --status-ok: #4ADE80;
-    --status-ok-bg: #064E3B;
-    --status-warn: #FBBF24;
-    --status-warn-bg: #78350F;
-    --status-fail: #F87171;
-    --status-fail-bg: #7F1D1D;
-    --status-neutral: #94A3B8;
-    --status-neutral-bg: #1E293B;
+    --status-ok-bg: rgba(74, 222, 128, 0.12);
+    --status-warn: #F5B759;
+    --status-warn-bg: rgba(245, 183, 89, 0.12);
+    --status-fail: #FF7B72;
+    --status-fail-bg: rgba(255, 123, 114, 0.12);
 
-    --elevation-1: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-    --elevation-2: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
-    --elevation-3: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5);
-  }
-
-  * {
-    @apply border-border;
-    -webkit-tap-highlight-color: transparent;
+    --elevation-1: none;
+    --elevation-2: none;
+    --elevation-3: none;
   }
 
   html {
     color-scheme: light dark;
     touch-action: manipulation;
+    background-color: var(--canvas);
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--canvas);
+    color: var(--fg);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-tap-highlight-color: transparent;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  /* Touch device base font size */
+  @media (pointer: coarse) {
+    body {
+      font-size: 16px;
+    }
   }
 
   /* iOS Safari auto-zoom prevention */
@@ -92,6 +91,15 @@
 @layer utilities {
   .tabular-nums {
     font-variant-numeric: tabular-nums;
+  }
+
+  .label-caps {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--fg-muted);
   }
 
   .safe-pt {
@@ -134,6 +142,6 @@
   .backdrop-blur-lg {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-    background-color: var(--color-surface) !important;
+    background-color: var(--surface) !important;
   }
 }

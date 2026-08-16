@@ -1,52 +1,66 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { CheckCircle2, AlertTriangle, XCircle, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-medium rounded-sm border transition-colors",
+  "inline-flex items-center gap-1.5 text-xs font-medium transition-colors select-none",
   {
     variants: {
       variant: {
-        default: "border-border bg-muted text-foreground",
-        ok: "border-status-ok/30 bg-status-ok-bg text-status-ok",
-        warn: "border-status-warn/30 bg-status-warn-bg text-status-warn",
-        fail: "border-status-fail/30 bg-status-fail-bg text-status-fail",
-        neutral: "border-status-neutral/30 bg-status-neutral-bg text-status-neutral",
+        neutral: "text-fg-muted",
+        ok: "text-status-ok",
+        warn: "text-status-warn",
+        fail: "text-status-fail",
+        brand: "text-brand",
+      },
+      styleType: {
+        dot: "py-0.5",
+        subtle: "px-2.5 py-0.5 rounded-pill",
       },
     },
+    compoundVariants: [
+      { variant: "ok", styleType: "subtle", className: "bg-status-ok-bg" },
+      { variant: "warn", styleType: "subtle", className: "bg-status-warn-bg" },
+      { variant: "fail", styleType: "subtle", className: "bg-status-fail-bg" },
+      { variant: "neutral", styleType: "subtle", className: "bg-surface-2" },
+      { variant: "brand", styleType: "subtle", className: "bg-brand-muted" },
+    ],
     defaultVariants: {
-      variant: "default",
+      variant: "neutral",
+      styleType: "dot",
     },
   }
 );
 
+const dotColors = {
+  ok: "bg-status-ok",
+  warn: "bg-status-warn",
+  fail: "bg-status-fail",
+  neutral: "bg-fg-muted",
+  brand: "bg-brand",
+};
+
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof badgeVariants> {
-  showIcon?: boolean;
+  showDot?: boolean;
 }
-
-const statusIcons = {
-  ok: CheckCircle2,
-  warn: AlertTriangle,
-  fail: XCircle,
-  neutral: HelpCircle,
-  default: null,
-};
 
 export function Badge({
   className,
-  variant = "default",
-  showIcon = true,
+  variant = "neutral",
+  styleType = "dot",
+  showDot = true,
   children,
   ...props
 }: BadgeProps) {
-  const IconComponent = showIcon && variant ? statusIcons[variant] : null;
+  const dotColorClass = variant ? dotColors[variant] : dotColors.neutral;
 
   return (
-    <span className={cn(badgeVariants({ variant }), className)} {...props}>
-      {IconComponent && <IconComponent className="size-3.5 shrink-0" />}
+    <span className={cn(badgeVariants({ variant, styleType }), className)} {...props}>
+      {showDot && (
+        <span className={cn("size-1.5 rounded-full shrink-0", dotColorClass)} aria-hidden="true" />
+      )}
       <span>{children}</span>
     </span>
   );

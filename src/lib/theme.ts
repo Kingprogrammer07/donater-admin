@@ -33,7 +33,7 @@ export function applyTheme(theme: Theme): "light" | "dark" {
   if (metaThemeColor) {
     metaThemeColor.setAttribute(
       "content",
-      effectiveTheme === "dark" ? "#0B1220" : "#F8FAFC"
+      effectiveTheme === "dark" ? "#0C0D10" : "#F7F8FA"
     );
   }
 

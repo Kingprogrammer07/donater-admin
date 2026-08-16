@@ -5,31 +5,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--color-background)",
-        surface: "var(--color-surface)",
-        foreground: "var(--color-foreground)",
-        primary: {
-          DEFAULT: "var(--color-primary)",
-          foreground: "var(--color-on-primary)",
+        canvas: "var(--canvas)",
+        surface: "var(--surface)",
+        "surface-2": "var(--surface-2)",
+        fg: {
+          DEFAULT: "var(--fg)",
+          muted: "var(--fg-muted)",
+          subtle: "var(--fg-subtle)",
         },
-        secondary: {
-          DEFAULT: "var(--color-secondary)",
-          foreground: "var(--color-on-primary)",
+        hairline: "var(--hairline)",
+        brand: {
+          DEFAULT: "var(--brand)",
+          muted: "var(--brand-muted)",
         },
-        accent: {
-          DEFAULT: "var(--color-accent)",
-          foreground: "var(--color-on-primary)",
-        },
-        muted: {
-          DEFAULT: "var(--color-muted)",
-          foreground: "var(--color-muted-foreground)",
-        },
-        border: "var(--color-border)",
-        destructive: {
-          DEFAULT: "var(--color-destructive)",
-          foreground: "var(--color-on-primary)",
-        },
-        ring: "var(--color-ring)",
         status: {
           ok: {
             DEFAULT: "var(--status-ok)",
@@ -50,9 +38,10 @@ export default {
         },
       },
       borderRadius: {
-        sm: "var(--radius-sm)",
-        md: "var(--radius-md)",
-        lg: "var(--radius-lg)",
+        sm: "var(--radius-sm)", // 8px
+        md: "var(--radius-md)", // 12px
+        lg: "var(--radius-lg)", // 16px
+        pill: "9999px",
       },
       boxShadow: {
         0: "none",
@@ -90,9 +79,8 @@ export default {
         xs: ["12px", { lineHeight: "16px" }],
         sm: ["14px", { lineHeight: "20px" }],
         base: ["16px", { lineHeight: "24px" }],
-        lg: ["18px", { lineHeight: "28px" }],
-        "2xl": ["24px", { lineHeight: "32px", letterSpacing: "-0.02em" }],
-        "4xl": ["32px", { lineHeight: "40px", letterSpacing: "-0.02em" }],
+        title: ["20px", { lineHeight: "26px", letterSpacing: "-0.01em" }],
+        display: ["30px", { lineHeight: "36px", letterSpacing: "-0.02em" }],
       },
     },
   },
