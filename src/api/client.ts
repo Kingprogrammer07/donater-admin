@@ -148,9 +148,17 @@ export const authApi = {
   },
 
   async logout(): Promise<void> {
+    const refreshToken = getStoredRefreshToken();
     try {
-      if (inMemoryAccessToken) {
-        await request<void>("/auth/logout", { method: "POST" }, false);
+      //  The server revokes the session by refresh token, so sending none
+      //  would leave it valid until it expired on its own.
+      if (refreshToken) {
+        const payload: RefreshRequest = { refresh_token: refreshToken };
+        await request<void>(
+          "/auth/logout",
+          { method: "POST", body: JSON.stringify(payload) },
+          false
+        );
       }
     } finally {
       notifyUnauthorized();

@@ -1,10 +1,13 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+﻿import { useEffect, useRef, useCallback } from "react";
 import type { PointerEvent } from "react";
 import { motion, useMotionValue, useSpring, useReducedMotion } from "motion/react";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { useTheme } from "@/lib/theme";
 import { Icons } from "@/components/icons";
-import { Button } from "@/components/ui/button";
+
+//  Set in .env as VITE_TELEGRAM_BOT_USERNAME. The domain must be registered
+//  with BotFather (/setdomain) or Telegram refuses to render the widget.
+const BOT_USERNAME = import.meta.env.VITE_TELEGRAM_BOT_USERNAME;
 
 declare global {
   interface Window {
@@ -25,7 +28,6 @@ export function LoginPage() {
   const prefersReducedMotion = useReducedMotion();
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetContainerRef = useRef<HTMLDivElement>(null);
-  const [isDevLoginLoading, setIsDevLoginLoading] = useState(false);
 
   // Pointer parallax (max 10px shift)
   const mouseX = useMotionValue(0);
@@ -76,24 +78,25 @@ export function LoginPage() {
     };
   }, [loginWithTelegram, clearError]);
 
-  // Local dev login simulation (for localhost testing when widget is blocked)
-  const handleDevLogin = async (tgId: number) => {
-    setIsDevLoginLoading(true);
-    clearError();
-    try {
-      // In local dev environment, send a payload to test the full auth flow
-      await loginWithTelegram({
-        id: tgId,
-        first_name: "Aziz",
-        username: "aziz",
-        auth_date: Math.floor(Date.now() / 1000),
-      });
-    } catch {
-      // Handled via authError
-    } finally {
-      setIsDevLoginLoading(false);
-    }
-  };
+  //  Telegram serves the button itself; the payload it hands back is signed
+  //  with the bot token, which only the server has. Nothing here can fake it.
+  useEffect(() => {
+    const host = widgetContainerRef.current;
+    if (!host || !BOT_USERNAME) return;
+
+    const script = document.createElement("script");
+    script.src = "https://telegram.org/js/telegram-widget.js?22";
+    script.async = true;
+    script.setAttribute("data-telegram-login", BOT_USERNAME);
+    script.setAttribute("data-size", "large");
+    script.setAttribute("data-radius", "12");
+    script.setAttribute("data-onauth", "onTelegramAuth(user)");
+    host.appendChild(script);
+
+    return () => {
+      host.replaceChildren();
+    };
+  }, []);
 
   return (
     <div
@@ -177,72 +180,37 @@ export function LoginPage() {
                 <span>{authError.message}</span>
               </div>
               {authError.retryAfter && (
-                <p className="text-[11px] text-fg-muted pl-5">
+                <p className="text-xs text-fg-muted pl-5">
                   Qayta urinish: {authError.retryAfter} soniyadan keyin.
                 </p>
               )}
               {authError.requestId && (
-                <p className="text-[10px] font-mono text-fg-subtle pl-5">
+                <p className="text-xs font-mono text-fg-subtle pl-5">
                   Request ID: {authError.requestId}
                 </p>
               )}
             </div>
           )}
 
-          {/* Telegram Login Action Area */}
+          {/* Telegram Login Widget. Telegram renders its own button here; a
+              custom one cannot start the flow, and a button that does nothing
+              is worse than no button. */}
           <div className="space-y-4 pt-1">
             <div
               ref={widgetContainerRef}
-              className="flex justify-center min-h-[44px] items-center"
-            >
-              {/* Telegram Login Widget button / Custom trigger */}
-              <Button
-                variant="primary"
-                size="md"
-                className="w-full min-h-[44px] gap-2 font-medium"
-                isLoading={isLoading}
-                onClick={() => {
-                  // If real widget iframe is embedded, click it or trigger login
-                  if (typeof window !== "undefined" && window.location.hostname === "localhost") {
-                    handleDevLogin(777967425);
-                  }
-                }}
-              >
-                <Icons.User size="sm" />
-                <span>Telegram orqali kirish</span>
-              </Button>
-            </div>
+              className="flex min-h-[44px] items-center justify-center"
+              aria-busy={isLoading}
+            />
 
-            {/* Quick dev-testing buttons if on localhost */}
-            {typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") && (
-              <div className="border-t border-hairline pt-3 text-center space-y-2">
-                <span className="text-[11px] font-mono text-fg-subtle">Dev Test Akkauntlar:</span>
-                <div className="flex gap-2 justify-center">
-                  <Button
-                    variant="secondary"
-                    size="xs"
-                    isLoading={isDevLoginLoading}
-                    onClick={() => handleDevLogin(777967425)}
-                    title="Owner ID: 777967425"
-                  >
-                    Owner
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="xs"
-                    isLoading={isDevLoginLoading}
-                    onClick={() => handleDevLogin(999999)}
-                    title="Non-admin ID for testing 403"
-                  >
-                    Not Admin (403 Test)
-                  </Button>
-                </div>
-              </div>
+            {!BOT_USERNAME && (
+              <p className="text-center text-xs text-status-warn">
+                Kirish tugmasi sozlanmagan: <code>VITE_TELEGRAM_BOT_USERNAME</code> yo'q.
+              </p>
             )}
           </div>
 
           <div className="text-center pt-1">
-            <p className="text-[11px] text-fg-subtle">
+            <p className="text-xs text-fg-subtle">
               Parol saqlanmaydi · Telegram SHA-256 HMAC orqali autentifikatsiya
             </p>
           </div>
