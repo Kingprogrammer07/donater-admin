@@ -7,7 +7,12 @@ import type {
   PaymentOut,
   ProofOut,
   PagePaymentOut,
+  UserOut,
   UserDetailOut,
+  PageUserOut,
+  LedgerEntryOut,
+  PageLedgerEntryOut,
+  BalanceAdjustRequest,
   OrderOut,
   OrderDetailOut,
   PageOrderOut,
@@ -321,11 +326,72 @@ export const paymentsApi = {
 };
 
 export const usersApi = {
+  listUsers(
+    params: {
+      limit?: number;
+      before_id?: number | null;
+      q?: string | null;
+      is_blocked?: boolean | null;
+    } = {}
+  ): Promise<PageUserOut> {
+    const search = new URLSearchParams();
+    if (params.limit) search.set("limit", String(params.limit));
+    if (params.before_id) search.set("before_id", String(params.before_id));
+    if (params.q) search.set("q", params.q);
+    if (params.is_blocked !== undefined && params.is_blocked !== null) {
+      search.set("is_blocked", String(params.is_blocked));
+    }
+    const qs = search.toString();
+    return request<PageUserOut>(`/users${qs ? `?${qs}` : ""}`);
+  },
+
   getUser(userId: number): Promise<UserDetailOut> {
     return request<UserDetailOut>(`/users/${userId}`);
   },
+
+  getUserLedger(
+    userId: number,
+    params: {
+      limit?: number;
+      before_id?: number | null;
+    } = {}
+  ): Promise<PageLedgerEntryOut> {
+    const search = new URLSearchParams();
+    if (params.limit) search.set("limit", String(params.limit));
+    if (params.before_id) search.set("before_id", String(params.before_id));
+    const qs = search.toString();
+    return request<PageLedgerEntryOut>(`/users/${userId}/ledger${qs ? `?${qs}` : ""}`);
+  },
+
   getUserPayments(userId: number, limit = 10): Promise<PagePaymentOut> {
     return request<PagePaymentOut>(`/payments?user_id=${userId}&limit=${limit}`);
+  },
+
+  adjustBalance(
+    userId: number,
+    data: BalanceAdjustRequest,
+    idempotencyKey: string
+  ): Promise<LedgerEntryOut> {
+    return request<LedgerEntryOut>(
+      `/users/${userId}/balance-adjust?idempotency_key=${encodeURIComponent(idempotencyKey)}`,
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      }
+    );
+  },
+
+  blockUser(userId: number, reason: string): Promise<UserOut> {
+    return request<UserOut>(`/users/${userId}/block`, {
+      method: "POST",
+      body: JSON.stringify({ reason }),
+    });
+  },
+
+  unblockUser(userId: number): Promise<UserOut> {
+    return request<UserOut>(`/users/${userId}/unblock`, {
+      method: "POST",
+    });
   },
 };
 

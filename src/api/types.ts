@@ -59,9 +59,11 @@ export interface UserOut {
   id: number;
   tg_id: number;
   username: string | null;
+  first_name?: string | null;
   full_name?: string | null;
   language?: "uz" | "ru" | "en" | string;
   is_blocked: boolean;
+  blocked_reason?: string | null;
   balance_uzs?: string;
   orders_count?: number;
   payments_count?: number;
@@ -76,11 +78,45 @@ export interface UserDetailOut {
   first_name?: string | null;
   language?: "uz" | "ru" | "en" | string;
   is_blocked: boolean;
+  blocked_reason?: string | null;
   balance_uzs: string;
   orders_total?: number;
   spent_uzs?: string;
   created_at?: string;
   last_seen_at?: string | null;
+}
+
+export interface PageUserOut {
+  items: UserOut[];
+  next_cursor?: number | null;
+  has_more: boolean;
+}
+
+// Ledger Types
+export interface LedgerEntryOut {
+  id: number;
+  amount_uzs: string;
+  balance_after: string;
+  kind: "topup" | "order_hold" | "order_refund" | "admin_adjust" | string;
+  ref_type: "payment" | "order" | "admin" | string;
+  ref_id: string;
+  comment: string | null;
+  created_at: string;
+}
+
+export interface PageLedgerEntryOut {
+  items: LedgerEntryOut[];
+  next_cursor?: number | null;
+  has_more: boolean;
+}
+
+export interface BalanceAdjustRequest {
+  amount_uzs: number | string;
+  comment: string;
+}
+
+export interface BlockRequest {
+  reason: string;
 }
 
 // Order Types
