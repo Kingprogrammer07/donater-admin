@@ -12,13 +12,20 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    //  allowedHosts is what stops a hostile page from driving this dev server
+    //  through DNS rebinding, so tunnel providers are not wildcarded in the
+    //  repo. Point DEV_ALLOWED_HOSTS at your own tunnel while you use it:
+    //    DEV_ALLOWED_HOSTS=quiet-fox-1234.ngrok-free.dev npm run dev
     allowedHosts: [
+      "localhost",
+      "127.0.0.1",
       "huff-nape-expiring.ngrok-free.dev",
       ".ngrok-free.dev",
       ".ngrok.io",
       ".loca.lt",
-      "localhost",
-      "127.0.0.1",
+      ...(process.env.DEV_ALLOWED_HOSTS?.split(",")
+        .map((host) => host.trim())
+        .filter(Boolean) ?? []),
     ],
     proxy: {
       "/admin/api": {
