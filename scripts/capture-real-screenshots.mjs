@@ -9,13 +9,13 @@ async function run() {
     fs.mkdirSync(artifactsDir, { recursive: true });
   }
 
-  console.log("Starting Vite dev server for React Router tests...");
+  console.log("Starting Vite dev server for Step 3 primitives verification...");
   const server = await createServer({
-    server: { host: "127.0.0.1", port: 5178 },
+    server: { host: "127.0.0.1", port: 5182 },
   });
   await server.listen();
   const address = server.httpServer.address();
-  const port = typeof address === "object" && address ? address.port : 5178;
+  const port = typeof address === "object" && address ? address.port : 5182;
   const baseUrl = `http://127.0.0.1:${port}/admin/`;
   console.log(`Vite server started on ${baseUrl}`);
 
@@ -23,18 +23,7 @@ async function run() {
     headless: true,
   });
 
-  const setupAuthMocks = async (page, permissions = [
-    "view",
-    "review_payments",
-    "adjust_balance",
-    "manage_orders",
-    "reveal_delivery",
-    "manage_pricing",
-    "manage_settings",
-    "manage_catalog",
-    "broadcast",
-    "manage_admins",
-  ]) => {
+  const setupAuthMocks = async (page) => {
     await page.addInitScript(() => {
       localStorage.setItem("donater_admin_refresh_token", "mock-dev-refresh-token");
     });
@@ -52,7 +41,7 @@ async function run() {
             tg_id: 777967425,
             username: "owner",
             full_name: "Aziz Qosimov",
-            role: permissions.includes("manage_admins") ? "owner" : "viewer",
+            role: "owner",
             is_active: true,
             last_login_at: new Date().toISOString(),
           },
@@ -70,11 +59,22 @@ async function run() {
             tg_id: 777967425,
             username: "owner",
             full_name: "Aziz Qosimov",
-            role: permissions.includes("manage_admins") ? "owner" : "viewer",
+            role: "owner",
             is_active: true,
             last_login_at: new Date().toISOString(),
           },
-          permissions,
+          permissions: [
+            "view",
+            "review_payments",
+            "adjust_balance",
+            "manage_orders",
+            "reveal_delivery",
+            "manage_pricing",
+            "manage_settings",
+            "manage_catalog",
+            "broadcast",
+            "manage_admins",
+          ],
         }),
       });
     });
@@ -83,99 +83,151 @@ async function run() {
   const testResults = {};
 
   try {
-    const page = await browser.newPage({
+    // 1. Desktop Light Mode & DataTable URL Search Params Persistence
+    console.log("1. Testing DataTable URL Filters & Page Refresh Persistence...");
+    const pageLight = await browser.newPage({
       viewport: { width: 1280, height: 800 },
       colorScheme: "light",
     });
-    await setupAuthMocks(page);
+    await setupAuthMocks(pageLight);
 
-    // 1. Test direct navigation to /admin/orders/42
-    console.log("1. Testing direct navigation to /admin/orders/42...");
-    await page.goto(`${baseUrl}orders/42`, { waitUntil: "networkidle" });
-    await page.waitForTimeout(600);
+    await pageLight.goto(`${baseUrl}styleguide`, { waitUntil: "networkidle" });
+    await pageLight.waitForTimeout(600);
 
-    const orders42Data = await page.evaluate(() => {
-      const h1 = document.querySelector("h1")?.innerText;
-      const h2 = document.querySelector("h2")?.innerText;
-      const activeNav = document.querySelector("aside a[aria-current='page']")?.getAttribute("href");
-      const activeNavText = document.querySelector("aside a[aria-current='page']")?.innerText?.trim();
-      const breadcrumb = document.querySelector("nav[aria-label='Breadcrumb']")?.innerText?.trim();
-      const activeElementTag = document.activeElement?.tagName;
-      const activeElementAria = document.activeElement?.getAttribute("aria-label");
+    // Apply Filter: type in search input and click "completed"
+    await pageLight.fill("input[type='search']", "Azizbek");
+    await pageLight.click("button:has-text('completed')");
+    await pageLight.waitForTimeout(300);
+
+    const initialFilterUrl = pageLight.url();
+    const rowsBeforeReload = await pageLight.locator("tbody tr").count();
+
+    // Reload page to verify persistence
+    await pageLight.reload({ waitUntil: "networkidle" });
+    await pageLight.waitForTimeout(500);
+
+    const afterReloadState = await pageLight.evaluate(() => {
+      const input = document.querySelector("input[type='search']");
+      const activeFilter = document.querySelector("button.bg-fg")?.innerText?.trim();
+      const firstRowText = document.querySelector("tbody tr td")?.innerText?.trim();
+      const domRowCount = document.querySelectorAll("tbody tr").length;
 
       return {
-        h1,
-        h2,
-        activeNavHref: activeNav,
-        activeNavText,
-        breadcrumb,
-        activeElement: `${activeElementTag}${activeElementAria ? `[aria-label='${activeElementAria}']` : ''}`,
+        inputValue: input?.value,
+        activeFilter,
+        firstRowText,
+        domRowCount,
+        currentUrl: window.location.href,
       };
     });
-    testResults.orders42Direct = orders42Data;
+
+    testResults.filterPersistence = {
+      initialFilterUrl,
+      rowsBeforeReload,
+      afterReloadState,
+      isStatePreserved:
+        afterReloadState.inputValue === "Azizbek" &&
+        afterReloadState.activeFilter === "completed" &&
+        afterReloadState.domRowCount > 0,
+    };
 
     // Capture Light Mode Screenshot
     const lightPath = path.join(artifactsDir, "layout_light_real.png");
-    await page.screenshot({ path: lightPath, fullPage: false });
+    await pageLight.screenshot({ path: lightPath, fullPage: false });
     console.log(`Saved Light screenshot to: ${lightPath}`);
 
-    // 2. Test Link element attributes (middle-click capability / real <a href>)
-    console.log("2. Testing NavLink <a> element attributes...");
-    const navLinks = await page.evaluate(() => {
-      return Array.from(document.querySelectorAll("aside a")).map((a) => ({
-        label: a.innerText.trim(),
-        tagName: a.tagName,
-        href: a.getAttribute("href"),
-        ariaCurrent: a.getAttribute("aria-current"),
-      }));
+    // 2. Testing 1000-Row Virtual Scrolling Performance
+    console.log("2. Testing 1000-Row Virtual Scrolling DOM footprint...");
+    // Clear filters to show 1000 items
+    await pageLight.fill("input[type='search']", "");
+    await pageLight.click("button:has-text('Barchasi')");
+    await pageLight.waitForTimeout(300);
+
+    const virtualDomStats = await pageLight.evaluate(() => {
+      const scrollContainer = document.querySelector("table")?.parentElement;
+      const initialDomRows = document.querySelectorAll("tbody tr").length;
+
+      if (scrollContainer) {
+        scrollContainer.scrollTop = 5000; // scroll deep into 1000 items
+      }
+
+      const scrolledDomRows = document.querySelectorAll("tbody tr").length;
+      return {
+        initialDomRows,
+        scrolledDomRows,
+        totalItemsInMock: 1000,
+        isVirtualized: scrolledDomRows < 35, // Only ~15-25 nodes in DOM despite 1000 rows
+      };
     });
-    testResults.allNavLinks = navLinks;
+    testResults.virtualScroll = virtualDomStats;
 
-    // 3. Test Navigation & Browser Back Button (popstate)
-    console.log("3. Testing client navigation to Payments and browser back...");
-    await page.locator("aside a", { hasText: "To'lovlar" }).first().click();
-    await page.waitForTimeout(400);
+    // 3. Testing Drawer Focus Trap and Focus Return
+    console.log("3. Testing Drawer Focus Trap & Return...");
+    // Switch to Dialogs tab
+    await pageLight.click("button:has-text('Drawer & Modal')");
+    await pageLight.waitForTimeout(300);
 
-    const paymentsNavData = await page.evaluate(() => ({
-      url: window.location.pathname,
-      h1: document.querySelector("h1")?.innerText,
-      activeElement: document.activeElement?.tagName,
-      activeNavHref: document.querySelector("aside a[aria-current='page']")?.getAttribute("href"),
-    }));
-    testResults.paymentsNavigation = paymentsNavData;
+    const openDrawerBtn = pageLight.locator("button", { hasText: "O'ngdan Drawer Ochish" });
+    await openDrawerBtn.focus();
+    await openDrawerBtn.click();
+    await pageLight.waitForTimeout(400);
 
-    // Browser Back
-    await page.goBack();
-    await page.waitForTimeout(400);
+    const drawerFocusTrapTest = await pageLight.evaluate(async () => {
+      const dialog = document.querySelector("div[role='dialog']");
+      const initialFocusedTag = document.activeElement?.tagName;
+      const initialFocusedAria = document.activeElement?.getAttribute("aria-label");
 
-    const backNavData = await page.evaluate(() => ({
-      url: window.location.pathname,
-      h1: document.querySelector("h1")?.innerText,
-      activeElement: document.activeElement?.tagName,
-      activeNavHref: document.querySelector("aside a[aria-current='page']")?.getAttribute("href"),
-    }));
-    testResults.browserBackButton = backNavData;
+      // Verify that focus is inside dialog
+      const isInsideDialog = dialog ? dialog.contains(document.activeElement) : false;
 
-    // 4. Test Dark Mode & Toast
-    console.log("4. Capturing Dark Mode...");
+      return {
+        isDrawerOpen: !!dialog,
+        isInsideDialog,
+        initialFocusedTag,
+        initialFocusedAria,
+      };
+    });
+
+    // Press Escape to close drawer and check focus return
+    await pageLight.keyboard.press("Escape");
+    await pageLight.waitForTimeout(400);
+
+    const focusReturnTest = await pageLight.evaluate(() => {
+      const activeEl = document.activeElement;
+      return {
+        activeElementText: activeEl?.innerText?.trim(),
+        activeElementTag: activeEl?.tagName,
+        isReturnedToTriggerButton: activeEl?.innerText?.includes("O'ngdan Drawer Ochish"),
+      };
+    });
+
+    testResults.drawerAccessibility = {
+      drawerFocusTrapTest,
+      focusReturnTest,
+    };
+
+    // 4. Desktop Dark Mode (Showing Drawer open in Dark Mode)
+    console.log("4. Capturing Desktop Layout Dark Mode...");
     const pageDark = await browser.newPage({
       viewport: { width: 1280, height: 800 },
       colorScheme: "dark",
     });
     await setupAuthMocks(pageDark);
-    await pageDark.goto(`${baseUrl}payments`, { waitUntil: "networkidle" });
+    await pageDark.goto(`${baseUrl}styleguide`, { waitUntil: "networkidle" });
     await pageDark.evaluate(() => {
       document.documentElement.classList.add("dark");
     });
     await pageDark.waitForTimeout(400);
-    await pageDark.click("button:has-text('Success Toast')");
+
+    // Open Drawer in Dark Mode to capture
+    await pageDark.click("tbody tr >> nth=0");
     await pageDark.waitForTimeout(400);
 
     const darkPath = path.join(artifactsDir, "layout_dark_real.png");
     await pageDark.screenshot({ path: darkPath, fullPage: false });
     console.log(`Saved Dark screenshot to: ${darkPath}`);
 
-    // 5. Test iPhone (390px) Mobile Viewport & Drawer
+    // 5. iPhone (390px) Mobile Viewport
     console.log("5. Capturing iPhone Layout (390px)...");
     const pageIPhone = await browser.newPage({
       viewport: { width: 390, height: 844 },
@@ -184,62 +236,18 @@ async function run() {
       hasTouch: true,
     });
     await setupAuthMocks(pageIPhone);
-    await pageIPhone.goto(`${baseUrl}orders/42`, { waitUntil: "networkidle" });
+    await pageIPhone.goto(`${baseUrl}styleguide`, { waitUntil: "networkidle" });
     await pageIPhone.waitForTimeout(400);
 
-    // Open Drawer
-    await pageIPhone.click("button[aria-label='Menyuni ochish']");
+    // Switch to Primitives tab on mobile
+    await pageIPhone.click("button:has-text('Money, Date, Status')");
     await pageIPhone.waitForTimeout(400);
-
-    const iphoneMetrics = await pageIPhone.evaluate(() => {
-      const drawer = document.querySelector("div[role='dialog']");
-      const navButtons = document.querySelectorAll("div[role='dialog'] aside nav a");
-      const touchTargets = Array.from(navButtons).map((btn) => {
-        const r = btn.getBoundingClientRect();
-        return {
-          text: btn.innerText.trim(),
-          height: `${Math.round(r.height)}px`,
-          is44pt: r.height >= 44,
-        };
-      });
-
-      return {
-        isDrawerOpen: !!drawer,
-        viewportWidth: window.innerWidth,
-        scrollWidth: document.documentElement.scrollWidth,
-        hasHorizontalOverflow: document.documentElement.scrollWidth > window.innerWidth,
-        navTouchTargetsCount: touchTargets.length,
-        allNavItemsAbove44pt: touchTargets.every((t) => t.is44pt),
-      };
-    });
-    testResults.iphoneDrawer = iphoneMetrics;
 
     const iphonePath = path.join(artifactsDir, "layout_iphone_390px_real.png");
     await pageIPhone.screenshot({ path: iphonePath, fullPage: false });
     console.log(`Saved iPhone screenshot to: ${iphonePath}`);
 
-    // 6. Test Viewer Role (Permission Filtering: /admins hidden)
-    console.log("6. Testing Viewer Role (ensure /admins is hidden)...");
-    const pageViewer = await browser.newPage({
-      viewport: { width: 1280, height: 800 },
-    });
-    await setupAuthMocks(pageViewer, ["view"]); // only 'view' permission
-    await pageViewer.goto(baseUrl, { waitUntil: "networkidle" });
-    await pageViewer.waitForTimeout(500);
-
-    const viewerData = await pageViewer.evaluate(() => {
-      const links = Array.from(document.querySelectorAll("aside a")).map((a) => a.getAttribute("href"));
-      return {
-        allRenderedLinks: links,
-        hasAdminsLink: links.includes("/admin/admins") || links.includes("/admins"),
-        hasPricingLink: links.includes("/admin/pricing") || links.includes("/pricing"),
-        hasBroadcastsLink: links.includes("/admin/broadcasts") || links.includes("/broadcasts"),
-        hasPaymentsLink: links.includes("/admin/payments") || links.includes("/payments"),
-      };
-    });
-    testResults.viewerRoleFiltering = viewerData;
-
-    console.log("\n=== REACT ROUTER V7 VERIFICATION RESULTS ===");
+    console.log("\n=== STEP 3 PRIMITIVES VERIFICATION RESULTS ===");
     console.log(JSON.stringify(testResults, null, 2));
   } finally {
     await browser.close();

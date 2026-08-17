@@ -23,5 +23,16 @@ export default defineConfig({
     outDir: "dist",
     assetsDir: "assets",
     sourcemap: true,
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "vendor-react": ["react", "react-dom", "react-router"],
+          "vendor-motion": ["motion"],
+          "vendor-icons": ["lucide-react"],
+          "vendor-virtual": ["@tanstack/react-virtual"],
+        },
+      },
+    },
   },
 });
