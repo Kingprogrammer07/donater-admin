@@ -36,6 +36,13 @@ export function SupportAlertsCard({
   const isChatIdDirty = initialChatIdNumber !== currentChatIdNumber;
   const isDirty = isSupportDirty || isChatIdDirty;
 
+  //  Number("abc") is NaN, which JSON.stringify turns into null - the same
+  //  payload as "switch alerts off". A typo must not silently mute the alerts.
+  const chatIdError =
+    adminChatId.trim() && !/^-?\d+$/.test(adminChatId.trim())
+      ? "Chat ID butun son bo'lishi kerak (masalan -1001234567890)."
+      : null;
+
   const saveMutation = useMutation({
     mutationFn: async () => {
       const patchValues: Record<string, unknown> = {};
@@ -105,7 +112,7 @@ export function SupportAlertsCard({
               variant="primary"
               size="sm"
               onClick={() => saveMutation.mutate()}
-              disabled={saveMutation.isPending}
+              disabled={saveMutation.isPending || Boolean(chatIdError)}
               className="gap-1 text-xs font-semibold"
             >
               {saveMutation.isPending && (
@@ -150,8 +157,9 @@ export function SupportAlertsCard({
             onChange={(e) => setAdminChatId(e.target.value)}
             className="w-full px-3 py-2 rounded-xs border border-hairline bg-canvas text-xs text-fg font-mono focus:outline-none focus:border-fg disabled:bg-surface-2 disabled:cursor-not-allowed"
           />
-          <p className="text-[12px] text-fg-subtle">
-            Yangi to'lovlar, xatoliklar va tizim ogohlantirishlari yuboriladigan Telegram chat/guruhi IDsi.
+          <p className={`text-[12px] ${chatIdError ? "text-status-fail" : "text-fg-subtle"}`}>
+            {chatIdError ??
+              "Yangi to'lovlar, xatoliklar va tizim ogohlantirishlari yuboriladigan Telegram chat/guruhi IDsi."}
           </p>
         </div>
       </div>

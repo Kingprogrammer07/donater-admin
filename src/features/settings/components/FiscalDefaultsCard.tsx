@@ -45,6 +45,15 @@ export function FiscalDefaultsCard({
   const isVatDirty = initialVatNumber !== currentVatNumber;
   const isDirty = isSpicDirty || isPackageDirty || isVatDirty;
 
+  //  The fiscal receipt builds VATPercent as a whole number, so a fractional
+  //  percent would break the receipt task rather than this form.
+  const vatError =
+    vatPercent.trim() && !/^\d{1,3}$/.test(vatPercent.trim())
+      ? "QQS foizi butun son bo'lishi kerak (0 dan 100 gacha)."
+      : currentVatNumber > 100
+        ? "QQS foizi 100 dan oshmasligi kerak."
+        : null;
+
   const saveMutation = useMutation({
     mutationFn: async () => {
       const patchValues: Record<string, unknown> = {};
@@ -122,7 +131,7 @@ export function FiscalDefaultsCard({
               variant="primary"
               size="sm"
               onClick={() => saveMutation.mutate()}
-              disabled={saveMutation.isPending}
+              disabled={saveMutation.isPending || Boolean(vatError)}
               className="gap-1 text-xs font-semibold"
             >
               {saveMutation.isPending && (
@@ -192,8 +201,8 @@ export function FiscalDefaultsCard({
               %
             </span>
           </div>
-          <p className="text-[12px] text-fg-subtle">
-            O'zbekistonda standart stavka: 12% yoki 0%
+          <p className={`text-[12px] ${vatError ? "text-status-fail" : "text-fg-subtle"}`}>
+            {vatError ?? "O'zbekistonda standart stavka: 12% yoki 0%"}
           </p>
         </div>
       </div>

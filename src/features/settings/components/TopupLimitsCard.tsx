@@ -9,6 +9,19 @@ import { useAuth } from "@/lib/auth/AuthContext";
 import { queryClient } from "@/lib/queryClient";
 import { ApiError } from "@/api/errors";
 
+//  Money leaves this form as a string, so it is checked as one: an amount that
+//  is not a number is stored happily by nobody and then raises inside the bot,
+//  for every user trying to top up. The server refuses it too - this is just
+//  the half that tells the operator before they press save.
+const AMOUNT = /^\d+(\.\d{1,4})?$/;
+
+function amountError(value: string, label: string): string | null {
+  const trimmed = value.trim();
+  if (!trimmed) return `${label}: qiymat bo'sh.`;
+  if (!AMOUNT.test(trimmed)) return `${label}: faqat raqam, masalan 2000.00`;
+  return null;
+}
+
 export interface TopupLimitsCardProps {
   initialMinTopup?: string | null;
   initialMaxTopup?: string | null;
@@ -39,14 +52,17 @@ export function TopupLimitsCard({
   const isFazerDirty = (initialFazerLowBalance || "") !== fazerLowBalance.trim();
   const isDirty = isMinDirty || isMaxDirty || isFazerDirty;
 
+  const minError = amountError(minTopup, "Minimal summa");
+  const maxError = amountError(maxTopup, "Maksimal summa");
+  const fazerError = amountError(fazerLowBalance, "Kam qoldiq chegarasi");
+  const rangeError =
+    !minError && !maxError && Number(minTopup.trim()) > Number(maxTopup.trim())
+      ? "Minimal summa maksimal summadan katta bo'lishi mumkin emas."
+      : null;
+  const hasError = Boolean(minError || maxError || fazerError || rangeError);
+
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const minNum = parseFloat(minTopup);
-      const maxNum = parseFloat(maxTopup);
-      if (!isNaN(minNum) && !isNaN(maxNum) && minNum > maxNum) {
-        throw new Error("Minimal to'ldirish summasi maksimal summadan katta bo'lishi mumkin emas.");
-      }
-
       const patchValues: Record<string, unknown> = {};
       if (isMinDirty) {
         patchValues.min_topup_uzs = minTopup.trim();
@@ -120,7 +136,7 @@ export function TopupLimitsCard({
               variant="primary"
               size="sm"
               onClick={() => saveMutation.mutate()}
-              disabled={saveMutation.isPending}
+              disabled={saveMutation.isPending || hasError}
               className="gap-1 text-xs font-semibold"
             >
               {saveMutation.isPending && (
@@ -152,8 +168,8 @@ export function TopupLimitsCard({
               UZS
             </span>
           </div>
-          <p className="text-[12px] text-fg-subtle">
-            Bitta to'lovdagi eng kam summa
+          <p className={`text-[12px] ${minError ? "text-status-fail" : "text-fg-subtle"}`}>
+            {minError ?? "Bitta to'lovdagi eng kam summa"}
           </p>
         </div>
 
@@ -175,8 +191,10 @@ export function TopupLimitsCard({
               UZS
             </span>
           </div>
-          <p className="text-[12px] text-fg-subtle">
-            Bitta to'lovdagi eng ko'p summa
+          <p
+            className={`text-[12px] ${maxError || rangeError ? "text-status-fail" : "text-fg-subtle"}`}
+          >
+            {maxError ?? rangeError ?? "Bitta to'lovdagi eng ko'p summa"}
           </p>
         </div>
 
@@ -198,8 +216,8 @@ export function TopupLimitsCard({
               USD
             </span>
           </div>
-          <p className="text-[12px] text-fg-subtle">
-            Balans shu miqdordan kamaysa ogohlantirish beriladi
+          <p className={`text-[12px] ${fazerError ? "text-status-fail" : "text-fg-subtle"}`}>
+            {fazerError ?? "Balans shu miqdordan kamaysa ogohlantirish beriladi"}
           </p>
         </div>
       </div>
