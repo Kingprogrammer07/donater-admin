@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { auditApi } from "@/api/client";
 import { Button } from "@/components/ui/button";
@@ -173,72 +173,84 @@ export function AuditTable() {
                 const isExpanded = expandedId === entry.id;
                 const hasDiff = Boolean(entry.before || entry.after);
 
+                const toggle = () => hasDiff && setExpandedId(isExpanded ? null : entry.id);
+
                 return (
-                  <tr key={entry.id} className="group">
-                    <td colSpan={6} className="p-0">
-                      <div
-                        onClick={() => hasDiff && setExpandedId(isExpanded ? null : entry.id)}
-                        className={`flex items-center justify-between p-3 transition-colors ${
-                          hasDiff ? "cursor-pointer hover:bg-surface-2/50" : ""
-                        } ${isExpanded ? "bg-surface-2/60" : ""}`}
-                      >
-                        <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 w-full items-center">
-                          {/* ID */}
-                          <span className="font-mono text-fg-subtle text-[12px]">
-                            #{entry.id}
-                          </span>
+                  <Fragment key={entry.id}>
+                    {/*  One cell per column, so the header row above actually
+                        labels the data under it - and the row opens from the
+                        keyboard, not only from a mouse. */}
+                    <tr
+                      onClick={toggle}
+                      onKeyDown={(event) => {
+                        if (!hasDiff) return;
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          toggle();
+                        }
+                      }}
+                      tabIndex={hasDiff ? 0 : undefined}
+                      role={hasDiff ? "button" : undefined}
+                      aria-expanded={hasDiff ? isExpanded : undefined}
+                      className={`transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-fg/40 ${
+                        hasDiff ? "cursor-pointer hover:bg-surface-2/50" : ""
+                      } ${isExpanded ? "bg-surface-2/60" : ""}`}
+                    >
+                      <td className="p-3 font-mono text-fg-subtle text-[12px]">#{entry.id}</td>
 
-                          {/* Action */}
-                          <div className="flex items-center gap-1.5 font-mono font-bold text-fg">
-                            <span className="truncate">{entry.action}</span>
-                          </div>
+                      <td className="p-3 font-mono font-bold text-fg">
+                        <span className="truncate block max-w-[220px]">{entry.action}</span>
+                      </td>
 
-                          {/* Actor */}
-                          <div className="text-fg-subtle">
-                            {entry.actor_tg_id ? (
-                              <span className="font-mono text-fg">
-                                TG: {entry.actor_tg_id}
-                              </span>
-                            ) : (
-                              <span className="text-[12px] text-fg-subtle">Tizim (Worker)</span>
-                            )}
-                          </div>
+                      <td className="p-3 text-fg-subtle">
+                        {entry.actor_tg_id ? (
+                          <span className="font-mono text-fg">TG: {entry.actor_tg_id}</span>
+                        ) : (
+                          <span className="text-[12px] text-fg-subtle">Tizim (Worker)</span>
+                        )}
+                      </td>
 
-                          {/* Target */}
-                          <div className="text-fg-subtle">
-                            {entry.target_type ? (
-                              <Badge variant="neutral" styleType="subtle" className="text-[12px] font-mono">
-                                {entry.target_type}
-                                {entry.target_id ? ` #${entry.target_id}` : ""}
-                              </Badge>
-                            ) : (
-                              "—"
-                            )}
-                          </div>
+                      <td className="p-3 text-fg-subtle">
+                        {entry.target_type ? (
+                          <Badge
+                            variant="neutral"
+                            styleType="subtle"
+                            className="text-[12px] font-mono"
+                          >
+                            {entry.target_type}
+                            {entry.target_id ? ` #${entry.target_id}` : ""}
+                          </Badge>
+                        ) : (
+                          "—"
+                        )}
+                      </td>
 
-                          {/* Date & Expand Button */}
-                          <div className="flex items-center justify-between sm:justify-end gap-2 text-right">
-                            <DateTime value={entry.created_at} mode="relative" />
-                            {hasDiff && (
-                              <span className="text-brand p-1 rounded-xs hover:bg-surface-2">
-                                <Icons.ChevronDown
-                                  size={14}
-                                  className={`transition-transform ${isExpanded ? "rotate-180" : ""}`}
-                                />
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
+                      <td className="p-3 text-fg-subtle whitespace-nowrap">
+                        <DateTime value={entry.created_at} mode="relative" />
+                      </td>
 
-                      {/* Expanded Diff Viewer */}
-                      {isExpanded && (
-                        <div className="p-4 bg-canvas border-t border-hairline/60">
+                      <td className="p-3 text-right">
+                        {hasDiff ? (
+                          <Icons.ChevronDown
+                            size={14}
+                            className={`inline text-brand transition-transform ${
+                              isExpanded ? "rotate-180" : ""
+                            }`}
+                          />
+                        ) : (
+                          <span className="text-[12px] text-fg-subtle">—</span>
+                        )}
+                      </td>
+                    </tr>
+
+                    {isExpanded && (
+                      <tr>
+                        <td colSpan={6} className="p-4 bg-canvas border-t border-hairline/60">
                           <AuditDiffViewer before={entry.before} after={entry.after} />
-                        </div>
-                      )}
-                    </td>
-                  </tr>
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
                 );
               })}
             </tbody>

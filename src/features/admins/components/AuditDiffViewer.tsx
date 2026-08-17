@@ -6,16 +6,30 @@ export interface AuditDiffViewerProps {
 }
 
 const SECRET_KEY_PATTERN = /(token|secret|key|password|hash|api_key|auth)/i;
+const MASK = "••••••••";
+
+//  Audit payloads are free-form JSON, so a secret can sit at any depth. Masking
+//  only the top level would print the nested object verbatim through
+//  JSON.stringify - and this page is readable by every role, including viewer.
+function redact(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(redact);
+  if (value !== null && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, inner]) => [
+        key,
+        SECRET_KEY_PATTERN.test(key) ? MASK : redact(inner),
+      ])
+    );
+  }
+  return value;
+}
 
 function maskSecret(key: string, value: unknown): string {
   if (value === null || value === undefined) return "—";
-  if (SECRET_KEY_PATTERN.test(key) && typeof value === "string" && value.length > 0) {
-    return "••••••••";
-  }
-  if (typeof value === "object") {
-    return JSON.stringify(value, null, 1);
-  }
-  return String(value);
+  if (SECRET_KEY_PATTERN.test(key)) return MASK;
+  const safe = redact(value);
+  if (typeof safe === "object") return JSON.stringify(safe, null, 1);
+  return String(safe);
 }
 
 export function AuditDiffViewer({ before, after }: AuditDiffViewerProps) {

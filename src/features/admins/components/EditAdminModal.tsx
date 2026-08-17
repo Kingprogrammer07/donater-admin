@@ -70,14 +70,21 @@ export function EditAdminModal({ admin, open, onClose }: EditAdminModalProps) {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="fixed inset-0 z-100 flex items-center justify-center p-4"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="edit-admin-title"
+      >
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
           onClick={onClose}
-          className="fixed inset-0 bg-overlay"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm cursor-pointer"
+          aria-hidden="true"
         />
 
         {/* Modal Window */}
@@ -93,7 +100,9 @@ export function EditAdminModal({ admin, open, onClose }: EditAdminModalProps) {
                 <Icons.Edit size={16} />
               </div>
               <div>
-                <h2 className="text-sm font-bold text-fg">Adminni Tahrirlash</h2>
+                <h2 id="edit-admin-title" className="text-sm font-bold text-fg">
+                  Adminni Tahrirlash
+                </h2>
                 <p className="text-[12px] text-fg-subtle font-mono">
                   TG ID: {admin.tg_id} {admin.full_name ? `(${admin.full_name})` : ""}
                 </p>
