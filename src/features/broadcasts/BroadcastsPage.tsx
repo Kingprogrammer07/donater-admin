@@ -93,29 +93,48 @@ export default function BroadcastsPage() {
         cell: (row: BroadcastOut) => {
           const total = row.total_count || 0;
           const sent = row.sent_count || 0;
-          const processed = sent + (row.blocked_count || 0) + (row.failed_count || 0);
+          const unsent = (row.blocked_count || 0) + (row.failed_count || 0);
+          const processed = sent + unsent;
           const pct = total > 0 ? Math.min(100, Math.round((processed / total) * 100)) : 0;
 
-          if (row.status === "running" || row.status === "finished") {
+          //  A cancelled run that had already started keeps its counters, so
+          //  the frozen audience - not the status - decides whether there is
+          //  progress to show.
+          if (total > 0) {
+            //  The bar tracks how far the run got; the colour tracks how it
+            //  went. A finished run that failed on every recipient is 100%
+            //  processed and must not be green.
+            const barClass =
+              row.status === "running"
+                ? "bg-brand"
+                : sent === 0
+                  ? "bg-status-fail"
+                  : unsent > 0
+                    ? "bg-status-warn"
+                    : "bg-status-ok";
+
             return (
               <div className="space-y-1 text-xs">
-                <div className="flex items-center justify-between font-mono">
-                  <span className="text-fg-subtle">{sent} / {total}</span>
+                <div
+                  className="flex items-center justify-between font-mono"
+                  title={`Yetkazildi: ${sent}, yetkazilmadi: ${unsent}, jami: ${total}`}
+                >
+                  <span className="text-fg-subtle">{processed} / {total}</span>
                   <span className="font-bold text-fg">{pct}%</span>
                 </div>
                 <div className="w-full h-1.5 rounded-full bg-surface-2 overflow-hidden border border-hairline/60">
-                  <div
-                    className={`h-full ${row.status === "finished" ? "bg-status-ok" : "bg-brand"}`}
-                    style={{ width: `${pct}%` }}
-                  />
+                  <div className={`h-full ${barClass}`} style={{ width: `${pct}%` }} />
                 </div>
               </div>
             );
           }
 
+          //  Before the send starts the audience is not frozen yet, so
+          //  total_count is 0 - which is a fact about the run, not about the
+          //  filter. Printing "0 ta qamrov" here read as "this reaches nobody".
           return (
-            <span className="font-mono text-xs text-fg-muted">
-              {total.toLocaleString("uz-UZ")} ta qamrov
+            <span className="font-mono text-xs text-fg-subtle">
+              {row.status === "cancelled" ? "Yuborilmadi" : "Hali boshlanmagan"}
             </span>
           );
         },

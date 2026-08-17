@@ -11,7 +11,7 @@ import { useToast } from "@/lib/toast/ToastContext";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { queryClient } from "@/lib/queryClient";
 import { ApiError } from "@/api/errors";
-import { BroadcastStatusBadge } from "./BroadcastStatusBadge";
+import { BroadcastStatusBadge, broadcastStatusLabel } from "./BroadcastStatusBadge";
 import { TelegramMessagePreview } from "./TelegramMessagePreview";
 import { AudienceFilterSummary } from "./AudienceFilterSummary";
 import type { BroadcastOut } from "@/api/types";
@@ -48,6 +48,20 @@ export function BroadcastDetailDrawer({
       const data = query.state.data as BroadcastOut | undefined;
       return data?.status === "running" ? 5000 : false;
     },
+  });
+
+  //  total_count stays 0 until the server freezes the audience inside start(),
+  //  so a draft cannot report its own reach. The confirm dialog is the last
+  //  screen before a message goes to everyone, and it has to show a real
+  //  number - ask the same endpoint the wizard asks.
+  const isBeforeSend = broadcast?.status === "draft" || broadcast?.status === "scheduled";
+  const { data: reachPreview, isLoading: isReachLoading } = useQuery({
+    queryKey: ["audience-preview", broadcast?.audience],
+    queryFn: () => broadcastApi.previewAudience(broadcast!.audience),
+    //  /preview requires the broadcast permission; a viewer asking would only
+    //  collect a 403.
+    enabled: isOpen && Boolean(broadcast) && isBeforeSend && canManageBroadcast,
+    staleTime: 30_000,
   });
 
   // Start Mutation
@@ -104,6 +118,24 @@ export function BroadcastDetailDrawer({
   const processed = sent + blocked + failed;
   const progressPct = total > 0 ? Math.min(100, Math.round((processed / total) * 100)) : 0;
 
+  //  Green means "everyone got it". A finished run where every message failed
+  //  is still 100% processed, and painting that bar green reads as success.
+  const barClass = !isTerminal
+    ? "bg-brand"
+    : sent === 0
+      ? "bg-status-fail"
+      : blocked + failed > 0
+        ? "bg-status-warn"
+        : "bg-status-ok";
+
+  const reach = isBeforeSend ? reachPreview?.total : total;
+  const reachLabel =
+    reach === undefined
+      ? isReachLoading
+        ? "hisoblanmoqda..."
+        : "noma'lum"
+      : `${reach.toLocaleString("uz-UZ")} ta`;
+
   return (
     <>
       <Drawer
@@ -112,7 +144,9 @@ export function BroadcastDetailDrawer({
         title={broadcast ? `Xabarnoma #${broadcast.id}` : "Xabarnoma tafsilotlari"}
         description={
           broadcast
-            ? `${broadcast.status.toUpperCase()} • ${total} ta qamrov`
+            ? `${broadcastStatusLabel(broadcast.status)} • ${
+                isBeforeSend ? `taxminiy qamrov ${reachLabel}` : `${reachLabel} qamrov`
+              }`
             : "Yuklanmoqda..."
         }
         size="lg"
@@ -185,8 +219,8 @@ export function BroadcastDetailDrawer({
                 </div>
               </div>
 
-              {/* Progress Bar (if running or finished) */}
-              {(status === "running" || status === "finished") && (
+              {/* Progress, once there is a frozen audience to measure against */}
+              {total > 0 && (
                 <div className="space-y-1.5 pt-1">
                   <div className="flex items-center justify-between text-xs font-mono">
                     <span className="text-fg-subtle">
@@ -196,9 +230,7 @@ export function BroadcastDetailDrawer({
                   </div>
                   <div className="w-full h-2 rounded-full bg-surface-2 overflow-hidden border border-hairline/60">
                     <div
-                      className={`h-full transition-all duration-500 ${
-                        status === "finished" ? "bg-status-ok" : "bg-brand"
-                      }`}
+                      className={`h-full transition-all duration-500 ${barClass}`}
                       style={{ width: `${progressPct}%` }}
                     />
                   </div>
@@ -208,10 +240,10 @@ export function BroadcastDetailDrawer({
               {/* Stats Chips */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs pt-1">
                 <div className="p-2.5 rounded-xs border border-hairline bg-surface-2/50 space-y-0.5">
-                  <span className="text-fg-subtle block">Jami qamrov:</span>
-                  <span className="font-bold font-mono text-fg text-sm">
-                    {total.toLocaleString("uz-UZ")}
+                  <span className="text-fg-subtle block">
+                    {isBeforeSend ? "Taxminiy qamrov:" : "Jami qamrov:"}
                   </span>
+                  <span className="font-bold font-mono text-fg text-sm">{reachLabel}</span>
                 </div>
 
                 <div className="p-2.5 rounded-xs border border-status-ok/30 bg-status-ok-bg/20 space-y-0.5">
@@ -288,7 +320,11 @@ export function BroadcastDetailDrawer({
           await startMutation.mutateAsync();
         }}
         title="Xabarnomani yuborishni boshlash"
-        description={`Bu ${total.toLocaleString("uz-UZ")} foydalanuvchiga xabar yuboradi. Bu amalni orqaga qaytarib bo'lmaydi.`}
+        description={
+          reach === 0
+            ? "Bu filtr hozir hech kimga to'g'ri kelmayapti. Yuborish boshlanmaydi — avval auditoriya filtrini tekshiring."
+            : `Bu ${reachLabel} foydalanuvchiga xabar yuboradi. Auditoriya aynan boshlash payti muzlatiladi, shuning uchun son shu daqiqadagi holatga qarab bir oz farq qilishi mumkin. Bu amalni orqaga qaytarib bo'lmaydi.`
+        }
         confirmLabel="Yuborishni boshlash"
         variant="primary"
         isLoading={startMutation.isPending}

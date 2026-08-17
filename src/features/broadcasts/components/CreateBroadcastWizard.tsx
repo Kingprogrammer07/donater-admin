@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { broadcastApi } from "@/api/client";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Icons } from "@/components/icons";
 import { useToast } from "@/lib/toast/ToastContext";
 import { ApiError } from "@/api/errors";
 import { queryClient } from "@/lib/queryClient";
+import { useDebouncedValue } from "@/lib/useDebouncedValue";
 import { AnimatePresence, motion } from "motion/react";
 import { TelegramMessagePreview } from "./TelegramMessagePreview";
 import { AudienceFilterSummary } from "./AudienceFilterSummary";
@@ -46,23 +47,36 @@ export function CreateBroadcastWizard({ isOpen, onClose }: CreateBroadcastWizard
   const audienceFilter: AudienceFilter = {
     languages: selectedLangs.length > 0 ? (selectedLangs as ("uz" | "ru" | "en")[]) : null,
     include_blocked: includeBlocked,
-    balance_min: balanceMin ? Number(balanceMin) : null,
-    balance_max: balanceMax ? Number(balanceMax) : null,
+    //  Sent as written, not as a JS number: money is Decimal on the server and
+    //  a float round-trip is the one thing a balance filter must not do.
+    balance_min: balanceMin.trim() || null,
+    balance_max: balanceMax.trim() || null,
     has_ordered: hasOrdered === "all" ? null : hasOrdered === "true",
+    //  The date inputs are local wall-clock; the API takes instants. The "to"
+    //  bound covers the whole chosen day rather than its first millisecond.
     seen_after: seenAfter ? new Date(seenAfter).toISOString() : null,
-    registered_from: registeredFrom ? new Date(registeredFrom).toISOString() : null,
-    registered_to: registeredTo ? new Date(registeredTo).toISOString() : null,
+    registered_from: registeredFrom ? new Date(`${registeredFrom}T00:00:00`).toISOString() : null,
+    registered_to: registeredTo ? new Date(`${registeredTo}T23:59:59.999`).toISOString() : null,
   };
 
-  // Live Audience Preview Query with debounce
-  const { data: previewData, isLoading: isPreviewLoading } = useQuery({
-    queryKey: ["audience-preview", audienceFilter],
-    queryFn: () => broadcastApi.previewAudience(audienceFilter),
-    enabled: isOpen && step === 1,
-    staleTime: 300,
+  //  One request per pause instead of one per keystroke: typing a six-digit
+  //  balance used to fire six counting queries against the whole user table.
+  //  Debounced through the serialised form because the object above is a fresh
+  //  literal on every render, and debouncing an unstable identity never settles.
+  const filterKey = JSON.stringify(audienceFilter);
+  const settledKey = useDebouncedValue(filterKey);
+  const settledFilter = useMemo(() => JSON.parse(settledKey) as AudienceFilter, [settledKey]);
+
+  const { data: previewData, isFetching: isPreviewFetching } = useQuery({
+    queryKey: ["audience-preview", settledKey],
+    queryFn: () => broadcastApi.previewAudience(settledFilter),
+    enabled: isOpen && step !== 2,
+    staleTime: 30_000,
   });
 
   const audienceTotal = previewData?.total ?? 0;
+  //  Still typing, or the answer for what is on screen has not arrived yet.
+  const isCounting = isPreviewFetching || settledKey !== filterKey;
 
   // Create Broadcast Mutation
   const createMutation = useMutation({
@@ -247,16 +261,14 @@ export function CreateBroadcastWizard({ isOpen, onClose }: CreateBroadcastWizard
                       Auditoriya qamrovi:
                     </span>
                     <span className="text-sm font-bold font-mono text-fg">
-                      {isPreviewLoading ? (
-                        "Hisoblanmoqda..."
-                      ) : (
-                        `${audienceTotal.toLocaleString("uz-UZ")} ta foydalanuvchi`
-                      )}
+                      {isCounting
+                        ? "Hisoblanmoqda..."
+                        : `${audienceTotal.toLocaleString("uz-UZ")} ta foydalanuvchi`}
                     </span>
                   </div>
                 </div>
 
-                {audienceTotal === 0 && !isPreviewLoading && (
+                {audienceTotal === 0 && !isCounting && (
                   <Badge variant="warn" styleType="subtle" className="text-xs">
                     0 ta foydalanuvchi
                   </Badge>
@@ -343,6 +355,43 @@ export function CreateBroadcastWizard({ isOpen, onClose }: CreateBroadcastWizard
                       placeholder="Maks balans (UZS)"
                       value={balanceMax}
                       onChange={(e) => setBalanceMax(e.target.value)}
+                      className="w-full px-3 py-1.5 rounded-xs border border-hairline bg-canvas text-xs text-fg font-mono focus:outline-none focus:border-fg"
+                    />
+                  </div>
+                </div>
+
+                {/* Last activity */}
+                <div className="space-y-1.5">
+                  <label htmlFor="filter-seen-after" className="text-xs font-semibold text-fg block">
+                    Oxirgi faollik (shu vaqtdan keyin):
+                  </label>
+                  <input
+                    id="filter-seen-after"
+                    type="datetime-local"
+                    value={seenAfter}
+                    onChange={(e) => setSeenAfter(e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-xs border border-hairline bg-canvas text-xs text-fg font-mono focus:outline-none focus:border-fg"
+                  />
+                </div>
+
+                {/* Registration window */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-fg block">
+                    Ro'yxatdan o'tgan davr:
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <input
+                      type="date"
+                      aria-label="Ro'yxatdan o'tgan: boshlanish sanasi"
+                      value={registeredFrom}
+                      onChange={(e) => setRegisteredFrom(e.target.value)}
+                      className="w-full px-3 py-1.5 rounded-xs border border-hairline bg-canvas text-xs text-fg font-mono focus:outline-none focus:border-fg"
+                    />
+                    <input
+                      type="date"
+                      aria-label="Ro'yxatdan o'tgan: tugash sanasi"
+                      value={registeredTo}
+                      onChange={(e) => setRegisteredTo(e.target.value)}
                       className="w-full px-3 py-1.5 rounded-xs border border-hairline bg-canvas text-xs text-fg font-mono focus:outline-none focus:border-fg"
                     />
                   </div>
@@ -520,6 +569,23 @@ export function CreateBroadcastWizard({ isOpen, onClose }: CreateBroadcastWizard
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-1">
               {/* Left Column: Details & Schedule */}
               <div className="space-y-4">
+                {/* The number this send is about, restated where it is decided */}
+                <div className="p-3.5 rounded-xs border border-brand/40 bg-brand-muted/40 flex items-center gap-2.5">
+                  <div className="size-8 rounded-full bg-brand flex items-center justify-center text-canvas shrink-0">
+                    <Icons.Users size="sm" />
+                  </div>
+                  <div>
+                    <span className="text-xs text-fg-subtle block font-medium">
+                      Auditoriya qamrovi:
+                    </span>
+                    <span className="text-sm font-bold font-mono text-fg">
+                      {isCounting
+                        ? "Hisoblanmoqda..."
+                        : `${audienceTotal.toLocaleString("uz-UZ")} ta foydalanuvchi`}
+                    </span>
+                  </div>
+                </div>
+
                 <AudienceFilterSummary filter={audienceFilter} />
 
                 {/* Schedule DateTime Input */}
@@ -593,7 +659,7 @@ export function CreateBroadcastWizard({ isOpen, onClose }: CreateBroadcastWizard
                 type="button"
                 variant="primary"
                 size="sm"
-                disabled={step === 1 && audienceTotal === 0 && !isPreviewLoading}
+                disabled={step === 1 && (isCounting || audienceTotal === 0)}
                 onClick={() => {
                   if (step === 1 && audienceTotal === 0) {
                     toastError("Auditoriya 0 bo'lganda davom etib bo'lmaydi.");
