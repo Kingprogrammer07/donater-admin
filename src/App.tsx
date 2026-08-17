@@ -11,6 +11,7 @@ import { Icons } from "@/components/icons";
 const LoginPage = lazy(() =>
   import("@/features/auth/LoginPage").then((m) => ({ default: m.LoginPage }))
 );
+const DashboardPage = lazy(() => import("@/features/dashboard/DashboardPage"));
 const PaymentsPage = lazy(() => import("@/features/payments/PaymentsPage"));
 const OrdersPage = lazy(() => import("@/features/orders/OrdersPage"));
 const UsersPage = lazy(() => import("@/features/users/UsersPage"));
@@ -91,7 +92,7 @@ const router = createBrowserRouter(
           path: "/",
           element: (
             <SuspenseWrapper>
-              <PlaceholderPage />
+              <DashboardPage />
             </SuspenseWrapper>
           ),
         },

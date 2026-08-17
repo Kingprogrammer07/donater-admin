@@ -17,6 +17,13 @@ import type {
   OrderDetailOut,
   PageOrderOut,
   RevealPayloadOut,
+  OverviewOut,
+  TimeseriesOut,
+  TopProductOut,
+  FazerCardsStatusOut,
+  StatsPeriod,
+  StatsInterval,
+  StatsMetric,
 } from "./types";
 
 const REFRESH_TOKEN_KEY = "donater_admin_refresh_token";
@@ -444,4 +451,36 @@ export const ordersApi = {
     });
   },
 };
+
+export const statsApi = {
+  getOverview(period: StatsPeriod = "7d"): Promise<OverviewOut> {
+    return request<OverviewOut>(`/stats/overview?period=${period}`);
+  },
+
+  getTimeseries(
+    params: {
+      metric?: StatsMetric;
+      interval?: StatsInterval;
+      period?: StatsPeriod;
+    } = {}
+  ): Promise<TimeseriesOut> {
+    const search = new URLSearchParams();
+    if (params.metric) search.set("metric", params.metric);
+    if (params.interval) search.set("interval", params.interval);
+    if (params.period) search.set("period", params.period);
+    const qs = search.toString();
+    return request<TimeseriesOut>(`/stats/timeseries${qs ? `?${qs}` : ""}`);
+  },
+
+  getTopProducts(period: StatsPeriod = "7d", limit = 10): Promise<TopProductOut[]> {
+    return request<TopProductOut[]>(`/stats/top-products?period=${period}&limit=${limit}`);
+  },
+};
+
+export const systemApi = {
+  getFazerCards(): Promise<FazerCardsStatusOut> {
+    return request<FazerCardsStatusOut>("/system/fazercards");
+  },
+};
+
 

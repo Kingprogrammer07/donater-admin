@@ -182,3 +182,53 @@ export interface RevealPayloadOut {
   public_id: string;
   delivered_payload: Record<string, unknown> | null;
 }
+
+// Stats & Dashboard Types
+export type StatsPeriod = "today" | "7d" | "30d";
+export type StatsInterval = "hour" | "day";
+export type StatsMetric = "revenue" | "profit" | "orders" | "users" | "topups";
+
+export interface OverviewOut {
+  revenue_uzs: string;
+  profit_uzs: string;
+  orders_total: number;
+  orders_by_status: Record<string, number>;
+  new_users: number;
+  topups_uzs: string;
+  refunds_uzs: string;
+  pending_proofs: number;
+  failed_orders: number;
+}
+
+export interface TimeseriesPointOut {
+  bucket: string;
+  value: string;
+}
+
+export interface TimeseriesOut {
+  metric: string;
+  interval: string;
+  points: TimeseriesPointOut[];
+}
+
+export interface TopProductOut {
+  offer_id: number;
+  name: string;
+  product_kind: string;
+  orders: number;
+  quantity: number;
+  revenue_uzs: string;
+  profit_uzs: string;
+}
+
+// System & Diagnostics Types
+export interface FazerCardsStatusOut {
+  reachable: boolean;
+  balance_usd?: string | null;
+  currency?: string | null;
+  login?: string | null;
+  plan?: string | null;
+  subscription_active?: boolean | null;
+  low_balance: boolean;
+  error?: string | null;
+}
