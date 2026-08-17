@@ -354,3 +354,62 @@ export interface ManualRateRequest {
 export interface FxModeRequest {
   strict_manual: boolean;
 }
+
+// Broadcast (Mass Mailing) Types
+export type BroadcastStatus = "draft" | "scheduled" | "running" | "finished" | "cancelled";
+
+export interface BroadcastButton {
+  url: string;
+  text_uz: string;
+  text_ru?: string | null;
+  text_en?: string | null;
+}
+
+export interface AudienceFilter {
+  languages?: ("uz" | "ru" | "en")[] | null;
+  include_blocked?: boolean;
+  balance_min?: number | string | null;
+  balance_max?: number | string | null;
+  has_ordered?: boolean | null;
+  seen_after?: string | null;
+  registered_from?: string | null;
+  registered_to?: string | null;
+}
+
+export interface BroadcastCreateRequest {
+  audience?: AudienceFilter;
+  text_uz: string;
+  text_ru?: string | null;
+  text_en?: string | null;
+  buttons?: BroadcastButton[];
+  scheduled_at?: string | null;
+}
+
+export interface BroadcastOut {
+  id: number;
+  status: BroadcastStatus | string;
+  audience: AudienceFilter;
+  text_uz: string;
+  text_ru: string | null;
+  text_en: string | null;
+  buttons: BroadcastButton[];
+  scheduled_at: string | null;
+  started_at: string | null;
+  finished_at: string | null;
+  total_count: number;
+  sent_count: number;
+  blocked_count: number;
+  failed_count: number;
+  created_by_admin_id: number | null;
+  created_at: string;
+}
+
+export interface PageBroadcastOut {
+  items: BroadcastOut[];
+  next_cursor?: number | null;
+  has_more: boolean;
+}
+
+export interface AudiencePreviewOut {
+  total: number;
+}

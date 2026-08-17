@@ -92,7 +92,6 @@ export const NAV_SECTIONS: NavSectionConfig[] = [
         label: "Broadcast",
         path: "/broadcasts",
         icon: "Send",
-        permission: "broadcast",
         step: 9,
         description: "Auditoriya segmentatsiyasi va ommaviy xabarnomalar",
       },

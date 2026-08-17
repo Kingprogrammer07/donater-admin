@@ -37,6 +37,11 @@ import type {
   FxRateOut,
   ManualRateRequest,
   FxModeRequest,
+  AudienceFilter,
+  BroadcastCreateRequest,
+  BroadcastOut,
+  PageBroadcastOut,
+  AudiencePreviewOut,
 } from "./types";
 
 const REFRESH_TOKEN_KEY = "donater_admin_refresh_token";
@@ -613,6 +618,56 @@ export const fxApi = {
     });
   },
 };
+
+export const broadcastApi = {
+  list(
+    params: {
+      limit?: number;
+      before_id?: number | null;
+      broadcast_status?: string | null;
+    } = {}
+  ): Promise<PageBroadcastOut> {
+    const search = new URLSearchParams();
+    if (params.limit) search.set("limit", String(params.limit));
+    if (params.before_id) search.set("before_id", String(params.before_id));
+    if (params.broadcast_status && params.broadcast_status !== "all") {
+      search.set("broadcast_status", params.broadcast_status);
+    }
+    const qs = search.toString();
+    return request<PageBroadcastOut>(`/broadcasts${qs ? `?${qs}` : ""}`);
+  },
+
+  previewAudience(filter: AudienceFilter): Promise<AudiencePreviewOut> {
+    return request<AudiencePreviewOut>("/broadcasts/preview", {
+      method: "POST",
+      body: JSON.stringify(filter),
+    });
+  },
+
+  create(payload: BroadcastCreateRequest): Promise<BroadcastOut> {
+    return request<BroadcastOut>("/broadcasts", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  get(broadcastId: number): Promise<BroadcastOut> {
+    return request<BroadcastOut>(`/broadcasts/${broadcastId}`);
+  },
+
+  start(broadcastId: number): Promise<BroadcastOut> {
+    return request<BroadcastOut>(`/broadcasts/${broadcastId}/start`, {
+      method: "POST",
+    });
+  },
+
+  cancel(broadcastId: number): Promise<BroadcastOut> {
+    return request<BroadcastOut>(`/broadcasts/${broadcastId}/cancel`, {
+      method: "POST",
+    });
+  },
+};
+
 
 
 
