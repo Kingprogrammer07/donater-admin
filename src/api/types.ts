@@ -413,3 +413,67 @@ export interface PageBroadcastOut {
 export interface AudiencePreviewOut {
   total: number;
 }
+
+// System & Diagnostics Types
+export interface CheckOut {
+  name: string;
+  status: "ok" | "failing" | "degraded" | string;
+  detail?: string | null;
+}
+
+export interface HealthOut {
+  status: "ok" | "degraded" | string;
+  checks: CheckOut[];
+}
+
+export interface FazerCardsStatusOut {
+  reachable: boolean;
+  balance_usd?: string | null;
+  currency?: string | null;
+  login?: string | null;
+  plan?: string | null;
+  subscription_active?: boolean | null;
+  low_balance: boolean;
+  error?: string | null;
+}
+
+export interface QueueOut {
+  queued: number;
+  ready: number;
+  deferred: number;
+  in_progress: number;
+  worker_seen_at?: string | null;
+  worker_alive: boolean;
+}
+
+export interface FailedJobOut {
+  job_id: string;
+  function: string;
+  args: unknown[];
+  attempts: number;
+  error: string;
+  finished_at?: string | null;
+}
+
+export interface WebhookDeliveryOut {
+  id: number;
+  event: string;
+  source: string;
+  order_id?: number | null;
+  provider_order_id?: string | null;
+  received_at: string;
+  processed_at?: string | null;
+}
+
+export interface WebhookStatusOut {
+  url: string;
+  secret_configured: boolean;
+  deliveries: WebhookDeliveryOut[];
+}
+
+export interface WebhookTestOut {
+  delivered: boolean;
+  status_code?: number | null;
+  body?: string | null;
+  error?: string | null;
+}

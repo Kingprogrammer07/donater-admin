@@ -20,7 +20,6 @@ import type {
   OverviewOut,
   TimeseriesOut,
   TopProductOut,
-  FazerCardsStatusOut,
   StatsPeriod,
   StatsInterval,
   StatsMetric,
@@ -42,6 +41,12 @@ import type {
   BroadcastOut,
   PageBroadcastOut,
   AudiencePreviewOut,
+  HealthOut,
+  FazerCardsStatusOut,
+  QueueOut,
+  FailedJobOut,
+  WebhookStatusOut,
+  WebhookTestOut,
 } from "./types";
 
 const REFRESH_TOKEN_KEY = "donater_admin_refresh_token";
@@ -495,12 +500,6 @@ export const statsApi = {
   },
 };
 
-export const systemApi = {
-  getFazerCards(): Promise<FazerCardsStatusOut> {
-    return request<FazerCardsStatusOut>("/system/fazercards");
-  },
-};
-
 export const catalogApi = {
   listCategories(
     params: {
@@ -667,6 +666,41 @@ export const broadcastApi = {
     });
   },
 };
+
+export const systemApi = {
+  getHealth(): Promise<HealthOut> {
+    return request<HealthOut>("/system/health");
+  },
+
+  getFazerCards(): Promise<FazerCardsStatusOut> {
+    return request<FazerCardsStatusOut>("/system/fazercards");
+  },
+
+  getQueue(): Promise<QueueOut> {
+    return request<QueueOut>("/system/queue");
+  },
+
+  getFailedJobs(limit = 20): Promise<FailedJobOut[]> {
+    return request<FailedJobOut[]>(`/system/failed-jobs?limit=${limit}`);
+  },
+
+  retryFailedJob(jobId: string): Promise<{ status: string; function: string }> {
+    return request<{ status: string; function: string }>(`/system/failed-jobs/${jobId}/retry`, {
+      method: "POST",
+    });
+  },
+
+  getWebhooks(limit = 20): Promise<WebhookStatusOut> {
+    return request<WebhookStatusOut>(`/system/webhooks?limit=${limit}`);
+  },
+
+  testWebhook(): Promise<WebhookTestOut> {
+    return request<WebhookTestOut>("/system/webhooks/test", {
+      method: "POST",
+    });
+  },
+};
+
 
 
 

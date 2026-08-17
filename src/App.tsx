@@ -18,6 +18,7 @@ const UsersPage = lazy(() => import("@/features/users/UsersPage"));
 const CatalogPage = lazy(() => import("@/features/catalog/CatalogPage"));
 const PricingPage = lazy(() => import("@/features/pricing/PricingPage"));
 const BroadcastsPage = lazy(() => import("@/features/broadcasts/BroadcastsPage"));
+const SystemPage = lazy(() => import("@/features/system/SystemPage"));
 const PlaceholderPage = lazy(() =>
   import("@/features/placeholders/PlaceholderPage").then((m) => ({ default: m.PlaceholderPage }))
 );
@@ -167,7 +168,7 @@ const router = createBrowserRouter(
           path: "/system",
           element: (
             <SuspenseWrapper>
-              <PlaceholderPage />
+              <SystemPage />
             </SuspenseWrapper>
           ),
         },

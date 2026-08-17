@@ -16,7 +16,9 @@ import {
   ChevronsUpDown,
   Clock,
   Copy,
+  Cpu,
   CreditCard,
+  Database,
   DollarSign,
   Eye,
   EyeOff,
@@ -161,6 +163,8 @@ export const Icons = {
   Radio: createIcon(Radio),
   Activity: createIcon(Activity),
   Server: createIcon(Server),
+  Database: createIcon(Database),
+  Cpu: createIcon(Cpu),
   Sliders: createIcon(Sliders),
   Palette: createIcon(Palette),
 
