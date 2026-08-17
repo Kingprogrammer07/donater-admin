@@ -1,7 +1,40 @@
 import { AuthProvider, useAuth } from "@/lib/auth/AuthContext";
+import { RouterProvider, useRouter } from "@/lib/router/RouterContext";
+import { ToastProvider } from "@/lib/toast/ToastContext";
 import { LoginPage } from "@/features/auth/LoginPage";
-import { AuthenticatedShell } from "@/features/auth/AuthenticatedShell";
+import { AdminLayout } from "@/components/layout/AdminLayout";
+import { PlaceholderPage } from "@/features/placeholders/PlaceholderPage";
+import { StyleguidePage } from "@/features/styleguide/StyleguidePage";
+import { NotFoundPage } from "@/features/error/NotFoundPage";
+import { findNavItemByPath } from "@/components/layout/navItems";
 import { Icons } from "@/components/icons";
+
+function AuthenticatedApp() {
+  const { pathname } = useRouter();
+
+  if (pathname === "/styleguide") {
+    return (
+      <AdminLayout>
+        <StyleguidePage />
+      </AdminLayout>
+    );
+  }
+
+  const navItem = findNavItemByPath(pathname);
+  if (navItem) {
+    return (
+      <AdminLayout>
+        <PlaceholderPage />
+      </AdminLayout>
+    );
+  }
+
+  return (
+    <AdminLayout>
+      <NotFoundPage />
+    </AdminLayout>
+  );
+}
 
 function MainRouter() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -21,13 +54,17 @@ function MainRouter() {
     return <LoginPage />;
   }
 
-  return <AuthenticatedShell />;
+  return <AuthenticatedApp />;
 }
 
 export default function App() {
   return (
     <AuthProvider>
-      <MainRouter />
+      <RouterProvider>
+        <ToastProvider>
+          <MainRouter />
+        </ToastProvider>
+      </RouterProvider>
     </AuthProvider>
   );
 }

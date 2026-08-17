@@ -9,13 +9,13 @@ async function run() {
     fs.mkdirSync(artifactsDir, { recursive: true });
   }
 
-  console.log("Starting Vite dev server...");
+  console.log("Starting Vite dev server for Step 2 layout capture...");
   const server = await createServer({
-    server: { host: "127.0.0.1", port: 5175 },
+    server: { host: "127.0.0.1", port: 5176 },
   });
   await server.listen();
   const address = server.httpServer.address();
-  const port = typeof address === "object" && address ? address.port : 5175;
+  const port = typeof address === "object" && address ? address.port : 5176;
   const baseUrl = `http://127.0.0.1:${port}/admin/`;
   console.log(`Vite server started on ${baseUrl}`);
 
@@ -25,16 +25,78 @@ async function run() {
 
   const measurements = {};
 
+  const setupAuthMocks = async (page) => {
+    await page.addInitScript(() => {
+      localStorage.setItem("donater_admin_refresh_token", "mock-dev-refresh-token");
+    });
+
+    await page.route("**/admin/api/v1/auth/refresh", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          access_token: "mock-access-token",
+          access_expires_at: new Date(Date.now() + 3600000).toISOString(),
+          refresh_token: "mock-rotated-refresh-token",
+          admin: {
+            id: 1,
+            tg_id: 777967425,
+            username: "owner",
+            full_name: "Aziz Qosimov",
+            role: "owner",
+            is_active: true,
+            last_login_at: new Date().toISOString(),
+          },
+        }),
+      });
+    });
+
+    await page.route("**/admin/api/v1/auth/me", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          admin: {
+            id: 1,
+            tg_id: 777967425,
+            username: "owner",
+            full_name: "Aziz Qosimov",
+            role: "owner",
+            is_active: true,
+            last_login_at: new Date().toISOString(),
+          },
+          permissions: [
+            "view",
+            "review_payments",
+            "adjust_balance",
+            "manage_orders",
+            "reveal_delivery",
+            "manage_pricing",
+            "manage_settings",
+            "manage_catalog",
+            "broadcast",
+            "manage_admins",
+          ],
+        }),
+      });
+    });
+  };
+
   try {
     // 1. Desktop Light Mode
-    console.log("Capturing Desktop Light Mode...");
+    console.log("Capturing Desktop Layout Light Mode...");
     const pageLight = await browser.newPage({
       viewport: { width: 1280, height: 800 },
       colorScheme: "light",
     });
+    await setupAuthMocks(pageLight);
 
     await pageLight.goto(baseUrl, { waitUntil: "networkidle" });
     await pageLight.waitForTimeout(600);
+
+    // Trigger 500 error toast to demonstrate request_id copying in screenshot
+    await pageLight.click("button:has-text('500 Error Toast')");
+    await pageLight.waitForTimeout(400);
 
     const lightMetrics = await pageLight.evaluate(() => {
       const getLuminance = (rgbStr) => {
@@ -55,25 +117,21 @@ async function run() {
         return ((lighter + 0.05) / (darker + 0.05)).toFixed(2);
       };
 
-      const card = document.querySelector("main > div") || document.querySelector("main");
-      const cardBg = window.getComputedStyle(card || document.body).backgroundColor;
-      const title = document.querySelector("h2");
-      const titleColor = window.getComputedStyle(title || document.body).color;
-      const desc = document.querySelector("p");
-      const descColor = window.getComputedStyle(desc || document.body).color;
-      const primaryBtn = document.querySelector("button.bg-fg") || document.querySelector("button");
-      const btnStyle = window.getComputedStyle(primaryBtn);
+      const sidebar = document.querySelector("aside");
+      const sidebarBg = window.getComputedStyle(sidebar || document.body).backgroundColor;
+      const navBtn = document.querySelector("aside nav button");
+      const navColor = window.getComputedStyle(navBtn || document.body).color;
+      const header = document.querySelector("header");
+      const headerBg = window.getComputedStyle(header || document.body).backgroundColor;
+      const headerTitle = document.querySelector("header span.font-semibold");
+      const headerTitleColor = window.getComputedStyle(headerTitle || document.body).color;
 
       return {
-        cardBackground: cardBg,
-        titleColor,
-        titleContrastRatio: getContrast(titleColor, cardBg),
-        descColor,
-        descContrastRatio: getContrast(descColor, cardBg),
-        buttonBg: btnStyle.backgroundColor,
-        buttonColor: btnStyle.color,
-        buttonContrastRatio: getContrast(btnStyle.color, btnStyle.backgroundColor),
-        buttonHeight: btnStyle.height,
+        sidebarBackground: sidebarBg,
+        navItemColor: navColor,
+        navItemContrastRatio: `${getContrast(navColor, sidebarBg)} : 1`,
+        headerTitleColor,
+        headerContrastRatio: `${getContrast(headerTitleColor, headerBg)} : 1`,
         scrollWidth: document.documentElement.scrollWidth,
         clientWidth: document.documentElement.clientWidth,
         hasHorizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth,
@@ -81,22 +139,27 @@ async function run() {
     });
 
     measurements.light = lightMetrics;
-    const lightPath = path.join(artifactsDir, "login_light_real.png");
+    const lightPath = path.join(artifactsDir, "layout_light_real.png");
     await pageLight.screenshot({ path: lightPath, fullPage: false });
-    console.log(`Saved Light screenshot to: ${lightPath}`);
+    console.log(`Saved Layout Light screenshot to: ${lightPath}`);
 
     // 2. Desktop Dark Mode
-    console.log("Capturing Desktop Dark Mode...");
+    console.log("Capturing Desktop Layout Dark Mode...");
     const pageDark = await browser.newPage({
       viewport: { width: 1280, height: 800 },
       colorScheme: "dark",
     });
+    await setupAuthMocks(pageDark);
 
     await pageDark.goto(baseUrl, { waitUntil: "networkidle" });
     await pageDark.evaluate(() => {
       document.documentElement.classList.add("dark");
     });
     await pageDark.waitForTimeout(600);
+
+    // Trigger success toast
+    await pageDark.click("button:has-text('Success Toast')");
+    await pageDark.waitForTimeout(400);
 
     const darkMetrics = await pageDark.evaluate(() => {
       const getLuminance = (rgbStr) => {
@@ -117,25 +180,15 @@ async function run() {
         return ((lighter + 0.05) / (darker + 0.05)).toFixed(2);
       };
 
-      const card = document.querySelector("main > div") || document.querySelector("main");
-      const cardBg = window.getComputedStyle(card || document.body).backgroundColor;
-      const title = document.querySelector("h2");
-      const titleColor = window.getComputedStyle(title || document.body).color;
-      const desc = document.querySelector("p");
-      const descColor = window.getComputedStyle(desc || document.body).color;
-      const primaryBtn = document.querySelector("button.bg-fg") || document.querySelector("button");
-      const btnStyle = window.getComputedStyle(primaryBtn);
+      const sidebar = document.querySelector("aside");
+      const sidebarBg = window.getComputedStyle(sidebar || document.body).backgroundColor;
+      const navBtn = document.querySelector("aside nav button");
+      const navColor = window.getComputedStyle(navBtn || document.body).color;
 
       return {
-        cardBackground: cardBg,
-        titleColor,
-        titleContrastRatio: getContrast(titleColor, cardBg),
-        descColor,
-        descContrastRatio: getContrast(descColor, cardBg),
-        buttonBg: btnStyle.backgroundColor,
-        buttonColor: btnStyle.color,
-        buttonContrastRatio: getContrast(btnStyle.color, btnStyle.backgroundColor),
-        buttonHeight: btnStyle.height,
+        sidebarBackground: sidebarBg,
+        navItemColor: navColor,
+        navItemContrastRatio: `${getContrast(navColor, sidebarBg)} : 1`,
         scrollWidth: document.documentElement.scrollWidth,
         clientWidth: document.documentElement.clientWidth,
         hasHorizontalOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth,
@@ -143,41 +196,60 @@ async function run() {
     });
 
     measurements.dark = darkMetrics;
-    const darkPath = path.join(artifactsDir, "login_dark_real.png");
+    const darkPath = path.join(artifactsDir, "layout_dark_real.png");
     await pageDark.screenshot({ path: darkPath, fullPage: false });
-    console.log(`Saved Dark screenshot to: ${darkPath}`);
+    console.log(`Saved Layout Dark screenshot to: ${darkPath}`);
 
-    // 3. iPhone 390px Viewport
-    console.log("Capturing iPhone (390px) Viewport...");
+    // 3. iPhone 390px Viewport (Mobile Drawer open)
+    console.log("Capturing iPhone Layout (390px)...");
     const pageIPhone = await browser.newPage({
       viewport: { width: 390, height: 844 },
       deviceScaleFactor: 2,
       isMobile: true,
       hasTouch: true,
     });
+    await setupAuthMocks(pageIPhone);
 
     await pageIPhone.goto(baseUrl, { waitUntil: "networkidle" });
-    await pageIPhone.waitForTimeout(600);
+    await pageIPhone.waitForTimeout(500);
+
+    // Open mobile hamburger menu
+    await pageIPhone.click("button[aria-label='Menyuni ochish']");
+    await pageIPhone.waitForTimeout(400);
 
     const iphoneMetrics = await pageIPhone.evaluate(() => {
-      const button = document.querySelector("button.bg-fg") || document.querySelector("button");
-      const btnRect = button.getBoundingClientRect();
+      const drawer = document.querySelector("div[role='dialog']");
+      const navButtons = document.querySelectorAll("div[role='dialog'] aside nav button");
+      const touchTargets = Array.from(navButtons).map((btn) => {
+        const r = btn.getBoundingClientRect();
+        return {
+          text: btn.innerText.trim(),
+          height: `${Math.round(r.height)}px`,
+          is44pt: r.height >= 44,
+        };
+      });
+
+      const menuToggleBtn = document.querySelector("header button[aria-label='Menyuni ochish']");
+      const menuRect = menuToggleBtn ? menuToggleBtn.getBoundingClientRect() : null;
+
       return {
+        isDrawerOpen: !!drawer,
         viewportWidth: window.innerWidth,
         scrollWidth: document.documentElement.scrollWidth,
         hasHorizontalOverflow: document.documentElement.scrollWidth > window.innerWidth,
-        buttonTouchTargetWidth: `${btnRect.width}px`,
-        buttonTouchTargetHeight: `${btnRect.height}px`,
-        isTouchTargetAbove44pt: btnRect.height >= 44,
+        hamburgerButtonHeight: menuRect ? `${menuRect.height}px` : "N/A",
+        navTouchTargetsCount: touchTargets.length,
+        allNavItemsAbove44pt: touchTargets.every((t) => t.is44pt),
+        sampleNavTouchTarget: touchTargets[0],
       };
     });
 
     measurements.iphone = iphoneMetrics;
-    const iphonePath = path.join(artifactsDir, "login_iphone_390px_real.png");
+    const iphonePath = path.join(artifactsDir, "layout_iphone_390px_real.png");
     await pageIPhone.screenshot({ path: iphonePath, fullPage: false });
-    console.log(`Saved iPhone screenshot to: ${iphonePath}`);
+    console.log(`Saved iPhone Layout screenshot to: ${iphonePath}`);
 
-    console.log("\n=== REAL DOM MEASUREMENT RESULTS ===");
+    console.log("\n=== STEP 2 REAL MEASUREMENT RESULTS ===");
     console.log(JSON.stringify(measurements, null, 2));
   } finally {
     await browser.close();
