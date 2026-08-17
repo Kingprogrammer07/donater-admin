@@ -1,5 +1,7 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 import { AuthProvider, useAuth } from "@/lib/auth/AuthContext";
 import { ToastProvider } from "@/lib/toast/ToastContext";
 import { AdminLayout } from "@/components/layout/AdminLayout";
@@ -9,6 +11,7 @@ import { Icons } from "@/components/icons";
 const LoginPage = lazy(() =>
   import("@/features/auth/LoginPage").then((m) => ({ default: m.LoginPage }))
 );
+const PaymentsPage = lazy(() => import("@/features/payments/PaymentsPage"));
 const PlaceholderPage = lazy(() =>
   import("@/features/placeholders/PlaceholderPage").then((m) => ({ default: m.PlaceholderPage }))
 );
@@ -94,7 +97,7 @@ const router = createBrowserRouter(
           path: "/payments",
           element: (
             <SuspenseWrapper>
-              <PlaceholderPage />
+              <PaymentsPage />
             </SuspenseWrapper>
           ),
         },
@@ -196,10 +199,12 @@ const router = createBrowserRouter(
 
 export default function App() {
   return (
-    <AuthProvider>
-      <ToastProvider>
-        <RouterProvider router={router} />
-      </ToastProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }

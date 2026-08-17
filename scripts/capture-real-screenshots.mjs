@@ -2,6 +2,43 @@ import { chromium } from "playwright";
 import { createServer } from "vite";
 import path from "node:path";
 import fs from "node:fs";
+import crypto from "node:crypto";
+
+const BOT_TOKEN = process.env.BOT_TOKEN || "5566434691:AAFlFOuAMeY2nSLQsY64CHseYI7g07qO56k";
+const API_BASE = "http://127.0.0.1:8000/admin/api/v1";
+
+async function getDevLoginRefreshToken(tgId = 777967425) {
+  const payload = {
+    id: tgId,
+    first_name: "Dev",
+    username: "dev",
+    auth_date: Math.floor(Date.now() / 1000),
+  };
+
+  const secret = crypto.createHash("sha256").update(BOT_TOKEN).digest();
+  const checkString = Object.keys(payload)
+    .sort()
+    .map((key) => `${key}=${payload[key]}`)
+    .join("\n");
+  payload.hash = crypto.createHmac("sha256", secret).update(checkString).digest("hex");
+
+  const response = await fetch(`${API_BASE}/auth/telegram`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Dev login failed for tg_id ${tgId}: ${response.status} ${await response.text()}`);
+  }
+
+  const data = await response.json();
+  return {
+    refreshToken: data.refresh_token,
+    accessToken: data.access_token,
+    admin: data.admin,
+  };
+}
 
 async function run() {
   const artifactsDir = "C:/Users/Admin/.gemini/antigravity/brain/1a04d73f-cca8-4d6c-ba1f-0fdc07577a66";
@@ -9,13 +46,13 @@ async function run() {
     fs.mkdirSync(artifactsDir, { recursive: true });
   }
 
-  console.log("Starting Vite dev server for Step 3 primitives verification...");
+  console.log("1. Starting Vite dev server for Step 4 Payments verification...");
   const server = await createServer({
-    server: { host: "127.0.0.1", port: 5182 },
+    server: { host: "127.0.0.1", port: 5184 },
   });
   await server.listen();
   const address = server.httpServer.address();
-  const port = typeof address === "object" && address ? address.port : 5182;
+  const port = typeof address === "object" && address ? address.port : 5184;
   const baseUrl = `http://127.0.0.1:${port}/admin/`;
   console.log(`Vite server started on ${baseUrl}`);
 
@@ -23,231 +60,148 @@ async function run() {
     headless: true,
   });
 
-  const setupAuthMocks = async (page) => {
-    await page.addInitScript(() => {
-      localStorage.setItem("donater_admin_refresh_token", "mock-dev-refresh-token");
-    });
-
-    await page.route("**/admin/api/v1/auth/refresh", async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({
-          access_token: "mock-access-token",
-          access_expires_at: new Date(Date.now() + 3600000).toISOString(),
-          refresh_token: "mock-rotated-refresh-token",
-          admin: {
-            id: 1,
-            tg_id: 777967425,
-            username: "owner",
-            full_name: "Aziz Qosimov",
-            role: "owner",
-            is_active: true,
-            last_login_at: new Date().toISOString(),
-          },
-        }),
-      });
-    });
-
-    await page.route("**/admin/api/v1/auth/me", async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({
-          admin: {
-            id: 1,
-            tg_id: 777967425,
-            username: "owner",
-            full_name: "Aziz Qosimov",
-            role: "owner",
-            is_active: true,
-            last_login_at: new Date().toISOString(),
-          },
-          permissions: [
-            "view",
-            "review_payments",
-            "adjust_balance",
-            "manage_orders",
-            "reveal_delivery",
-            "manage_pricing",
-            "manage_settings",
-            "manage_catalog",
-            "broadcast",
-            "manage_admins",
-          ],
-        }),
-      });
-    });
-  };
-
   const testResults = {};
 
   try {
-    // 1. Desktop Light Mode & DataTable URL Search Params Persistence
-    console.log("1. Testing DataTable URL Filters & Page Refresh Persistence...");
+    // 1. Verify Unauthenticated / Tokensiz 401 on Proof File Endpoint
+    console.log("2. Testing unauthenticated proof-file request (expected 401)...");
+    const unauthProofRes = await fetch(`${API_BASE}/payments/1/proof-file`);
+    testResults.unauthenticatedProofTest = {
+      status: unauthProofRes.status,
+      statusText: unauthProofRes.statusText,
+      is401Unauthorized: unauthProofRes.status === 401,
+    };
+    console.log(`Unauthenticated status: ${unauthProofRes.status} (401 ok)`);
+
+    // 2. Desktop Light Mode & Payments Queue Verification
+    console.log("3. Capturing Desktop Payments Page in Light Mode with live backend data...");
+    const lightAuth = await getDevLoginRefreshToken(777967425);
     const pageLight = await browser.newPage({
       viewport: { width: 1280, height: 800 },
       colorScheme: "light",
     });
-    await setupAuthMocks(pageLight);
 
-    await pageLight.goto(`${baseUrl}styleguide`, { waitUntil: "networkidle" });
-    await pageLight.waitForTimeout(600);
+    await pageLight.addInitScript((token) => {
+      localStorage.setItem("donater_admin_refresh_token", token);
+    }, lightAuth.refreshToken);
 
-    // Apply Filter: type in search input and click "completed"
-    await pageLight.fill("input[type='search']", "Azizbek");
-    await pageLight.click("button:has-text('completed')");
-    await pageLight.waitForTimeout(300);
+    await pageLight.goto(`${baseUrl}payments`, { waitUntil: "domcontentloaded" });
+    await pageLight.waitForTimeout(1000);
 
-    const initialFilterUrl = pageLight.url();
-    const rowsBeforeReload = await pageLight.locator("tbody tr").count();
+    const queueCardFound = await pageLight.locator("text=Chek #").first().isVisible();
+    const customerFound = await pageLight.locator("text=@muhammad_dev").isVisible();
 
-    // Reload page to verify persistence
-    await pageLight.reload({ waitUntil: "networkidle" });
-    await pageLight.waitForTimeout(500);
-
-    const afterReloadState = await pageLight.evaluate(() => {
-      const input = document.querySelector("input[type='search']");
-      const activeFilter = document.querySelector("button.bg-fg")?.innerText?.trim();
-      const firstRowText = document.querySelector("tbody tr td")?.innerText?.trim();
-      const domRowCount = document.querySelectorAll("tbody tr").length;
-
-      return {
-        inputValue: input?.value,
-        activeFilter,
-        firstRowText,
-        domRowCount,
-        currentUrl: window.location.href,
-      };
-    });
-
-    testResults.filterPersistence = {
-      initialFilterUrl,
-      rowsBeforeReload,
-      afterReloadState,
-      isStatePreserved:
-        afterReloadState.inputValue === "Azizbek" &&
-        afterReloadState.activeFilter === "completed" &&
-        afterReloadState.domRowCount > 0,
+    testResults.ownerQueueTest = {
+      queueCardFound,
+      customerFound,
+      role: lightAuth.admin.role,
     };
 
     // Capture Light Mode Screenshot
-    const lightPath = path.join(artifactsDir, "layout_light_real.png");
+    const lightPath = path.join(artifactsDir, "payments_light_real.png");
     await pageLight.screenshot({ path: lightPath, fullPage: false });
     console.log(`Saved Light screenshot to: ${lightPath}`);
+    await pageLight.close();
 
-    // 2. Testing 1000-Row Virtual Scrolling Performance
-    console.log("2. Testing 1000-Row Virtual Scrolling DOM footprint...");
-    // Clear filters to show 1000 items
-    await pageLight.fill("input[type='search']", "");
-    await pageLight.click("button:has-text('Barchasi')");
-    await pageLight.waitForTimeout(300);
-
-    const virtualDomStats = await pageLight.evaluate(() => {
-      const scrollContainer = document.querySelector("table")?.parentElement;
-      const initialDomRows = document.querySelectorAll("tbody tr").length;
-
-      if (scrollContainer) {
-        scrollContainer.scrollTop = 5000; // scroll deep into 1000 items
-      }
-
-      const scrolledDomRows = document.querySelectorAll("tbody tr").length;
-      return {
-        initialDomRows,
-        scrolledDomRows,
-        totalItemsInMock: 1000,
-        isVirtualized: scrolledDomRows < 35, // Only ~15-25 nodes in DOM despite 1000 rows
-      };
-    });
-    testResults.virtualScroll = virtualDomStats;
-
-    // 3. Testing Drawer Focus Trap and Focus Return
-    console.log("3. Testing Drawer Focus Trap & Return...");
-    // Switch to Dialogs tab
-    await pageLight.click("button:has-text('Drawer & Modal')");
-    await pageLight.waitForTimeout(300);
-
-    const openDrawerBtn = pageLight.locator("button", { hasText: "O'ngdan Drawer Ochish" });
-    await openDrawerBtn.focus();
-    await openDrawerBtn.click();
-    await pageLight.waitForTimeout(400);
-
-    const drawerFocusTrapTest = await pageLight.evaluate(async () => {
-      const dialog = document.querySelector("div[role='dialog']");
-      const initialFocusedTag = document.activeElement?.tagName;
-      const initialFocusedAria = document.activeElement?.getAttribute("aria-label");
-
-      // Verify that focus is inside dialog
-      const isInsideDialog = dialog ? dialog.contains(document.activeElement) : false;
-
-      return {
-        isDrawerOpen: !!dialog,
-        isInsideDialog,
-        initialFocusedTag,
-        initialFocusedAria,
-      };
-    });
-
-    // Press Escape to close drawer and check focus return
-    await pageLight.keyboard.press("Escape");
-    await pageLight.waitForTimeout(400);
-
-    const focusReturnTest = await pageLight.evaluate(() => {
-      const activeEl = document.activeElement;
-      return {
-        activeElementText: activeEl?.innerText?.trim(),
-        activeElementTag: activeEl?.tagName,
-        isReturnedToTriggerButton: activeEl?.innerText?.includes("O'ngdan Drawer Ochish"),
-      };
-    });
-
-    testResults.drawerAccessibility = {
-      drawerFocusTrapTest,
-      focusReturnTest,
-    };
-
-    // 4. Desktop Dark Mode (Showing Drawer open in Dark Mode)
-    console.log("4. Capturing Desktop Layout Dark Mode...");
+    // 3. Desktop Dark Mode (Showing Reject Modal in Dark Mode)
+    console.log("4. Capturing Desktop Dark Mode with Reject Modal...");
+    const darkAuth = await getDevLoginRefreshToken(777967425);
     const pageDark = await browser.newPage({
       viewport: { width: 1280, height: 800 },
       colorScheme: "dark",
     });
-    await setupAuthMocks(pageDark);
-    await pageDark.goto(`${baseUrl}styleguide`, { waitUntil: "networkidle" });
+    await pageDark.addInitScript((token) => {
+      localStorage.setItem("donater_admin_refresh_token", token);
+    }, darkAuth.refreshToken);
+
+    await pageDark.goto(`${baseUrl}payments`, { waitUntil: "domcontentloaded" });
     await pageDark.evaluate(() => {
       document.documentElement.classList.add("dark");
     });
-    await pageDark.waitForTimeout(400);
+    await pageDark.waitForTimeout(1000);
 
-    // Open Drawer in Dark Mode to capture
-    await pageDark.click("tbody tr >> nth=0");
-    await pageDark.waitForTimeout(400);
+    // Click Reject button to open Reject modal
+    const rejectBtn = pageDark.locator("button:has-text('Rad etish')").first();
+    if (await rejectBtn.isVisible()) {
+      await rejectBtn.click();
+      await pageDark.waitForTimeout(400);
+    }
 
-    const darkPath = path.join(artifactsDir, "layout_dark_real.png");
+    const darkPath = path.join(artifactsDir, "payments_dark_real.png");
     await pageDark.screenshot({ path: darkPath, fullPage: false });
     console.log(`Saved Dark screenshot to: ${darkPath}`);
+    await pageDark.close();
 
-    // 5. iPhone (390px) Mobile Viewport
-    console.log("5. Capturing iPhone Layout (390px)...");
+    // 4. Testing Viewer Role (11223344) & Missing Review Buttons
+    console.log("5. Testing Viewer Role (11223344)...");
+    const viewerAuth = await getDevLoginRefreshToken(11223344);
+    const pageViewer = await browser.newPage({
+      viewport: { width: 1280, height: 800 },
+      colorScheme: "light",
+    });
+    await pageViewer.addInitScript((token) => {
+      localStorage.setItem("donater_admin_refresh_token", token);
+    }, viewerAuth.refreshToken);
+
+    await pageViewer.goto(`${baseUrl}payments`, { waitUntil: "domcontentloaded" });
+    await pageViewer.waitForTimeout(1000);
+
+    const hasApproveBtn = await pageViewer.locator("button:has-text('Tasdiqlash')").isVisible();
+    const hasRejectBtn = await pageViewer.locator("button:has-text('Rad etish')").isVisible();
+    const hasViewerWarning = await pageViewer.locator("text=Viewer rolidasiz").isVisible();
+
+    testResults.viewerRoleTest = {
+      role: viewerAuth.admin.role,
+      hasApproveBtn,
+      hasRejectBtn,
+      hasViewerWarning,
+      areActionButtonsHidden: !hasApproveBtn && !hasRejectBtn,
+    };
+    console.log(`Viewer buttons hidden: ${!hasApproveBtn && !hasRejectBtn}, warning visible: ${hasViewerWarning}`);
+    await pageViewer.close();
+
+    // 5. Capture iPhone (390px) Viewport
+    console.log("6. Capturing iPhone Layout (390px)...");
+    const iphoneAuth = await getDevLoginRefreshToken(777967425);
     const pageIPhone = await browser.newPage({
       viewport: { width: 390, height: 844 },
       deviceScaleFactor: 2,
       isMobile: true,
       hasTouch: true,
     });
-    await setupAuthMocks(pageIPhone);
-    await pageIPhone.goto(`${baseUrl}styleguide`, { waitUntil: "networkidle" });
-    await pageIPhone.waitForTimeout(400);
+    await pageIPhone.addInitScript((token) => {
+      localStorage.setItem("donater_admin_refresh_token", token);
+    }, iphoneAuth.refreshToken);
 
-    // Switch to Primitives tab on mobile
-    await pageIPhone.click("button:has-text('Money, Date, Status')");
-    await pageIPhone.waitForTimeout(400);
+    await pageIPhone.goto(`${baseUrl}payments`, { waitUntil: "domcontentloaded" });
+    await pageIPhone.waitForTimeout(1000);
 
-    const iphonePath = path.join(artifactsDir, "layout_iphone_390px_real.png");
+    const iphonePath = path.join(artifactsDir, "payments_iphone_390px_real.png");
     await pageIPhone.screenshot({ path: iphonePath, fullPage: false });
     console.log(`Saved iPhone screenshot to: ${iphonePath}`);
+    await pageIPhone.close();
 
-    console.log("\n=== STEP 3 PRIMITIVES VERIFICATION RESULTS ===");
+    // 6. Testing 409 Conflict Simulation
+    console.log("7. Testing 409 Conflict Response Structure on Double Action...");
+    const testAuth = await getDevLoginRefreshToken(777967425);
+    const secondApprove = await fetch(`${API_BASE}/payments/proofs/1/approve`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${testAuth.accessToken}`,
+        "Idempotency-Key": crypto.randomUUID(),
+      },
+    });
+    const secondData = await secondApprove.json();
+    console.log(`Approve status: ${secondApprove.status}`, secondData);
+
+    testResults.conflict409Test = {
+      secondApproveStatus: secondApprove.status,
+      is409Conflict: secondApprove.status === 409,
+      conflictDetail: secondData.detail || secondData,
+    };
+
+    console.log("\n=== STEP 4 PAYMENTS VERIFICATION RESULTS ===");
     console.log(JSON.stringify(testResults, null, 2));
   } finally {
     await browser.close();

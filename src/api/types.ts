@@ -25,3 +25,59 @@ export type MeOut = components["schemas"]["MeOut"] & {
 export type TelegramLoginRequest = components["schemas"]["TelegramLoginRequest"];
 export type RefreshRequest = components["schemas"]["RefreshRequest"];
 export type ValidationError = components["schemas"]["ValidationError"];
+
+// Payment & Proof Types
+export interface PaymentOut {
+  id: number;
+  public_id: string;
+  user_id: number;
+  provider: "manual" | "payme" | "click" | string;
+  amount_uzs: string;
+  status: "pending_check" | "approved" | "rejected" | "paid" | "refunded" | "expired" | string;
+  credited_at: string | null;
+  created_at: string;
+}
+
+export interface ProofOut {
+  id: number;
+  payment_id: number;
+  tg_file_id: string;
+  decision: "pending" | "approved" | "rejected" | string;
+  reviewed_by_tg_id: number | null;
+  reviewed_at: string | null;
+  reject_reason: string | null;
+}
+
+export interface PagePaymentOut {
+  items: PaymentOut[];
+  next_cursor?: number | null;
+  has_more: boolean;
+}
+
+export interface UserOut {
+  id: number;
+  tg_id: number;
+  username: string | null;
+  full_name?: string | null;
+  language?: "uz" | "ru" | "en" | string;
+  is_blocked: boolean;
+  balance_uzs?: string;
+  orders_count?: number;
+  payments_count?: number;
+  last_seen_at?: string | null;
+  created_at?: string;
+}
+
+export interface UserDetailOut {
+  id: number;
+  tg_id: number;
+  username: string | null;
+  first_name?: string | null;
+  language?: "uz" | "ru" | "en" | string;
+  is_blocked: boolean;
+  balance_uzs: string;
+  orders_total?: number;
+  spent_uzs?: string;
+  created_at?: string;
+  last_seen_at?: string | null;
+}

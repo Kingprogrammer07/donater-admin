@@ -1,5 +1,14 @@
 import { parseApiError, ApiError } from "./errors";
-import type { TokenPairOut, MeOut, TelegramLoginRequest, RefreshRequest } from "./types";
+import type {
+  TokenPairOut,
+  MeOut,
+  TelegramLoginRequest,
+  RefreshRequest,
+  PaymentOut,
+  ProofOut,
+  PagePaymentOut,
+  UserDetailOut,
+} from "./types";
 
 const REFRESH_TOKEN_KEY = "donater_admin_refresh_token";
 const BASE_URL = import.meta.env.VITE_API_BASE || "/admin/api/v1";
@@ -61,44 +70,122 @@ export async function request<T>(
     headers.set("Authorization", `Bearer ${inMemoryAccessToken}`);
   }
 
-  let response: Response;
   try {
-    response = await fetch(url, {
+    const response = await fetch(url, {
       ...options,
       headers,
     });
-  } catch (err) {
+
+    if (response.status === 401 && allowRetry) {
+      const refreshedTokens = await performTokenRefresh();
+      if (refreshedTokens) {
+        headers.set("Authorization", `Bearer ${refreshedTokens.access_token}`);
+        const retryResponse = await fetch(url, {
+          ...options,
+          headers,
+        });
+
+        if (!retryResponse.ok) {
+          throw await parseApiError(retryResponse);
+        }
+
+        if (retryResponse.status === 204) {
+          return undefined as T;
+        }
+
+        return (await retryResponse.json()) as T;
+      } else {
+        throw new ApiError({
+          status: 401,
+          message: "Sessiya muddati tugadi. Iltimos qaytadan kiring.",
+          requestId: response.headers.get("X-Request-ID") || undefined,
+        });
+      }
+    }
+
+    if (!response.ok) {
+      throw await parseApiError(response);
+    }
+
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
+    return (await response.json()) as T;
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+
     throw new ApiError({
       status: 0,
-      code: "network_error",
-      message: err instanceof Error ? err.message : "Tarmoq xatosi",
+      message: "Server bilan bog'lanishda xatolik yuz berdi. Internet ulanishini tekshiring.",
     });
   }
+}
 
-  // Handle 401 with automatic one-time token refresh
-  if (response.status === 401 && allowRetry && !endpoint.includes("/auth/refresh") && !endpoint.includes("/auth/telegram")) {
-    const refreshed = await performTokenRefresh();
-    if (refreshed) {
-      return request<T>(endpoint, options, false);
+export async function requestBlob(
+  endpoint: string,
+  options: RequestInit = {},
+  allowRetry = true
+): Promise<Blob> {
+  const url = `${BASE_URL}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
+  const headers = new Headers(options.headers || {});
+
+  if (inMemoryAccessToken && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${inMemoryAccessToken}`);
+  }
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers,
+    });
+
+    if (response.status === 401 && allowRetry) {
+      const refreshedTokens = await performTokenRefresh();
+      if (refreshedTokens) {
+        headers.set("Authorization", `Bearer ${refreshedTokens.access_token}`);
+        const retryResponse = await fetch(url, {
+          ...options,
+          headers,
+        });
+
+        if (!retryResponse.ok) {
+          throw await parseApiError(retryResponse);
+        }
+
+        return await retryResponse.blob();
+      } else {
+        throw new ApiError({
+          status: 401,
+          message: "Sessiya muddati tugadi. Iltimos qaytadan kiring.",
+          requestId: response.headers.get("X-Request-ID") || undefined,
+        });
+      }
     }
-    notifyUnauthorized();
-    throw await parseApiError(response);
-  }
 
-  if (!response.ok) {
-    throw await parseApiError(response);
-  }
+    if (!response.ok) {
+      throw await parseApiError(response);
+    }
 
-  if (response.status === 204) {
-    return undefined as unknown as T;
-  }
+    return await response.blob();
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
 
-  return response.json() as Promise<T>;
+    throw new ApiError({
+      status: 0,
+      message: "Faylni yuklab olishda tarmoq xatoligi yuz berdi.",
+    });
+  }
 }
 
 async function performTokenRefresh(): Promise<TokenPairOut | null> {
-  const refreshToken = getStoredRefreshToken();
-  if (!refreshToken) {
+  const storedRefreshToken = getStoredRefreshToken();
+  if (!storedRefreshToken) {
+    notifyUnauthorized();
     return null;
   }
 
@@ -108,7 +195,7 @@ async function performTokenRefresh(): Promise<TokenPairOut | null> {
 
   refreshPromise = (async () => {
     try {
-      const payload: RefreshRequest = { refresh_token: refreshToken };
+      const payload: RefreshRequest = { refresh_token: storedRefreshToken };
       const res = await fetch(`${BASE_URL}/auth/refresh`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -116,12 +203,12 @@ async function performTokenRefresh(): Promise<TokenPairOut | null> {
       });
 
       if (!res.ok) {
-        throw new Error("Refresh failed");
+        notifyUnauthorized();
+        return null;
       }
 
       const data = (await res.json()) as TokenPairOut;
       setAccessToken(data.access_token);
-      // ROTATE refresh token: store the new one
       setStoredRefreshToken(data.refresh_token);
       return data;
     } catch {
@@ -150,8 +237,6 @@ export const authApi = {
   async logout(): Promise<void> {
     const refreshToken = getStoredRefreshToken();
     try {
-      //  The server revokes the session by refresh token, so sending none
-      //  would leave it valid until it expired on its own.
       if (refreshToken) {
         const payload: RefreshRequest = { refresh_token: refreshToken };
         await request<void>(
@@ -170,3 +255,64 @@ export const authApi = {
   },
 };
 
+export const paymentsApi = {
+  getPendingProofs(limit = 50): Promise<ProofOut[]> {
+    return request<ProofOut[]>(`/payments/pending-proofs?limit=${limit}`);
+  },
+
+  getPayment(paymentId: number): Promise<PaymentOut> {
+    return request<PaymentOut>(`/payments/${paymentId}`);
+  },
+
+  async getProofFileBlobUrl(paymentId: number): Promise<string> {
+    const blob = await requestBlob(`/payments/${paymentId}/proof-file`);
+    return URL.createObjectURL(blob);
+  },
+
+  approveProof(proofId: number, idempotencyKey?: string): Promise<PaymentOut> {
+    const headers: Record<string, string> = {};
+    if (idempotencyKey) {
+      headers["Idempotency-Key"] = idempotencyKey;
+    }
+    return request<PaymentOut>(`/payments/proofs/${proofId}/approve`, {
+      method: "POST",
+      headers,
+    });
+  },
+
+  rejectProof(proofId: number, reason: string): Promise<PaymentOut> {
+    return request<PaymentOut>(`/payments/proofs/${proofId}/reject`, {
+      method: "POST",
+      body: JSON.stringify({ reason }),
+    });
+  },
+
+  listPayments(
+    params: {
+      limit?: number;
+      before_id?: number | null;
+      provider?: string | null;
+      status?: string | null;
+      user_id?: number | null;
+    } = {}
+  ): Promise<PagePaymentOut> {
+    const search = new URLSearchParams();
+    if (params.limit) search.set("limit", String(params.limit));
+    if (params.before_id) search.set("before_id", String(params.before_id));
+    if (params.provider && params.provider !== "all") search.set("provider", params.provider);
+    if (params.status && params.status !== "all") search.set("status", params.status);
+    if (params.user_id) search.set("user_id", String(params.user_id));
+
+    const qs = search.toString();
+    return request<PagePaymentOut>(`/payments${qs ? `?${qs}` : ""}`);
+  },
+};
+
+export const usersApi = {
+  getUser(userId: number): Promise<UserDetailOut> {
+    return request<UserDetailOut>(`/users/${userId}`);
+  },
+  getUserPayments(userId: number, limit = 10): Promise<PagePaymentOut> {
+    return request<PagePaymentOut>(`/payments?user_id=${userId}&limit=${limit}`);
+  },
+};
