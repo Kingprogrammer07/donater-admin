@@ -1,14 +1,16 @@
-﻿import { findNavItemByPath } from "@/components/layout/navItems";
-import { useRouter } from "@/lib/router/RouterContext";
+import { useLocation, useParams } from "react-router";
+import { findNavItemByPath } from "@/components/layout/navItems";
 import { useToast } from "@/lib/toast/ToastContext";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 export function PlaceholderPage() {
-  const { pathname } = useRouter();
+  const location = useLocation();
+  const params = useParams<{ id?: string }>();
   const toast = useToast();
-  const navItem = findNavItemByPath(pathname);
+
+  const navItem = findNavItemByPath(location.pathname);
 
   const title = navItem?.label || "Boshqaruv";
   const step = navItem?.step ?? 2;
@@ -40,7 +42,9 @@ export function PlaceholderPage() {
           </div>
           <h1 className="text-display font-semibold tracking-tight text-fg flex items-center gap-2.5">
             <IconComponent size="md" className="text-fg-muted" />
-            <span>{title}</span>
+            <span>
+              {title} {params.id ? `(#${params.id})` : ""}
+            </span>
           </h1>
           <p className="text-xs text-fg-muted max-w-2xl leading-relaxed">{description}</p>
         </div>
@@ -56,10 +60,15 @@ export function PlaceholderPage() {
 
         <div className="space-y-1.5 max-w-md mx-auto">
           <h2 className="text-base font-semibold text-fg">
-            {title} ekrani {step}-qadamda ishlab chiqiladi
+            {title} {params.id ? `(ID: ${params.id})` : ""} ekrani {step}-qadamda ishlab chiqiladi
           </h2>
+          {params.id && (
+            <div className="inline-block px-3 py-1 rounded-sm bg-surface-2 font-mono text-xs text-fg font-medium">
+              useParams id: {params.id}
+            </div>
+          )}
           <p className="text-xs text-fg-muted leading-relaxed">
-            Hozirda 2-qadam (Layout qobig'i, navigatsiya, header, toast tizimi va xato chegaralari) to'liq faol.
+            Hozirda 2-qadam (React Router v7 deklarativ marshrutlar, Layout qobig'i, navigatsiya, header, toast tizimi va xato chegaralari) to'liq faol.
           </p>
         </div>
 

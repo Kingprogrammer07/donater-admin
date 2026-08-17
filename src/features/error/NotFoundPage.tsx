@@ -1,9 +1,9 @@
+import { Link, useLocation } from "react-router";
 import { Icons } from "@/components/icons";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "@/lib/router/RouterContext";
+import { buttonVariants } from "@/components/ui/button";
 
 export function NotFoundPage() {
-  const { navigate, pathname } = useRouter();
+  const location = useLocation();
 
   return (
     <div className="min-h-[60vh] w-full flex items-center justify-center p-6 text-center select-none">
@@ -20,20 +20,18 @@ export function NotFoundPage() {
             Bunday sahifa mavjud emas
           </h2>
           <p className="text-xs text-fg-muted leading-relaxed">
-            Siz kiritgan <code className="font-mono text-fg bg-surface-2 px-1.5 py-0.5 rounded-sm">{pathname}</code> manzili bo'yicha hech qanday bo'lim topilmadi.
+            Siz kiritgan <code className="font-mono text-fg bg-surface-2 px-1.5 py-0.5 rounded-sm">{location.pathname}</code> manzili bo'yicha hech qanday bo'lim topilmadi.
           </p>
         </div>
 
         <div className="pt-2 flex justify-center">
-          <Button
-            variant="primary"
-            size="md"
-            onClick={() => navigate("/")}
-            className="gap-2"
+          <Link
+            to="/"
+            className={buttonVariants({ variant: "primary", size: "md" }) + " gap-2 no-underline"}
           >
             <Icons.Home size="sm" />
             <span>Dashboard'ga qaytish</span>
-          </Button>
+          </Link>
         </div>
       </div>
     </div>

@@ -1,42 +1,14 @@
+import { createBrowserRouter, RouterProvider } from "react-router";
 import { AuthProvider, useAuth } from "@/lib/auth/AuthContext";
-import { RouterProvider, useRouter } from "@/lib/router/RouterContext";
 import { ToastProvider } from "@/lib/toast/ToastContext";
 import { LoginPage } from "@/features/auth/LoginPage";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { PlaceholderPage } from "@/features/placeholders/PlaceholderPage";
 import { StyleguidePage } from "@/features/styleguide/StyleguidePage";
 import { NotFoundPage } from "@/features/error/NotFoundPage";
-import { findNavItemByPath } from "@/components/layout/navItems";
 import { Icons } from "@/components/icons";
 
-function AuthenticatedApp() {
-  const { pathname } = useRouter();
-
-  if (pathname === "/styleguide") {
-    return (
-      <AdminLayout>
-        <StyleguidePage />
-      </AdminLayout>
-    );
-  }
-
-  const navItem = findNavItemByPath(pathname);
-  if (navItem) {
-    return (
-      <AdminLayout>
-        <PlaceholderPage />
-      </AdminLayout>
-    );
-  }
-
-  return (
-    <AdminLayout>
-      <NotFoundPage />
-    </AdminLayout>
-  );
-}
-
-function MainRouter() {
+function ProtectedRoot() {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
@@ -54,17 +26,44 @@ function MainRouter() {
     return <LoginPage />;
   }
 
-  return <AuthenticatedApp />;
+  return <AdminLayout />;
 }
+
+const router = createBrowserRouter(
+  [
+    {
+      element: <ProtectedRoot />,
+      children: [
+        { path: "/", element: <PlaceholderPage /> },
+        { path: "/payments", element: <PlaceholderPage /> },
+        { path: "/orders", element: <PlaceholderPage /> },
+        { path: "/orders/:id", element: <PlaceholderPage /> },
+        { path: "/users", element: <PlaceholderPage /> },
+        { path: "/users/:id", element: <PlaceholderPage /> },
+        { path: "/catalog", element: <PlaceholderPage /> },
+        { path: "/pricing", element: <PlaceholderPage /> },
+        { path: "/broadcasts", element: <PlaceholderPage /> },
+        { path: "/system", element: <PlaceholderPage /> },
+        { path: "/settings", element: <PlaceholderPage /> },
+        { path: "/admins", element: <PlaceholderPage /> },
+        ...(import.meta.env.DEV
+          ? [{ path: "/styleguide", element: <StyleguidePage /> }]
+          : []),
+        { path: "*", element: <NotFoundPage /> },
+      ],
+    },
+  ],
+  {
+    basename: "/admin",
+  }
+);
 
 export default function App() {
   return (
     <AuthProvider>
-      <RouterProvider>
-        <ToastProvider>
-          <MainRouter />
-        </ToastProvider>
-      </RouterProvider>
+      <ToastProvider>
+        <RouterProvider router={router} />
+      </ToastProvider>
     </AuthProvider>
   );
 }

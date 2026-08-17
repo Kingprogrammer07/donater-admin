@@ -129,14 +129,18 @@ export const NAV_SECTIONS: NavSectionConfig[] = [
         step: 10,
         description: "Admin foydalanuvchilar, rollar va xavfsizlik audit jurnali",
       },
-      {
-        id: "styleguide",
-        label: "Styleguide",
-        path: "/styleguide",
-        icon: "Palette",
-        step: 0,
-        description: "Poydevor dizayn tizimi komponentlari va tokenlar ko'rgazmasi",
-      },
+      ...(import.meta.env.DEV
+        ? [
+            {
+              id: "styleguide",
+              label: "Styleguide",
+              path: "/styleguide",
+              icon: "Palette" as const,
+              step: 0,
+              description: "Poydevor dizayn tizimi komponentlari va tokenlar ko'rgazmasi",
+            },
+          ]
+        : []),
     ],
   },
 ];
@@ -144,7 +148,10 @@ export const NAV_SECTIONS: NavSectionConfig[] = [
 export function findNavItemByPath(pathname: string): NavItemConfig | undefined {
   for (const section of NAV_SECTIONS) {
     for (const item of section.items) {
-      if (item.path === pathname) return item;
+      if (item.path === "/" && pathname === "/") return item;
+      if (item.path !== "/" && (pathname === item.path || pathname.startsWith(item.path + "/"))) {
+        return item;
+      }
     }
   }
   return undefined;

@@ -1,5 +1,5 @@
-﻿import { useTheme } from "@/lib/theme";
-import { useRouter } from "@/lib/router/RouterContext";
+import { Link, useLocation } from "react-router";
+import { useTheme } from "@/lib/theme";
 import { Icons } from "@/components/icons";
 import { findNavItemByPath } from "./navItems";
 
@@ -9,10 +9,14 @@ interface HeaderProps {
 
 export function Header({ onMenuToggle }: HeaderProps) {
   const { theme, setTheme } = useTheme();
-  const { pathname, navigate } = useRouter();
+  const location = useLocation();
 
-  const currentNav = findNavItemByPath(pathname);
+  const currentNav = findNavItemByPath(location.pathname);
   const pageTitle = currentNav?.label || "Boshqaruv";
+
+  // Check if pathname has sub-path (e.g. /orders/42 -> id is 42)
+  const isSubRoute = currentNav && location.pathname !== currentNav.path && currentNav.path !== "/";
+  const subSegment = isSubRoute ? location.pathname.slice(currentNav.path.length + 1) : null;
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-hairline bg-canvas/80 backdrop-blur-md safe-pt select-none">
@@ -30,14 +34,27 @@ export function Header({ onMenuToggle }: HeaderProps) {
 
           {/* Breadcrumb Hierarchy */}
           <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs truncate">
-            <button
-              onClick={() => navigate("/")}
-              className="text-fg-subtle hover:text-fg transition-colors cursor-pointer shrink-0 truncate font-mono text-xs"
+            <Link
+              to="/"
+              className="text-fg-subtle hover:text-fg transition-colors cursor-pointer shrink-0 truncate font-mono text-xs no-underline"
             >
               Donater
-            </button>
+            </Link>
             <span className="text-fg-subtle shrink-0">/</span>
-            <span className="font-semibold text-fg truncate">{pageTitle}</span>
+            {isSubRoute ? (
+              <>
+                <Link
+                  to={currentNav.path}
+                  className="text-fg-subtle hover:text-fg transition-colors cursor-pointer shrink-0 truncate no-underline"
+                >
+                  {pageTitle}
+                </Link>
+                <span className="text-fg-subtle shrink-0">/</span>
+                <span className="font-semibold text-fg truncate font-mono">#{subSegment}</span>
+              </>
+            ) : (
+              <span className="font-semibold text-fg truncate">{pageTitle}</span>
+            )}
           </nav>
         </div>
 

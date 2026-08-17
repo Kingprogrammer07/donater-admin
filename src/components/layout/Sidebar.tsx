@@ -1,6 +1,6 @@
-﻿import { useState } from "react";
+import { useState } from "react";
+import { NavLink } from "react-router";
 import { useAuth } from "@/lib/auth/AuthContext";
-import { useRouter } from "@/lib/router/RouterContext";
 import { Icons } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import { NAV_SECTIONS, type NavItemConfig } from "./navItems";
@@ -13,7 +13,6 @@ interface SidebarProps {
 
 export function Sidebar({ onItemClick, onClose, className = "" }: SidebarProps) {
   const { admin, hasPermission, logout } = useAuth();
-  const { navigate, isActive } = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
@@ -23,11 +22,6 @@ export function Sidebar({ onItemClick, onClose, className = "" }: SidebarProps) 
     } finally {
       setIsLoggingOut(false);
     }
-  };
-
-  const handleNavClick = (path: string) => {
-    navigate(path);
-    onItemClick?.();
   };
 
   return (
@@ -86,8 +80,7 @@ export function Sidebar({ onItemClick, onClose, className = "" }: SidebarProps) 
                     <SidebarNavItem
                       key={item.id}
                       item={item}
-                      active={isActive(item.path)}
-                      onClick={() => handleNavClick(item.path)}
+                      onClick={onItemClick}
                     />
                   ))}
                 </div>
@@ -135,35 +128,40 @@ export function Sidebar({ onItemClick, onClose, className = "" }: SidebarProps) 
 
 function SidebarNavItem({
   item,
-  active,
   onClick,
 }: {
   item: NavItemConfig;
-  active: boolean;
-  onClick: () => void;
+  onClick?: () => void;
 }) {
   const IconComponent = Icons[item.icon] || Icons.FolderTree;
 
   return (
-    <button
+    <NavLink
+      to={item.path}
+      end={item.path === "/"}
       onClick={onClick}
-      aria-current={active ? "page" : undefined}
-      className={`w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] rounded-sm text-xs transition-colors text-left cursor-pointer group ${
-        active
-          ? "bg-surface-2 text-fg font-semibold shadow-0"
-          : "text-fg-muted hover:text-fg hover:bg-surface-2/60"
-      }`}
+      className={({ isActive }) =>
+        `w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] rounded-sm text-xs transition-colors text-left cursor-pointer group no-underline ${
+          isActive
+            ? "bg-surface-2 text-fg font-semibold shadow-0"
+            : "text-fg-muted hover:text-fg hover:bg-surface-2/60"
+        }`
+      }
     >
-      <IconComponent
-        size="sm"
-        className={`shrink-0 transition-colors ${
-          active ? "text-brand" : "text-fg-subtle group-hover:text-fg"
-        }`}
-      />
-      <span className="truncate flex-1">{item.label}</span>
-      {active && (
-        <span className="size-1.5 rounded-full bg-brand shrink-0" aria-hidden="true" />
+      {({ isActive }) => (
+        <>
+          <IconComponent
+            size="sm"
+            className={`shrink-0 transition-colors ${
+              isActive ? "text-brand" : "text-fg-subtle group-hover:text-fg"
+            }`}
+          />
+          <span className="truncate flex-1">{item.label}</span>
+          {isActive && (
+            <span className="size-1.5 rounded-full bg-brand shrink-0" aria-hidden="true" />
+          )}
+        </>
       )}
-    </button>
+    </NavLink>
   );
 }
