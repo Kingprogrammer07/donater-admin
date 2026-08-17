@@ -47,6 +47,10 @@ import type {
   FailedJobOut,
   WebhookStatusOut,
   WebhookTestOut,
+  AdminCreateRequest,
+  AdminPatchRequest,
+  AdminOut,
+  PageAuditEntryOut,
 } from "./types";
 
 const REFRESH_TOKEN_KEY = "donater_admin_refresh_token";
@@ -713,6 +717,49 @@ export const settingsApi = {
     });
   },
 };
+
+export const adminApi = {
+  listAdmins(): Promise<AdminOut[]> {
+    return request<AdminOut[]>("/admins");
+  },
+
+  createAdmin(payload: AdminCreateRequest): Promise<AdminOut> {
+    return request<AdminOut>("/admins", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  patchAdmin(adminId: number, payload: AdminPatchRequest): Promise<AdminOut> {
+    return request<AdminOut>(`/admins/${adminId}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  },
+};
+
+export const auditApi = {
+  listAudit(
+    params: {
+      limit?: number;
+      before_id?: number | null;
+      actor_admin_id?: number | null;
+      action?: string | null;
+      target_type?: string | null;
+    } = {}
+  ): Promise<PageAuditEntryOut> {
+    const search = new URLSearchParams();
+    if (params.limit) search.set("limit", String(params.limit));
+    if (params.before_id) search.set("before_id", String(params.before_id));
+    if (params.actor_admin_id) search.set("actor_admin_id", String(params.actor_admin_id));
+    if (params.action) search.set("action", params.action);
+    if (params.target_type) search.set("target_type", params.target_type);
+
+    const query = search.toString();
+    return request<PageAuditEntryOut>(`/audit${query ? `?${query}` : ""}`);
+  },
+};
+
 
 
 

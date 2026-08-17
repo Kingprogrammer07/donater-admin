@@ -477,3 +477,34 @@ export interface WebhookTestOut {
   body?: string | null;
   error?: string | null;
 }
+
+// Admin & Audit Management Types
+export interface AdminCreateRequest {
+  tg_id: number;
+  role: "owner" | "admin" | "support" | "viewer" | string;
+  full_name?: string | null;
+}
+
+export interface AdminPatchRequest {
+  role?: "owner" | "admin" | "support" | "viewer" | string | null;
+  is_active?: boolean | null;
+}
+
+export interface AuditEntryOut {
+  id: number;
+  actor_admin_id: number | null;
+  actor_tg_id: number | null;
+  action: string;
+  target_type: string | null;
+  target_id: string | null;
+  before: Record<string, unknown> | null;
+  after: Record<string, unknown> | null;
+  comment: string | null;
+  created_at: string;
+}
+
+export interface PageAuditEntryOut {
+  items: AuditEntryOut[];
+  next_cursor?: number | null;
+  has_more: boolean;
+}

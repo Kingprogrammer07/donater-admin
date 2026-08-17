@@ -122,8 +122,7 @@ export const NAV_SECTIONS: NavSectionConfig[] = [
         label: "Adminlar & Audit",
         path: "/admins",
         icon: "ShieldCheck",
-        permission: "manage_admins",
-        step: 10,
+        step: 12,
         description: "Admin foydalanuvchilar, rollar va xavfsizlik audit jurnali",
       },
       ...(import.meta.env.DEV
