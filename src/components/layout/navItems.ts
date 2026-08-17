@@ -78,7 +78,6 @@ export const NAV_SECTIONS: NavSectionConfig[] = [
         label: "Marja va Kurs",
         path: "/pricing",
         icon: "TrendingUp",
-        permission: "manage_pricing",
         step: 8,
         description: "Valyuta kursi, dinamik marja qoidalari va narx kaskadi",
       },

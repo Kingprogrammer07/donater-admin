@@ -24,6 +24,19 @@ import type {
   StatsPeriod,
   StatsInterval,
   StatsMetric,
+  CategoryOut,
+  OfferOut,
+  PageCategoryOut,
+  PageOfferOut,
+  CategoryPatch,
+  OfferPatch,
+  MarkupRuleOut,
+  MarkupRuleRequest,
+  MarkupPreviewRequest,
+  PriceBreakdownOut,
+  FxRateOut,
+  ManualRateRequest,
+  FxModeRequest,
 } from "./types";
 
 const REFRESH_TOKEN_KEY = "donater_admin_refresh_token";
@@ -482,5 +495,124 @@ export const systemApi = {
     return request<FazerCardsStatusOut>("/system/fazercards");
   },
 };
+
+export const catalogApi = {
+  listCategories(
+    params: {
+      limit?: number;
+      before_id?: number | null;
+      kind?: string | null;
+    } = {}
+  ): Promise<PageCategoryOut> {
+    const search = new URLSearchParams();
+    if (params.limit) search.set("limit", String(params.limit));
+    if (params.before_id) search.set("before_id", String(params.before_id));
+    if (params.kind && params.kind !== "all") search.set("kind", params.kind);
+    const qs = search.toString();
+    return request<PageCategoryOut>(`/catalog/categories${qs ? `?${qs}` : ""}`);
+  },
+
+  listOffers(
+    params: {
+      limit?: number;
+      before_id?: number | null;
+      category_id?: number | null;
+    } = {}
+  ): Promise<PageOfferOut> {
+    const search = new URLSearchParams();
+    if (params.limit) search.set("limit", String(params.limit));
+    if (params.before_id) search.set("before_id", String(params.before_id));
+    if (params.category_id) search.set("category_id", String(params.category_id));
+    const qs = search.toString();
+    return request<PageOfferOut>(`/catalog/offers${qs ? `?${qs}` : ""}`);
+  },
+
+  patchCategory(categoryId: number, payload: CategoryPatch): Promise<CategoryOut> {
+    return request<CategoryOut>(`/catalog/categories/${categoryId}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  patchOffer(offerId: number, payload: OfferPatch): Promise<OfferOut> {
+    return request<OfferOut>(`/catalog/offers/${offerId}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  syncCatalog(): Promise<{ status: string }> {
+    return request<{ status: string }>("/catalog/sync", {
+      method: "POST",
+    });
+  },
+};
+
+export const pricingApi = {
+  listRules(): Promise<MarkupRuleOut[]> {
+    return request<MarkupRuleOut[]>("/markup/rules");
+  },
+
+  createRule(payload: MarkupRuleRequest): Promise<MarkupRuleOut> {
+    return request<MarkupRuleOut>("/markup/rules", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  updateRule(ruleId: number, payload: MarkupRuleRequest): Promise<MarkupRuleOut> {
+    return request<MarkupRuleOut>(`/markup/rules/${ruleId}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  deleteRule(ruleId: number): Promise<void> {
+    return request<void>(`/markup/rules/${ruleId}`, {
+      method: "DELETE",
+    });
+  },
+
+  preview(payload: MarkupPreviewRequest): Promise<PriceBreakdownOut> {
+    return request<PriceBreakdownOut>("/markup/preview", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+};
+
+export const fxApi = {
+  getCurrentRate(): Promise<FxRateOut> {
+    return request<FxRateOut>("/fx/current");
+  },
+
+  getRateHistory(
+    params: {
+      limit?: number;
+      before_id?: number | null;
+    } = {}
+  ): Promise<FxRateOut[]> {
+    const search = new URLSearchParams();
+    if (params.limit) search.set("limit", String(params.limit));
+    if (params.before_id) search.set("before_id", String(params.before_id));
+    const qs = search.toString();
+    return request<FxRateOut[]>(`/fx/history${qs ? `?${qs}` : ""}`);
+  },
+
+  setManualRate(payload: ManualRateRequest): Promise<FxRateOut> {
+    return request<FxRateOut>("/fx/manual", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  setMode(payload: FxModeRequest): Promise<{ strict_manual: boolean }> {
+    return request<{ strict_manual: boolean }>("/fx/mode", {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
+  },
+};
+
 
 

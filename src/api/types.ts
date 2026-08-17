@@ -232,3 +232,125 @@ export interface FazerCardsStatusOut {
   low_balance: boolean;
   error?: string | null;
 }
+
+// Catalogue Types
+export interface CategoryOut {
+  id: number;
+  kind: string;
+  external_id: string;
+  name: string;
+  is_active: boolean;
+  is_visible: boolean;
+  sort_order: number;
+  spic: string | null;
+  package_code: string | null;
+  vat_percent: string | null;
+  synced_at: string | null;
+}
+
+export interface OfferOut {
+  id: number;
+  category_id: number;
+  external_id: string;
+  name: string;
+  price_usd: string;
+  stock: number | null;
+  min_quantity: number;
+  max_quantity: number | null;
+  is_active: boolean;
+  is_visible: boolean;
+  spic: string | null;
+  package_code: string | null;
+  vat_percent: string | null;
+}
+
+export interface PageCategoryOut {
+  items: CategoryOut[];
+  next_cursor?: number | null;
+  has_more: boolean;
+}
+
+export interface PageOfferOut {
+  items: OfferOut[];
+  next_cursor?: number | null;
+  has_more: boolean;
+}
+
+export interface CategoryPatch {
+  is_visible?: boolean;
+  sort_order?: number;
+  spic?: string | null;
+  package_code?: string | null;
+  vat_percent?: number | null;
+}
+
+export interface OfferPatch {
+  is_visible?: boolean;
+  spic?: string | null;
+  package_code?: string | null;
+  vat_percent?: number | null;
+}
+
+// Markup & Pricing Types
+export type MarkupScope = "global" | "kind" | "category" | "offer";
+
+export interface MarkupRuleOut {
+  id: number;
+  scope: MarkupScope | string;
+  product_kind: string | null;
+  category_id: number | null;
+  offer_id: number | null;
+  markup_pct: string;
+  markup_fixed_uzs: string;
+  round_to_uzs: number;
+  is_active: boolean;
+  note: string | null;
+}
+
+export interface MarkupRuleRequest {
+  scope: string;
+  product_kind?: string | null;
+  category_id?: number | null;
+  offer_id?: number | null;
+  markup_pct: number;
+  markup_fixed_uzs?: number;
+  round_to_uzs?: number;
+  is_active?: boolean;
+  note?: string | null;
+}
+
+export interface MarkupPreviewRequest {
+  offer_id: number;
+  quantity?: number;
+}
+
+export interface PriceBreakdownOut {
+  quantity: number;
+  unit_cost_usd: string;
+  cost_usd: string;
+  fx_rate: string;
+  markup_rule_id: number | null;
+  markup_pct: string;
+  markup_fixed_uzs: string;
+  round_to_uzs: number;
+  price_uzs: string;
+  profit_uzs: string;
+}
+
+// Foreign Exchange (FX) Types
+export interface FxRateOut {
+  id: number;
+  rate: string;
+  source: "cbu" | "manual" | string;
+  note: string | null;
+  observed_at: string;
+}
+
+export interface ManualRateRequest {
+  rate: number;
+  note?: string | null;
+}
+
+export interface FxModeRequest {
+  strict_manual: boolean;
+}

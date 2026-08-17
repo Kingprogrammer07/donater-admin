@@ -1,15 +1,24 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { statsApi, systemApi } from "@/api/client";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Icons } from "@/components/icons";
 import { NeedsAttentionCard } from "./components/NeedsAttentionCard";
 import { KpiCards } from "./components/KpiCards";
-import { RevenueProfitChart } from "./components/RevenueProfitChart";
-import { OrderStatusDonut } from "./components/OrderStatusDonut";
-import { OrdersTimeseriesChart } from "./components/OrdersTimeseriesChart";
 import { TopProductsCard } from "./components/TopProductsCard";
 import type { StatsPeriod } from "@/api/types";
+
+// Lazy-load heavier dataviz charts so KPI cards render instantly
+const RevenueProfitChart = lazy(() =>
+  import("./components/RevenueProfitChart").then((m) => ({ default: m.RevenueProfitChart }))
+);
+const OrderStatusDonut = lazy(() =>
+  import("./components/OrderStatusDonut").then((m) => ({ default: m.OrderStatusDonut }))
+);
+const OrdersTimeseriesChart = lazy(() =>
+  import("./components/OrdersTimeseriesChart").then((m) => ({ default: m.OrdersTimeseriesChart }))
+);
 
 const PERIOD_OPTIONS: { id: StatsPeriod; label: string }[] = [
   { id: "today", label: "Bugun" },
@@ -149,27 +158,33 @@ export default function DashboardPage() {
       {/* 3. Main Charts Section (Revenue/Profit + Status Donut) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <RevenueProfitChart
-            revenueSeries={revenueSeries}
-            profitSeries={profitSeries}
-            isLoading={isRevenueLoading || isProfitLoading}
-          />
+          <Suspense fallback={<Skeleton className="h-80 w-full" />}>
+            <RevenueProfitChart
+              revenueSeries={revenueSeries}
+              profitSeries={profitSeries}
+              isLoading={isRevenueLoading || isProfitLoading}
+            />
+          </Suspense>
         </div>
 
         <div>
-          <OrderStatusDonut
-            ordersByStatus={overview?.orders_by_status}
-            isLoading={isOverviewLoading}
-          />
+          <Suspense fallback={<Skeleton className="h-80 w-full" />}>
+            <OrderStatusDonut
+              ordersByStatus={overview?.orders_by_status}
+              isLoading={isOverviewLoading}
+            />
+          </Suspense>
         </div>
       </div>
 
       {/* 4. Secondary Trends (Orders Timeline + Top Products) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <OrdersTimeseriesChart
-          ordersSeries={ordersSeries}
-          isLoading={isOrdersLoading}
-        />
+        <Suspense fallback={<Skeleton className="h-72 w-full" />}>
+          <OrdersTimeseriesChart
+            ordersSeries={ordersSeries}
+            isLoading={isOrdersLoading}
+          />
+        </Suspense>
 
         <TopProductsCard
           products={topProducts}

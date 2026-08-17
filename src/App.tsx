@@ -15,6 +15,8 @@ const DashboardPage = lazy(() => import("@/features/dashboard/DashboardPage"));
 const PaymentsPage = lazy(() => import("@/features/payments/PaymentsPage"));
 const OrdersPage = lazy(() => import("@/features/orders/OrdersPage"));
 const UsersPage = lazy(() => import("@/features/users/UsersPage"));
+const CatalogPage = lazy(() => import("@/features/catalog/CatalogPage"));
+const PricingPage = lazy(() => import("@/features/pricing/PricingPage"));
 const PlaceholderPage = lazy(() =>
   import("@/features/placeholders/PlaceholderPage").then((m) => ({ default: m.PlaceholderPage }))
 );
@@ -140,7 +142,7 @@ const router = createBrowserRouter(
           path: "/catalog",
           element: (
             <SuspenseWrapper>
-              <PlaceholderPage />
+              <CatalogPage />
             </SuspenseWrapper>
           ),
         },
@@ -148,7 +150,7 @@ const router = createBrowserRouter(
           path: "/pricing",
           element: (
             <SuspenseWrapper>
-              <PlaceholderPage />
+              <PricingPage />
             </SuspenseWrapper>
           ),
         },
