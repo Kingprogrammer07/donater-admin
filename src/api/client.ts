@@ -54,6 +54,14 @@ function notifyUnauthorized(): void {
   }
 }
 
+//  Signing in and refreshing are how a session is obtained; a 401 from them is
+//  the answer, not a stale token. Running the refresh dance there replaces the
+//  real reason ("invalid telegram payload") with "your session expired", which
+//  is both wrong and unactionable.
+function isSessionEndpoint(endpoint: string): boolean {
+  return endpoint.includes("/auth/telegram") || endpoint.includes("/auth/refresh");
+}
+
 export async function request<T>(
   endpoint: string,
   options: RequestInit = {},
@@ -76,7 +84,7 @@ export async function request<T>(
       headers,
     });
 
-    if (response.status === 401 && allowRetry) {
+    if (response.status === 401 && allowRetry && !isSessionEndpoint(endpoint)) {
       const refreshedTokens = await performTokenRefresh();
       if (refreshedTokens) {
         headers.set("Authorization", `Bearer ${refreshedTokens.access_token}`);
@@ -142,7 +150,7 @@ export async function requestBlob(
       headers,
     });
 
-    if (response.status === 401 && allowRetry) {
+    if (response.status === 401 && allowRetry && !isSessionEndpoint(endpoint)) {
       const refreshedTokens = await performTokenRefresh();
       if (refreshedTokens) {
         headers.set("Authorization", `Bearer ${refreshedTokens.access_token}`);
