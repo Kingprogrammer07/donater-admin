@@ -4,7 +4,17 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DateTime } from "@/components/ui/datetime";
 import type { CheckOut } from "@/api/types";
+
+//  The endpoint speaks in enum values; the panel is read by people.
+const CHECK_STATUS_LABELS: Record<string, string> = {
+  ok: "Barqaror",
+  degraded: "Sekinlashgan",
+  failing: "Nosoz",
+};
+
+const ISO_TIMESTAMP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/;
 
 const SUBSYSTEM_LABELS: Record<string, { label: string; icon: keyof typeof Icons; desc: string }> = {
   database: {
@@ -142,7 +152,7 @@ export function HealthPanel() {
                     styleType="subtle"
                     className="text-[12px] font-mono capitalize"
                   >
-                    {check.status}
+                    {CHECK_STATUS_LABELS[check.status] ?? check.status}
                   </Badge>
                 </div>
 
@@ -151,11 +161,23 @@ export function HealthPanel() {
                 </p>
 
                 {check.detail && (
-                  <div className="pt-1 border-t border-hairline/60 flex items-center justify-between text-[12px] text-fg-muted font-mono">
-                    <span>Holat izohi:</span>
-                    <span className="truncate max-w-[170px]" title={check.detail}>
-                      {check.detail}
-                    </span>
+                  <div className="pt-1 border-t border-hairline/60 flex items-center justify-between gap-2 text-[12px] text-fg-muted font-mono">
+                    {/*  The worker reports its heartbeat as an instant. A
+                        truncated "2026-08-17T15:37:30.3642…" tells an operator
+                        nothing; "2 daqiqa oldin" is the whole point of it. */}
+                    {ISO_TIMESTAMP.test(check.detail) ? (
+                      <>
+                        <span>Oxirgi signal:</span>
+                        <DateTime value={check.detail} mode="relative" className="text-fg-muted" />
+                      </>
+                    ) : (
+                      <>
+                        <span>Holat izohi:</span>
+                        <span className="truncate max-w-[170px]" title={check.detail}>
+                          {check.detail}
+                        </span>
+                      </>
+                    )}
                   </div>
                 )}
               </div>

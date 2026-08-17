@@ -109,8 +109,18 @@ export function QueueWorkerPanel() {
             <span className="font-bold block">
               DIQQAT: Asinxron Ishchi (Worker) faol emas!
             </span>
+            {/*  The liveness window is the server's (heartbeat TTL), not the
+                panel's - so the banner reports the last signal rather than
+                naming a number that would drift out of sync with it. */}
             <span className="text-[12px] block">
-              Worker 5 daqiqadan beri javob qaytarmayapti. Buyurtmalarni yetkazib berish va ommaviy xabarnomalar to'xtab qolgan bo'lishi mumkin.
+              {queue?.worker_seen_at ? (
+                <>
+                  Oxirgi signal: <DateTime value={queue.worker_seen_at} mode="relative" />.
+                </>
+              ) : (
+                <>Worker hech qanday signal yubormagan.</>
+              )}{" "}
+              Buyurtmalarni yetkazib berish va ommaviy xabarnomalar to'xtab qolgan bo'lishi mumkin.
             </span>
           </div>
         </div>

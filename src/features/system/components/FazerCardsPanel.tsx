@@ -3,6 +3,7 @@ import { systemApi } from "@/api/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
+import { Money } from "@/components/ui/money";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function FazerCardsPanel() {
@@ -76,12 +77,15 @@ export function FazerCardsPanel() {
 
               {/* Large Balance Display */}
               <div className="flex items-baseline gap-2">
-                <span className="text-2xl sm:text-3xl font-bold font-mono text-fg">
-                  ${Number(status.balance_usd || 0).toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </span>
+                {/*  Money is a Decimal string on the wire and stays a string
+                    here; Number() on a balance is the one conversion this
+                    codebase does not make. */}
+                <Money
+                  amount={status.balance_usd}
+                  currency="USD"
+                  align="left"
+                  className="text-2xl sm:text-3xl font-bold text-fg"
+                />
                 <span className="text-xs text-fg-subtle font-mono">
                   {status.currency || "USD"}
                 </span>

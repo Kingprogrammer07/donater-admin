@@ -20,6 +20,14 @@ npm run dev
 npm run build
 ```
 
+Dev serverni tunnel (ngrok va shu kabi) orqali ochsangiz, o'sha hostni
+`DEV_ALLOWED_HOSTS` ga bering — Vite boshqa hostdan kelgan so'rovni rad etadi,
+va bu himoyani repoda wildcard bilan ochib qo'ymaymiz:
+
+```bash
+DEV_ALLOWED_HOSTS=quiet-fox-1234.ngrok-free.dev npm run dev
+```
+
 ## Backend bilan ishlash
 
 Backendni lokal ko'tarish (backend papkasida):
