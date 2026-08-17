@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { pricingApi } from "@/api/client";
 import { Badge } from "@/components/ui/badge";
@@ -22,8 +22,8 @@ const SCOPE_BADGE_CONFIG: Record<string, { label: string; variant: "ok" | "warn"
 
 export function MarkupCascadeList() {
   const { success, error: toastError } = useToast();
-  const { admin } = useAuth();
-  const isViewer = admin?.role === "viewer";
+  const { hasPermission } = useAuth();
+  const isViewer = !hasPermission("manage_pricing");
 
   const [selectedRule, setSelectedRule] = useState<MarkupRuleOut | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);

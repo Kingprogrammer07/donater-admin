@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+﻿import { useState, useMemo } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { catalogApi } from "@/api/client";
 import { DataTable, type ColumnDef } from "@/components/ui/data-table/DataTable";
@@ -15,8 +15,8 @@ import type { CategoryOut, CategoryPatch } from "@/api/types";
 
 export function CategoriesTab() {
   const { success, error: toastError } = useToast();
-  const { admin } = useAuth();
-  const isViewer = admin?.role === "viewer";
+  const { hasPermission } = useAuth();
+  const isViewer = !hasPermission("manage_catalog");
 
   const [selectedCategory, setSelectedCategory] = useState<CategoryOut | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);

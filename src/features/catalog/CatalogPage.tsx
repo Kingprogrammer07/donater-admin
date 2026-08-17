@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { catalogApi } from "@/api/client";
 import { Button } from "@/components/ui/button";
@@ -14,8 +14,8 @@ export default function CatalogPage() {
   const [isSyncConfirmOpen, setIsSyncConfirmOpen] = useState(false);
 
   const { error: toastError, info } = useToast();
-  const { admin } = useAuth();
-  const isViewer = admin?.role === "viewer";
+  const { hasPermission } = useAuth();
+  const isViewer = !hasPermission("manage_catalog");
 
   const syncMutation = useMutation({
     mutationFn: async () => {

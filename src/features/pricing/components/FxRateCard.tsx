@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { fxApi } from "@/api/client";
 import { Badge } from "@/components/ui/badge";
@@ -15,8 +15,8 @@ import { AnimatePresence, motion } from "motion/react";
 
 export function FxRateCard() {
   const { success, error: toastError } = useToast();
-  const { admin } = useAuth();
-  const isViewer = admin?.role === "viewer";
+  const { hasPermission } = useAuth();
+  const isViewer = !hasPermission("manage_pricing");
 
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
   const [manualRateInput, setManualRateInput] = useState<string>("");

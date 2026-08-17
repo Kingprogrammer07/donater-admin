@@ -28,6 +28,14 @@ const RULES = [
     violates: () => true,
     hint: "docs/FRONTEND.md §0.4: no `any`. Name the type, or use `unknown` and narrow it.",
   },
+  {
+    name: "permission decided by role name",
+    pattern: /\brole\s*===\s*["'`]\w+["'`]/g,
+    violates: () => true,
+    hint:
+      "Use hasPermission('manage_x'). Roles are nested, so `role === 'viewer'` also shows the " +
+      "control to support, who then gets a 403 from the server.",
+  },
 ];
 
 function* walk(dir) {
