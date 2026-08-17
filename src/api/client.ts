@@ -8,6 +8,10 @@ import type {
   ProofOut,
   PagePaymentOut,
   UserDetailOut,
+  OrderOut,
+  OrderDetailOut,
+  PageOrderOut,
+  RevealPayloadOut,
 } from "./types";
 
 const REFRESH_TOKEN_KEY = "donater_admin_refresh_token";
@@ -324,3 +328,54 @@ export const usersApi = {
     return request<PagePaymentOut>(`/payments?user_id=${userId}&limit=${limit}`);
   },
 };
+
+export const ordersApi = {
+  listOrders(
+    params: {
+      limit?: number;
+      before_id?: number | null;
+      status?: string | null;
+      user_id?: number | null;
+      q?: string | null;
+    } = {}
+  ): Promise<PageOrderOut> {
+    const search = new URLSearchParams();
+    if (params.limit) search.set("limit", String(params.limit));
+    if (params.before_id) search.set("before_id", String(params.before_id));
+    if (params.status && params.status !== "all") search.set("status", params.status);
+    if (params.user_id) search.set("user_id", String(params.user_id));
+    if (params.q) search.set("q", params.q);
+
+    const qs = search.toString();
+    return request<PageOrderOut>(`/orders${qs ? `?${qs}` : ""}`);
+  },
+
+  getOrder(orderId: number): Promise<OrderDetailOut> {
+    return request<OrderDetailOut>(`/orders/${orderId}`);
+  },
+
+  revealPayload(orderId: number): Promise<RevealPayloadOut> {
+    return request<RevealPayloadOut>(`/orders/${orderId}/payload`);
+  },
+
+  retryOrder(orderId: number): Promise<OrderOut> {
+    return request<OrderOut>(`/orders/${orderId}/retry`, {
+      method: "POST",
+    });
+  },
+
+  refundOrder(orderId: number, reason: string): Promise<OrderOut> {
+    return request<OrderOut>(`/orders/${orderId}/refund`, {
+      method: "POST",
+      body: JSON.stringify({ reason }),
+    });
+  },
+
+  forceComplete(orderId: number, reason: string): Promise<OrderOut> {
+    return request<OrderOut>(`/orders/${orderId}/force-complete`, {
+      method: "POST",
+      body: JSON.stringify({ reason }),
+    });
+  },
+};
+

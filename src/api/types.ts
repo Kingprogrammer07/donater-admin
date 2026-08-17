@@ -54,6 +54,7 @@ export interface PagePaymentOut {
   has_more: boolean;
 }
 
+// User Types
 export interface UserOut {
   id: number;
   tg_id: number;
@@ -80,4 +81,68 @@ export interface UserDetailOut {
   spent_uzs?: string;
   created_at?: string;
   last_seen_at?: string | null;
+}
+
+// Order Types
+export type OrderStatus =
+  | "funds_held"
+  | "submitting"
+  | "provider_pending"
+  | "completed"
+  | "failed"
+  | "refunded"
+  | "cancelled"
+  | string;
+
+export interface OrderOut {
+  id: number;
+  public_id: string;
+  user_id: number;
+  product_kind: "direct" | "evoucher" | "gift_card" | string;
+  quantity: number;
+  price_uzs: string;
+  profit_uzs: string;
+  status: OrderStatus;
+  provider_order_id: string | null;
+  provider_status: string | null;
+  error_message: string | null;
+  created_at: string;
+  completed_at: string | null;
+}
+
+export interface OrderEventOut {
+  id: number;
+  source: string;
+  event: string;
+  received_at: string;
+  processed_at: string | null;
+}
+
+export interface OrderDetailOut extends OrderOut {
+  offer_snapshot: {
+    name?: string;
+    category_name?: string;
+    product_kind?: string;
+    denomination?: number;
+    currency?: string;
+    [key: string]: unknown;
+  };
+  input_fields: Record<string, unknown>;
+  cost_usd: string;
+  fx_rate: string;
+  markup_pct: string;
+  markup_rule_id: number | null;
+  attempts: number;
+  events: OrderEventOut[];
+}
+
+export interface PageOrderOut {
+  items: OrderOut[];
+  next_cursor?: number | null;
+  has_more: boolean;
+}
+
+export interface RevealPayloadOut {
+  public_id: string;
+  delivered_payload: Record<string, unknown> | null;
 }

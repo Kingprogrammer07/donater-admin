@@ -12,6 +12,7 @@ const LoginPage = lazy(() =>
   import("@/features/auth/LoginPage").then((m) => ({ default: m.LoginPage }))
 );
 const PaymentsPage = lazy(() => import("@/features/payments/PaymentsPage"));
+const OrdersPage = lazy(() => import("@/features/orders/OrdersPage"));
 const PlaceholderPage = lazy(() =>
   import("@/features/placeholders/PlaceholderPage").then((m) => ({ default: m.PlaceholderPage }))
 );
@@ -105,7 +106,7 @@ const router = createBrowserRouter(
           path: "/orders",
           element: (
             <SuspenseWrapper>
-              <PlaceholderPage />
+              <OrdersPage />
             </SuspenseWrapper>
           ),
         },
@@ -113,7 +114,7 @@ const router = createBrowserRouter(
           path: "/orders/:id",
           element: (
             <SuspenseWrapper>
-              <PlaceholderPage />
+              <OrdersPage />
             </SuspenseWrapper>
           ),
         },
