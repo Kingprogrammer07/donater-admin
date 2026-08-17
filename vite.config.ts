@@ -12,6 +12,14 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    allowedHosts: [
+      "huff-nape-expiring.ngrok-free.dev",
+      ".ngrok-free.dev",
+      ".ngrok.io",
+      ".loca.lt",
+      "localhost",
+      "127.0.0.1",
+    ],
     proxy: {
       "/admin/api": {
         target: "http://127.0.0.1:8000",
