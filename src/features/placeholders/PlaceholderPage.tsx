@@ -1,4 +1,4 @@
-import { findNavItemByPath } from "@/components/layout/navItems";
+﻿import { findNavItemByPath } from "@/components/layout/navItems";
 import { useRouter } from "@/lib/router/RouterContext";
 import { useToast } from "@/lib/toast/ToastContext";
 import { Icons } from "@/components/icons";
@@ -34,7 +34,7 @@ export function PlaceholderPage() {
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="label-caps">{step}-QADAM REJASI</span>
-            <Badge variant="brand" styleType="subtle" className="text-[10px]">
+            <Badge variant="brand" styleType="subtle" className="text-xs">
               Qobiq Tayyor
             </Badge>
           </div>

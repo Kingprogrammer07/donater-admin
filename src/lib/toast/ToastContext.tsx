@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
+﻿import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Icons } from "@/components/icons";
 
@@ -182,12 +182,12 @@ function ToastCard({ toast, onDismiss }: { toast: ToastItem; onDismiss: () => vo
 
         {toast.requestId && (
           <div className="flex items-center gap-2 pt-1">
-            <span className="text-[11px] font-mono text-fg-subtle">
+            <span className="text-xs font-mono text-fg-subtle">
               Req ID: {toast.requestId.slice(0, 8)}...
             </span>
             <button
               onClick={handleCopyRequestId}
-              className="text-[11px] font-medium text-brand hover:underline inline-flex items-center gap-1 cursor-pointer"
+              className="text-xs font-medium text-brand hover:underline inline-flex items-center gap-1 cursor-pointer"
             >
               <Icons.Copy size="sm" className="size-3" />
               {copied ? "Nusxalandi" : "ID nusxalash"}

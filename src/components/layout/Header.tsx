@@ -1,4 +1,4 @@
-import { useTheme } from "@/lib/theme";
+﻿import { useTheme } from "@/lib/theme";
 import { useRouter } from "@/lib/router/RouterContext";
 import { Icons } from "@/components/icons";
 import { findNavItemByPath } from "./navItems";
@@ -32,7 +32,7 @@ export function Header({ onMenuToggle }: HeaderProps) {
           <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs truncate">
             <button
               onClick={() => navigate("/")}
-              className="text-fg-subtle hover:text-fg transition-colors cursor-pointer shrink-0 truncate font-mono text-[11px]"
+              className="text-fg-subtle hover:text-fg transition-colors cursor-pointer shrink-0 truncate font-mono text-xs"
             >
               Donater
             </button>

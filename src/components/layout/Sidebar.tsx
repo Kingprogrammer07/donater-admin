@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { useRouter } from "@/lib/router/RouterContext";
 import { Icons } from "@/components/icons";
@@ -44,12 +44,12 @@ export function Sidebar({ onItemClick, onClose, className = "" }: SidebarProps) 
             </div>
             <div className="flex flex-col min-w-0">
               <span className="text-sm font-semibold tracking-tight text-fg truncate">Donater Admin</span>
-              <span className="text-[11px] text-fg-subtle truncate">Boshqaruv Paneli</span>
+              <span className="text-xs text-fg-subtle truncate">Boshqaruv Paneli</span>
             </div>
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
-            <Badge variant="brand" styleType="subtle" className="text-[10px] uppercase">
+            <Badge variant="brand" styleType="subtle" className="text-xs uppercase">
               {String(admin?.role || "admin")}
             </Badge>
 
@@ -78,7 +78,7 @@ export function Sidebar({ onItemClick, onClose, className = "" }: SidebarProps) 
 
             return (
               <div key={section.id} className="space-y-1">
-                <div className="px-3 pb-1 text-[11px] font-semibold text-fg-subtle uppercase tracking-wider">
+                <div className="px-3 pb-1 text-xs font-semibold text-fg-subtle uppercase tracking-wider">
                   {section.title}
                 </div>
                 <div className="space-y-0.5">
@@ -108,7 +108,7 @@ export function Sidebar({ onItemClick, onClose, className = "" }: SidebarProps) 
               <div className="text-xs font-semibold text-fg truncate">
                 {String(admin?.full_name || admin?.username || "Admin")}
               </div>
-              <div className="text-[11px] font-mono text-fg-subtle truncate">
+              <div className="text-xs font-mono text-fg-subtle truncate">
                 {admin?.username ? `@${admin.username}` : `ID: ${admin?.tg_id}`}
               </div>
             </div>
@@ -147,6 +147,7 @@ function SidebarNavItem({
   return (
     <button
       onClick={onClick}
+      aria-current={active ? "page" : undefined}
       className={`w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] rounded-sm text-xs transition-colors text-left cursor-pointer group ${
         active
           ? "bg-surface-2 text-fg font-semibold shadow-0"
