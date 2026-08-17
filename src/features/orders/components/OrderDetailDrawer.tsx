@@ -26,10 +26,12 @@ export interface OrderDetailDrawerProps {
 
 export function OrderDetailDrawer({ orderId, isOpen, onClose }: OrderDetailDrawerProps) {
   const { success, error: toastError } = useToast();
-  const { admin } = useAuth();
+  const { hasPermission } = useAuth();
 
-  const isOwnerOrAdmin = admin?.role === "owner" || admin?.role === "admin";
-  const isViewer = admin?.role === "viewer";
+  //  Named after the permission, not the role: support is neither owner/admin
+  //  nor viewer, and would otherwise be shown controls the server refuses.
+  const canManageOrders = hasPermission("manage_orders");
+  const canRevealPayload = hasPermission("reveal_delivery");
 
   // Action Modals State
   const [isPayloadModalOpen, setIsPayloadModalOpen] = useState(false);
@@ -112,17 +114,17 @@ export function OrderDetailDrawer({ orderId, isOpen, onClose }: OrderDetailDrawe
     },
   });
 
-  const canRetry = order?.status === "funds_held" && isOwnerOrAdmin;
+  const canRetry = order?.status === "funds_held" && canManageOrders;
   const canRefund =
     order &&
     order.status !== "refunded" &&
     order.status !== "completed" &&
-    isOwnerOrAdmin;
+    canManageOrders;
   const canForceComplete =
     order &&
     order.status !== "completed" &&
     order.status !== "refunded" &&
-    isOwnerOrAdmin;
+    canManageOrders;
 
   return (
     <>
@@ -186,11 +188,11 @@ export function OrderDetailDrawer({ orderId, isOpen, onClose }: OrderDetailDrawe
               )}
             </div>
 
-            {/* Viewer Notice */}
-            {isViewer && (
+            {/* Read-only notice */}
+            {!canManageOrders && !canRevealPayload && (
               <div className="rounded-sm border border-hairline bg-surface-2/40 p-3 text-xs text-fg-muted flex items-center gap-2">
                 <Icons.Lock size="sm" className="text-fg-subtle shrink-0" />
-                <span>Viewer rolidasiz. Buyurtmani o'zgartirish yoki kalitni ko'rish faqat Admin va Owner uchun ruxsat etilgan.</span>
+                <span>Rolingizda buyurtmani o'zgartirish va kalitni ko'rish ruxsati yo'q. Ma'lumotlarni faqat ko'rishingiz mumkin.</span>
               </div>
             )}
 
@@ -283,7 +285,7 @@ export function OrderDetailDrawer({ orderId, isOpen, onClose }: OrderDetailDrawe
 
               <div className="flex items-center gap-2.5 flex-wrap">
                 {/* Reveal Delivery Payload Button */}
-                {isOwnerOrAdmin && (
+                {canRevealPayload && (
                   <Button
                     variant="secondary"
                     size="sm"

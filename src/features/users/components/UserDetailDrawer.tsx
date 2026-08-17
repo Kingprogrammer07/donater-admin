@@ -25,10 +25,11 @@ export interface UserDetailDrawerProps {
 
 export function UserDetailDrawer({ userId, isOpen, onClose }: UserDetailDrawerProps) {
   const { success, error: toastError } = useToast();
-  const { admin } = useAuth();
+  const { hasPermission } = useAuth();
 
-  const isOwnerOrAdmin = admin?.role === "owner" || admin?.role === "admin";
-  const isViewer = admin?.role === "viewer";
+  //  The server gates these on adjust_balance; asking the role instead would
+  //  show support a button it cannot use.
+  const canAdjustBalance = hasPermission("adjust_balance");
 
   // Action Modals State
   const [isAdjustModalOpen, setIsAdjustModalOpen] = useState(false);
@@ -191,11 +192,11 @@ export function UserDetailDrawer({ userId, isOpen, onClose }: UserDetailDrawerPr
               </div>
             </div>
 
-            {/* Viewer Notice */}
-            {isViewer && (
+            {/* Read-only notice */}
+            {!canAdjustBalance && (
               <div className="rounded-sm border border-hairline bg-surface-2/40 p-3 text-xs text-fg-muted flex items-center gap-2">
                 <Icons.Lock size="sm" className="text-fg-subtle shrink-0" />
-                <span>Viewer rolidasiz. Balansni tuzatish va bloklash faqat Admin va Owner uchun ruxsat etilgan.</span>
+                <span>Rolingizda balansni tuzatish va bloklash ruxsati yo'q. Ma'lumotlarni faqat ko'rishingiz mumkin.</span>
               </div>
             )}
 
@@ -267,7 +268,7 @@ export function UserDetailDrawer({ userId, isOpen, onClose }: UserDetailDrawerPr
             </div>
 
             {/* Actions Bar */}
-            {isOwnerOrAdmin && (
+            {canAdjustBalance && (
               <div className="rounded-sm border border-hairline bg-surface p-4 space-y-3">
                 <h4 className="text-xs font-semibold text-fg">
                   Foydalanuvchi ustida amallar
