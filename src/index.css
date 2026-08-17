@@ -26,6 +26,20 @@
     --status-neutral: #5B6472;
     --status-neutral-bg: rgba(91, 100, 114, 0.08);
 
+    /* Chart Semantic Tokens (Light) */
+    --chart-revenue: #2A4FD7;
+    --chart-revenue-fill: rgba(42, 79, 215, 0.08);
+    --chart-profit: #0F7B3F;
+    --chart-profit-fill: rgba(15, 123, 63, 0.08);
+    --chart-orders: #5856D6;
+    --chart-orders-fill: rgba(88, 86, 214, 0.08);
+    --chart-grid: rgba(15, 17, 21, 0.06);
+    --chart-axis: #646D7B;
+    --chart-tooltip-bg: #FFFFFF;
+    --chart-tooltip-fg: #0F1115;
+    --chart-status-refunded: #7C3AED;
+    --chart-status-submitting: #0284C7;
+
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
@@ -61,6 +75,20 @@
     --status-fail-bg: rgba(255, 123, 114, 0.12);
     --status-neutral: #A0A8B8;
     --status-neutral-bg: rgba(160, 168, 184, 0.12);
+
+    /* Chart Semantic Tokens (Dark) */
+    --chart-revenue: #7C9BFF;
+    --chart-revenue-fill: rgba(124, 155, 255, 0.12);
+    --chart-profit: #4ADE80;
+    --chart-profit-fill: rgba(74, 222, 128, 0.12);
+    --chart-orders: #9D9BF6;
+    --chart-orders-fill: rgba(157, 155, 246, 0.12);
+    --chart-grid: rgba(255, 255, 255, 0.06);
+    --chart-axis: #828C9C;
+    --chart-tooltip-bg: #131519;
+    --chart-tooltip-fg: #EDF0F5;
+    --chart-status-refunded: #A78BFA;
+    --chart-status-submitting: #38BDF8;
 
     --elevation-1: none;
     --elevation-2: none;

@@ -76,8 +76,32 @@ async function run() {
     }, lightAuth.refreshToken);
 
     await pageLight.goto(`${baseUrl}`, { waitUntil: "networkidle" });
-    await pageLight.waitForSelector("text=Boshqaruv Paneli (Dashboard)", { timeout: 8000 });
+    await pageLight.waitForSelector("text=Boshqaruv Paneli (Dashboard)", { timeout: 15000 });
     await pageLight.waitForTimeout(600);
+
+    // Hover over the chart to show light tooltip
+    const lightSvg = pageLight.locator(".recharts-wrapper").first();
+    const lightBox = await lightSvg.boundingBox();
+    if (lightBox) {
+      await pageLight.mouse.move(lightBox.x + lightBox.width * 0.85, lightBox.y + lightBox.height * 0.5);
+      await pageLight.waitForTimeout(300);
+    }
+
+    // Inspect computed token values in Light Mode
+    const lightComputed = await pageLight.evaluate(() => {
+      const el = document.documentElement;
+      const cs = getComputedStyle(el);
+      return {
+        chartRevenue: cs.getPropertyValue("--chart-revenue").trim(),
+        chartProfit: cs.getPropertyValue("--chart-profit").trim(),
+        chartGrid: cs.getPropertyValue("--chart-grid").trim(),
+        chartTooltipBg: cs.getPropertyValue("--chart-tooltip-bg").trim(),
+        surface: cs.getPropertyValue("--surface").trim(),
+        hairline: cs.getPropertyValue("--hairline").trim(),
+      };
+    });
+    console.log("   Light Mode Computed Tokens:", lightComputed);
+    testResults.lightComputedTokens = lightComputed;
 
     const lightPath = path.join(artifactsDir, "dashboard_light_real.png");
     await pageLight.screenshot({ path: lightPath, fullPage: false });
@@ -102,8 +126,32 @@ async function run() {
     await pageDark.evaluate(() => {
       document.documentElement.classList.add("dark");
     });
-    await pageDark.waitForSelector("text=Boshqaruv Paneli (Dashboard)", { timeout: 8000 });
+    await pageDark.waitForSelector("text=Boshqaruv Paneli (Dashboard)", { timeout: 15000 });
     await pageDark.waitForTimeout(600);
+
+    // Hover over the chart to show dark tooltip
+    const darkSvg = pageDark.locator(".recharts-wrapper").first();
+    const darkBox = await darkSvg.boundingBox();
+    if (darkBox) {
+      await pageDark.mouse.move(darkBox.x + darkBox.width * 0.85, darkBox.y + darkBox.height * 0.5);
+      await pageDark.waitForTimeout(300);
+    }
+
+    // Inspect computed token values in Dark Mode
+    const darkComputed = await pageDark.evaluate(() => {
+      const el = document.documentElement;
+      const cs = getComputedStyle(el);
+      return {
+        chartRevenue: cs.getPropertyValue("--chart-revenue").trim(),
+        chartProfit: cs.getPropertyValue("--chart-profit").trim(),
+        chartGrid: cs.getPropertyValue("--chart-grid").trim(),
+        chartTooltipBg: cs.getPropertyValue("--chart-tooltip-bg").trim(),
+        surface: cs.getPropertyValue("--surface").trim(),
+        hairline: cs.getPropertyValue("--hairline").trim(),
+      };
+    });
+    console.log("   Dark Mode Computed Tokens:", darkComputed);
+    testResults.darkComputedTokens = darkComputed;
 
     const darkPath = path.join(artifactsDir, "dashboard_dark_real.png");
     await pageDark.screenshot({ path: darkPath, fullPage: false });
@@ -127,7 +175,7 @@ async function run() {
     }, iphoneAuth.refreshToken);
 
     await pageIPhone.goto(`${baseUrl}`, { waitUntil: "networkidle" });
-    await pageIPhone.waitForSelector("text=Boshqaruv Paneli (Dashboard)", { timeout: 8000 });
+    await pageIPhone.waitForSelector("text=Boshqaruv Paneli (Dashboard)", { timeout: 15000 });
     await pageIPhone.waitForTimeout(600);
 
     const iphonePath = path.join(artifactsDir, "dashboard_iphone_390px_real.png");

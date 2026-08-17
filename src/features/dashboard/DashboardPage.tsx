@@ -75,7 +75,7 @@ export default function DashboardPage() {
   });
 
   // 6. FazerCards status query
-  const { data: fazerCards, isLoading: isFazerCardsLoading } = useQuery({
+  const { data: fazerCards } = useQuery({
     queryKey: ["system-fazercards"],
     queryFn: () => systemApi.getFazerCards(),
     retry: 1,

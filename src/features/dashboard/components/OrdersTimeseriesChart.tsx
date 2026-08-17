@@ -1,10 +1,17 @@
 import { useMemo } from "react";
-import { Line } from "react-chartjs-2";
-import "@/lib/chartjs";
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from "recharts";
 import { Icons } from "@/components/icons";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ChartTooltip } from "./ChartTooltip";
 import type { TimeseriesOut } from "@/api/types";
-import type { ChartOptions, TooltipItem } from "chart.js";
 
 export interface OrdersTimeseriesChartProps {
   ordersSeries?: TimeseriesOut | null;
@@ -23,84 +30,21 @@ export function OrdersTimeseriesChart({
   const hasData = points.length > 0 && points.some((p) => Number(p.value) > 0);
 
   const chartData = useMemo(() => {
-    const labels = points.map((p) => {
+    return points.map((p) => {
       const d = new Date(p.bucket);
-      return d.toLocaleDateString("uz-UZ", {
+      const label = d.toLocaleDateString("uz-UZ", {
         month: "short",
         day: "numeric",
         hour: ordersSeries?.interval === "hour" ? "2-digit" : undefined,
       });
+
+      return {
+        bucket: p.bucket,
+        label,
+        orders: Number(p.value) || 0,
+      };
     });
-
-    const values = points.map((p) => Number(p.value) || 0);
-
-    return {
-      labels,
-      datasets: [
-        {
-          label: "Buyurtmalar soni",
-          data: values,
-          borderColor: "#6366f1", // Indigo
-          backgroundColor: "rgba(99, 102, 241, 0.08)",
-          fill: true,
-          tension: 0.35,
-          borderWidth: 2,
-          pointRadius: points.length > 30 ? 0 : 3,
-          pointHoverRadius: 5,
-        },
-      ],
-    };
   }, [points, ordersSeries?.interval]);
-
-  const options: ChartOptions<"line"> = useMemo(
-    () => ({
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: isReducedMotion ? false : { duration: 400 },
-      plugins: {
-        legend: {
-          display: false,
-        },
-        tooltip: {
-          backgroundColor: "#18181b",
-          titleColor: "#ffffff",
-          bodyColor: "#ffffff",
-          padding: 8,
-          cornerRadius: 4,
-          callbacks: {
-            label: (context: TooltipItem<"line">) => {
-              const val = Number(context.raw) || 0;
-              return `Buyurtmalar: ${val} ta`;
-            },
-          },
-        },
-      },
-      scales: {
-        x: {
-          grid: {
-            color: "rgba(128, 128, 128, 0.12)",
-          },
-          ticks: {
-            font: { size: 10, family: "inherit" },
-            maxRotation: 0,
-            autoSkip: true,
-            maxTicksLimit: 8,
-          },
-        },
-        y: {
-          grid: {
-            color: "rgba(128, 128, 128, 0.12)",
-          },
-          ticks: {
-            font: { size: 10, family: "inherit" },
-            stepSize: 1,
-            precision: 0,
-          },
-        },
-      },
-    }),
-    [isReducedMotion]
-  );
 
   if (isLoading) {
     return (
@@ -135,7 +79,55 @@ export function OrdersTimeseriesChart({
         </div>
       ) : (
         <div className="h-56 w-full text-fg">
-          <Line data={chartData} options={options} />
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+              <defs>
+                <linearGradient id="ordersGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="var(--chart-orders)" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="var(--chart-orders)" stopOpacity={0.0} />
+                </linearGradient>
+              </defs>
+
+              <CartesianGrid
+                stroke="var(--chart-grid)"
+                strokeDasharray="3 3"
+                vertical={false}
+              />
+
+              <XAxis
+                dataKey="label"
+                tickLine={false}
+                axisLine={{ stroke: "var(--chart-grid)" }}
+                tick={{ fill: "var(--chart-axis)", fontSize: 10 }}
+              />
+
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                allowDecimals={false}
+                tick={{ fill: "var(--chart-axis)", fontSize: 10 }}
+              />
+
+              <Tooltip
+                content={
+                  <ChartTooltip
+                    unit="ta"
+                  />
+                }
+              />
+
+              <Area
+                type="monotone"
+                name="Buyurtmalar"
+                dataKey="orders"
+                stroke="var(--chart-orders)"
+                strokeWidth={2}
+                fillOpacity={1}
+                fill="url(#ordersGradient)"
+                isAnimationActive={!isReducedMotion}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       )}
     </div>

@@ -31,7 +31,7 @@ export default defineConfig({
           "vendor-motion": ["motion"],
           "vendor-icons": ["lucide-react"],
           "vendor-virtual": ["@tanstack/react-virtual"],
-          "vendor-charts": ["chart.js", "react-chartjs-2"],
+          "vendor-charts": ["recharts"],
         },
       },
     },

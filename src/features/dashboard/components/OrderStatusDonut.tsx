@@ -1,23 +1,20 @@
 import { useMemo } from "react";
-import { Doughnut } from "react-chartjs-2";
-import "@/lib/chartjs";
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
 import { Icons } from "@/components/icons";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { ChartOptions, TooltipItem } from "chart.js";
 
 export interface OrderStatusDonutProps {
   ordersByStatus?: Record<string, number> | null;
   isLoading?: boolean;
 }
 
-const STATUS_COLOR_MAP: Record<string, { bg: string; label: string }> = {
-  completed: { bg: "#10b981", label: "Yetkazildi" },
-  funds_held: { bg: "#f59e0b", label: "Kutilmoqda (Hold)" },
-  submitting: { bg: "#3b82f6", label: "Yuborilmoqda" },
-  provider_pending: { bg: "#06b6d4", label: "Provayderda" },
-  failed: { bg: "#ef4444", label: "Xatolik (Fail)" },
-  refunded: { bg: "#8b5cf6", label: "Qaytarildi (Refund)" },
-  cancelled: { bg: "#6b7280", label: "Bekor qilindi" },
+const STATUS_CONFIG: Record<string, { colorVar: string; label: string }> = {
+  completed: { colorVar: "var(--status-ok)", label: "Yetkazildi" },
+  funds_held: { colorVar: "var(--status-warn)", label: "Kutilmoqda (Hold)" },
+  submitting: { colorVar: "var(--chart-status-submitting)", label: "Yuborilmoqda" },
+  failed: { colorVar: "var(--status-fail)", label: "Xatolik (Fail)" },
+  refunded: { colorVar: "var(--chart-status-refunded)", label: "Qaytarildi (Refund)" },
+  cancelled: { colorVar: "var(--status-neutral)", label: "Bekor qilindi" },
 };
 
 export function OrderStatusDonut({
@@ -39,62 +36,19 @@ export function OrderStatusDonut({
   );
 
   const chartData = useMemo(() => {
-    const labels = entries.map(([st]) => STATUS_COLOR_MAP[st]?.label || st);
-    const data = entries.map(([, count]) => count);
-    const backgroundColor = entries.map(
-      ([st]) => STATUS_COLOR_MAP[st]?.bg || "#94a3b8"
-    );
-
-    return {
-      labels,
-      datasets: [
-        {
-          data,
-          backgroundColor,
-          borderWidth: 2,
-          borderColor: "transparent",
-          hoverOffset: 4,
-        },
-      ],
-    };
+    return entries.map(([statusKey, count]) => {
+      const conf = STATUS_CONFIG[statusKey] || {
+        colorVar: "var(--status-neutral)",
+        label: statusKey,
+      };
+      return {
+        key: statusKey,
+        name: conf.label,
+        value: count,
+        colorVar: conf.colorVar,
+      };
+    });
   }, [entries]);
-
-  const options: ChartOptions<"doughnut"> = useMemo(
-    () => ({
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: isReducedMotion ? false : { duration: 400 },
-      cutout: "70%",
-      plugins: {
-        legend: {
-          position: "bottom",
-          labels: {
-            boxWidth: 10,
-            boxHeight: 10,
-            usePointStyle: true,
-            font: { size: 11, family: "inherit" },
-            padding: 12,
-            color: "currentColor",
-          },
-        },
-        tooltip: {
-          backgroundColor: "#18181b",
-          titleColor: "#ffffff",
-          bodyColor: "#ffffff",
-          padding: 8,
-          cornerRadius: 4,
-          callbacks: {
-            label: (context: TooltipItem<"doughnut">) => {
-              const val = Number(context.raw) || 0;
-              const pct = totalOrders > 0 ? ((val / totalOrders) * 100).toFixed(1) : "0";
-              return `${context.label}: ${val} ta (${pct}%)`;
-            },
-          },
-        },
-      },
-    }),
-    [isReducedMotion, totalOrders]
-  );
 
   if (isLoading) {
     return (
@@ -128,16 +82,77 @@ export function OrderStatusDonut({
           </p>
         </div>
       ) : (
-        <div className="h-64 w-full text-fg relative">
-          <Doughnut data={chartData} options={options} />
-          {/* Centered Total Label */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-8">
-            <span className="text-lg font-bold font-mono text-fg">
-              {totalOrders}
-            </span>
-            <span className="text-xs text-fg-subtle">
-              buyurtma
-            </span>
+        <div className="space-y-3">
+          {/* Donut Chart Container */}
+          <div className="h-52 w-full text-fg relative">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={chartData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={55}
+                  outerRadius={75}
+                  paddingAngle={2}
+                  isAnimationActive={!isReducedMotion}
+                >
+                  {chartData.map((entry) => (
+                    <Cell
+                      key={entry.key}
+                      fill={entry.colorVar}
+                      stroke="var(--surface)"
+                      strokeWidth={2}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (!active || !payload || payload.length === 0) return null;
+                    const item = payload[0];
+                    if (!item) return null;
+                    const val = Number(item.value) || 0;
+                    const pct = totalOrders > 0 ? ((val / totalOrders) * 100).toFixed(1) : "0";
+                    return (
+                      <div className="rounded-xs border border-hairline bg-surface p-2 shadow-2 text-xs space-y-0.5 pointer-events-none">
+                        <div className="font-semibold text-fg">{item.name}</div>
+                        <div className="text-fg-muted font-mono">
+                          {val} ta ({pct}%)
+                        </div>
+                      </div>
+                    );
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+
+            {/* Center Summary inside Donut */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <span className="text-lg font-bold font-mono text-fg leading-none">
+                {totalOrders}
+              </span>
+              <span className="text-xs text-fg-subtle mt-0.5">
+                buyurtma
+              </span>
+            </div>
+          </div>
+
+          {/* Accessible Legend */}
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 pt-1 border-t border-hairline/60">
+            {chartData.map((item) => {
+              const pct = totalOrders > 0 ? ((item.value / totalOrders) * 100).toFixed(0) : "0";
+              return (
+                <div key={item.key} className="flex items-center gap-1.5 text-xs text-fg-muted">
+                  <span
+                    className="size-2 rounded-full shrink-0"
+                    style={{ backgroundColor: item.colorVar }}
+                  />
+                  <span>{item.name}</span>
+                  <span className="font-mono text-fg font-medium">({pct}%)</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
