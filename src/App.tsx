@@ -19,6 +19,7 @@ const CatalogPage = lazy(() => import("@/features/catalog/CatalogPage"));
 const PricingPage = lazy(() => import("@/features/pricing/PricingPage"));
 const BroadcastsPage = lazy(() => import("@/features/broadcasts/BroadcastsPage"));
 const SystemPage = lazy(() => import("@/features/system/SystemPage"));
+const SettingsPage = lazy(() => import("@/features/settings/SettingsPage"));
 const PlaceholderPage = lazy(() =>
   import("@/features/placeholders/PlaceholderPage").then((m) => ({ default: m.PlaceholderPage }))
 );
@@ -176,7 +177,7 @@ const router = createBrowserRouter(
           path: "/settings",
           element: (
             <SuspenseWrapper>
-              <PlaceholderPage />
+              <SettingsPage />
             </SuspenseWrapper>
           ),
         },

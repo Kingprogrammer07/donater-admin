@@ -701,6 +701,20 @@ export const systemApi = {
   },
 };
 
+export const settingsApi = {
+  getSettings(): Promise<Record<string, unknown>> {
+    return request<Record<string, unknown>>("/settings");
+  },
+
+  patchSettings(values: Record<string, unknown>): Promise<Record<string, unknown>> {
+    return request<Record<string, unknown>>("/settings", {
+      method: "PATCH",
+      body: JSON.stringify({ values }),
+    });
+  },
+};
+
+
 
 
 

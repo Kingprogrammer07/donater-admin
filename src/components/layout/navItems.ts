@@ -114,8 +114,7 @@ export const NAV_SECTIONS: NavSectionConfig[] = [
         label: "Sozlamalar",
         path: "/settings",
         icon: "Settings",
-        permission: "manage_settings",
-        step: 10,
+        step: 11,
         description: "Do'kon parametrlari, to'lov tizimlari va matnlar sozlamalari",
       },
       {
