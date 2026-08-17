@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+﻿import { useState, useMemo } from "react";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -80,8 +80,8 @@ export function StyleguidePage() {
 
     if (sortKey) {
       result.sort((a, b) => {
-        let valA: any = a[sortKey as keyof MockItem];
-        let valB: any = b[sortKey as keyof MockItem];
+        let valA: string | number = a[sortKey as keyof MockItem];
+        let valB: string | number = b[sortKey as keyof MockItem];
 
         if (sortKey === "amount") {
           valA = Number(a.amount);
@@ -125,7 +125,7 @@ export function StyleguidePage() {
       cell: (row) => (
         <div className="flex flex-col min-w-0">
           <span className="font-medium text-fg truncate">@{row.customer}</span>
-          <span className="font-mono text-[11px] text-fg-subtle truncate">ID: {row.tgId}</span>
+          <span className="font-mono text-xs text-fg-subtle truncate">ID: {row.tgId}</span>
         </div>
       ),
     },
@@ -253,10 +253,10 @@ export function StyleguidePage() {
 
             {/* Test State Simulator */}
             <div className="flex items-center gap-1.5 shrink-0 border-t lg:border-t-0 pt-2 lg:pt-0">
-              <span className="text-[11px] text-fg-subtle">Holat:</span>
+              <span className="text-xs text-fg-subtle">Holat:</span>
               <button
                 onClick={() => setTableState("normal")}
-                className={`px-2 py-1 text-[11px] rounded-sm transition-colors cursor-pointer ${
+                className={`px-2 py-1 text-xs rounded-sm transition-colors cursor-pointer ${
                   tableState === "normal" ? "bg-surface-2 font-semibold text-fg" : "text-fg-muted"
                 }`}
               >
@@ -264,7 +264,7 @@ export function StyleguidePage() {
               </button>
               <button
                 onClick={() => setTableState("loading")}
-                className={`px-2 py-1 text-[11px] rounded-sm transition-colors cursor-pointer ${
+                className={`px-2 py-1 text-xs rounded-sm transition-colors cursor-pointer ${
                   tableState === "loading" ? "bg-surface-2 font-semibold text-fg" : "text-fg-muted"
                 }`}
               >
@@ -272,7 +272,7 @@ export function StyleguidePage() {
               </button>
               <button
                 onClick={() => setTableState("error")}
-                className={`px-2 py-1 text-[11px] rounded-sm transition-colors cursor-pointer ${
+                className={`px-2 py-1 text-xs rounded-sm transition-colors cursor-pointer ${
                   tableState === "error" ? "bg-surface-2 font-semibold text-fg" : "text-fg-muted"
                 }`}
               >
@@ -280,7 +280,7 @@ export function StyleguidePage() {
               </button>
               <button
                 onClick={() => setTableState("empty")}
-                className={`px-2 py-1 text-[11px] rounded-sm transition-colors cursor-pointer ${
+                className={`px-2 py-1 text-xs rounded-sm transition-colors cursor-pointer ${
                   tableState === "empty" ? "bg-surface-2 font-semibold text-fg" : "text-fg-muted"
                 }`}
               >
@@ -324,19 +324,19 @@ export function StyleguidePage() {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               <div className="p-3.5 rounded-sm bg-surface-2 space-y-1">
-                <span className="text-[11px] text-fg-subtle block">UZS Valyutasi:</span>
+                <span className="text-xs text-fg-subtle block">UZS Valyutasi:</span>
                 <Money amount="1250000.00" currency="UZS" className="text-base" />
               </div>
               <div className="p-3.5 rounded-sm bg-surface-2 space-y-1">
-                <span className="text-[11px] text-fg-subtle block">Foyda / Musbat:</span>
+                <span className="text-xs text-fg-subtle block">Foyda / Musbat:</span>
                 <Money amount="45000.50" currency="UZS" showSign colored className="text-base" />
               </div>
               <div className="p-3.5 rounded-sm bg-surface-2 space-y-1">
-                <span className="text-[11px] text-fg-subtle block">Zarar / Manfiy:</span>
+                <span className="text-xs text-fg-subtle block">Zarar / Manfiy:</span>
                 <Money amount="-18500.00" currency="UZS" showSign colored className="text-base" />
               </div>
               <div className="p-3.5 rounded-sm bg-surface-2 space-y-1">
-                <span className="text-[11px] text-fg-subtle block">USD Valyutasi:</span>
+                <span className="text-xs text-fg-subtle block">USD Valyutasi:</span>
                 <Money amount="89.99" currency="USD" className="text-base" />
               </div>
             </div>
@@ -349,15 +349,15 @@ export function StyleguidePage() {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="p-3.5 rounded-sm bg-surface-2 space-y-1">
-                <span className="text-[11px] text-fg-subtle block">Nisbiy ko'rinish:</span>
+                <span className="text-xs text-fg-subtle block">Nisbiy ko'rinish:</span>
                 <DateTime value={new Date(Date.now() - 1000 * 60 * 12).toISOString()} mode="relative" />
               </div>
               <div className="p-3.5 rounded-sm bg-surface-2 space-y-1">
-                <span className="text-[11px] text-fg-subtle block">To'liq sana:</span>
+                <span className="text-xs text-fg-subtle block">To'liq sana:</span>
                 <DateTime value={new Date().toISOString()} mode="absolute" />
               </div>
               <div className="p-3.5 rounded-sm bg-surface-2 space-y-1">
-                <span className="text-[11px] text-fg-subtle block">Ikkala ko'rinish:</span>
+                <span className="text-xs text-fg-subtle block">Ikkala ko'rinish:</span>
                 <DateTime value={new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString()} mode="both" />
               </div>
             </div>

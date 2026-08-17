@@ -1,4 +1,4 @@
-import { useRef, type ReactNode } from "react";
+﻿import { useRef, type ReactNode } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
@@ -149,7 +149,7 @@ export function DataTable<T>({
                     scope="col"
                     aria-sort={ariaSort}
                     style={{ width: col.width }}
-                    className={`px-4 py-3 font-semibold text-fg-subtle uppercase tracking-wider text-[11px] ${alignClass} ${col.className || ""}`}
+                    className={`px-4 py-3 font-semibold text-fg-subtle uppercase tracking-wider text-xs ${alignClass} ${col.className || ""}`}
                   >
                     {col.sortable && onSortChange ? (
                       <button
@@ -200,6 +200,19 @@ export function DataTable<T>({
                     key={key}
                     role="row"
                     onClick={onRowClick ? () => onRowClick(row) : undefined}
+                    //  A clickable row that only answers the mouse locks
+                    //  keyboard users out of the detail panel entirely, and
+                    //  leaves nothing for the drawer to hand focus back to.
+                    tabIndex={onRowClick ? 0 : undefined}
+                    onKeyDown={
+                      onRowClick
+                        ? (event) => {
+                            if (event.key !== "Enter" && event.key !== " ") return;
+                            event.preventDefault();
+                            onRowClick(row);
+                          }
+                        : undefined
+                    }
                     style={{
                       position: "absolute",
                       top: 0,
@@ -208,7 +221,7 @@ export function DataTable<T>({
                       height: `${virtualRow.size}px`,
                       transform: `translateY(${virtualRow.start}px)`,
                     }}
-                    className={`flex items-center border-b border-hairline/60 transition-colors ${
+                    className={`flex items-center border-b border-hairline/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-inset ${
                       onRowClick
                         ? "cursor-pointer hover:bg-surface-2/70 active:bg-surface-2"
                         : "hover:bg-surface-2/30"
@@ -226,7 +239,7 @@ export function DataTable<T>({
                       if (col.cell) {
                         content = col.cell(row, virtualRow.index);
                       } else if (col.accessorKey && row != null) {
-                        content = String((row as any)[col.accessorKey] ?? "");
+                        content = String(row[col.accessorKey] ?? "");
                       }
 
                       return (
@@ -253,7 +266,17 @@ export function DataTable<T>({
                     key={key}
                     role="row"
                     onClick={onRowClick ? () => onRowClick(row) : undefined}
-                    className={`transition-colors ${
+                    tabIndex={onRowClick ? 0 : undefined}
+                    onKeyDown={
+                      onRowClick
+                        ? (event) => {
+                            if (event.key !== "Enter" && event.key !== " ") return;
+                            event.preventDefault();
+                            onRowClick(row);
+                          }
+                        : undefined
+                    }
+                    className={`transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-inset ${
                       onRowClick
                         ? "cursor-pointer hover:bg-surface-2/70 active:bg-surface-2"
                         : "hover:bg-surface-2/30"

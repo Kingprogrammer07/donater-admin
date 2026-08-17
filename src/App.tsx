@@ -59,8 +59,26 @@ function ProtectedRoot() {
   return <AdminLayout />;
 }
 
+//  Outside the session gate, and only in development. The page renders mock
+//  data and no real record, so hiding it behind a login only means the
+//  primitives cannot be inspected or reviewed without one. It is stripped from
+//  the production bundle entirely.
+const devOnlyRoutes = import.meta.env.DEV
+  ? [
+      {
+        path: "/styleguide",
+        element: (
+          <SuspenseWrapper>
+            <StyleguidePage />
+          </SuspenseWrapper>
+        ),
+      },
+    ]
+  : [];
+
 const router = createBrowserRouter(
   [
+    ...devOnlyRoutes,
     {
       element: <ProtectedRoot />,
       children: [
@@ -160,18 +178,6 @@ const router = createBrowserRouter(
             </SuspenseWrapper>
           ),
         },
-        ...(import.meta.env.DEV
-          ? [
-              {
-                path: "/styleguide",
-                element: (
-                  <SuspenseWrapper>
-                    <StyleguidePage />
-                  </SuspenseWrapper>
-                ),
-              },
-            ]
-          : []),
         {
           path: "*",
           element: (
